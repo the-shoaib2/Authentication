@@ -1,0 +1,404 @@
+
+/* Show scrollbar on hover */
+.profile-container:hover {
+    overflow-y: auto; /* Show scrollbar when hovering */
+}
+
+/* Scrollbar Styles for WebKit Browsers (Chrome, Safari, Edge) */
+.profile-container::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+    height: auto;
+}
+
+/* Track of the scrollbar */
+.profile-container::-webkit-scrollbar-track {
+    margin:80px;
+    background: #ececec;
+    border-radius: 10px; /* Rounded corners for the track */
+}
+
+/* Handle of the scrollbar */
+.profile-container::-webkit-scrollbar-thumb {
+    background: #cacaca; /* Grey color for the handle */
+    border-radius: 10px; /* Rounded corners for the handle */
+    transition: background 0.3s; /* Smooth color transition on hover */
+}
+
+/* Handle on hover */
+.profile-container::-webkit-scrollbar-thumb:hover {
+    background: #adadad; /* Darker grey color on hover */
+}
+
+/* Optional: Style for the scrollbar corner */
+.profile-container::-webkit-scrollbar-corner {
+    background: #f1f1f1; /* Background color for the scrollbar corner */
+}
+
+
+/* User Profile Container */
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 700px;
+    max-height: 80vh; /* Allow scrolling if the content exceeds the viewport height */
+    margin: 20px auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin: 20px 20px 20px 20px ;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    z-index: 1000;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+}
+
+
+
+
+/* Shared styles for both Back and Edit buttons */
+.icon-button {
+    position: absolute;
+    display: flex;
+    top: 25px;
+    width: 40px;
+    height: 40px;
+    background: #f4f4f4;
+    border: none;
+    font-family: none;
+    margin: 0;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    border-radius: 50%;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Back Button - specific positioning */
+.back-button {
+    left: 25px;
+}
+.back-button img {
+    margin: 0px 2px 2px 0px;
+}
+
+/* Edit Button - specific positioning */
+.edit-button {
+    right: 25px;
+}
+.edit-button img {
+  margin: 0px 0px 2px 2px;
+}
+
+/* Hover effect for both buttons */
+.icon-button:hover {
+    background-color: #007bff; 
+    box-shadow: 0 0px 8px rgba(0, 0, 0, 0.2); 
+}
+
+/* Icon styles */
+.icon-button img {
+    width: 24px; /* Adjust size as needed */
+    height: 24px;
+}
+
+
+
+/* User Information */
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 350px;
+    padding: 10px 20px;
+    margin: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover Effect for User Info */
+.user-info:hover {
+    background: #fdfdfd;
+    transform: scale(1.002);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Avatar */
+.avatar {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #fafafa;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f1f1;
+    margin: 3px 0 20px 0;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 0 2px rgb(230, 230, 230);
+}
+
+/* Hover Effect for Avatar */
+.avatar:hover {
+    box-shadow: 0 0 0 2px rgb(58, 44, 248), 0 0 18px rgba(5, 108, 243, 0.63);
+    transform: scale(1.002);
+}
+
+/* Profile Picture */
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+/* User Name */
+.user-name {
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+/* Details Container */
+.details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 20px;
+}
+.details-container p{
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    
+    
+}
+
+/* User Details List */
+.user-details {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+/* User Details Item */
+.user-details li {
+    margin: 10px 0;
+    font-size: 16px;
+    position: relative;
+    padding-left: 100px;
+}
+
+/* User Details Label */
+.user-details li::before {
+    content: attr(data-label);
+    font-weight: 500;
+    position: absolute;
+    left: 0;
+    width: 90px;
+}
+
+/* Separator Between List Items */
+.user-details li:not(:last-child) {
+    border-bottom: 1px solid #e4e4e4;
+    padding-bottom: 8px;
+}
+
+/* Actions Container */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Action Button */
+.action-button {
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effect for Action Button */
+.action-button:hover {
+    background-color: #0056b3;
+}
+
+/* Disabled Button */
+.action-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+
+
+
+
+/* Modal background overlay */
+.logout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001; /* Above other elements */
+}
+
+/* Modal content */
+.logout-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logout-modal-content p {
+font-weight: 500;
+margin-bottom: 50px;
+font-size: 20px;
+ 
+   
+}
+
+/* Modal actions (buttons) */
+.modal-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+/* Cancel button */
+.modal-cancel-button {
+    background-color: #a8a8a8;
+    border: none;
+    /* color: #000; */
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+
+}
+
+/* Logout button */
+.modal-logout-button {
+    background-color: #f70000;
+    border: none;
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+
+}
+
+.modal-cancel-button:hover{
+    background-color: #0a66f0;
+
+}
+
+.modal-logout-button:hover {
+    background-color: #c00000;
+    box-shadow: 0 0px 5px rgba(0, 0, 0, 0.158);
+
+}
+.expand-button button {
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    width: none;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    text-align: center;
+    display: inline-block;
+}
+
+
+/* profile.css */
+/* CSS for theme icon and rotation */
+.theme-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.theme-icon-action-button {
+    width: 30px;
+    height: 30px;
+    background: #173aff; /* Light background for the button */
+    border-radius: 50%; /* Makes the button circular */
+    cursor: pointer;
+    padding: 10px; /* Adjust as needed */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the icon inside the button */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Smooth transition for hover effect */
+    position: relative; /* Positioning context for pseudo-elements */
+}
+
+/* Hover effect */
+.theme-icon-action-button:hover {
+    background-color: #333; /* Dark background on hover */
+    border-color: #333; /* Dark border on hover */
+}
+
+.theme-icon-action-button .theme-icon {
+    filter: brightness(0) invert(1); /* Adjust icon color to match button background */
+}
+
+/* Rotation effect */
+.rotate-left {
+    transition: transform 0.5s ease;
+    transform: rotate(-180deg); /* Rotate left */
+}
+
+.rotate-right {
+    transition: transform 0.5s ease;
+    transform: rotate(180deg); /* Rotate right */
+}

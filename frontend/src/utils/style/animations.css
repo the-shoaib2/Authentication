@@ -1,0 +1,33 @@
+/* ------------------------------------------------
+   Fade-In Animation from Bottom
+   This animation fades in an element while moving it up from below.
+--------------------------------------------------- */
+@keyframes fadeInBottomEffect {
+    from {
+        opacity: 0;
+        transform: translateY(20px); 
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0); 
+    }
+}
+
+.fade-in-bottom {
+    animation: fadeInBottomEffect 0.5s ease-out; 
+}
+/* ------------------------------------------------
+   Fade-In Animation (General)
+   This animation gradually increases the opacity of an element.
+--------------------------------------------------- */
+@keyframes fadeInEffect {
+    to {
+        opacity: 1; 
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeInEffect 0.5s forwards; 
+}
+

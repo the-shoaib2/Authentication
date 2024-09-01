@@ -1,0 +1,63 @@
+/* ReactToastify Custom Styles */
+
+/* Toast container at the bottom-right corner */
+.Toastify__toast-container--bottom-right {
+    bottom: 5%; /* Adjust as needed */
+    right: 2%;  /* Adjust as needed */
+}
+
+/* Custom styles for the toast */
+.Toastify__toast-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: bold;
+}
+
+.Toastify__toast {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    color: #161616;
+    border-radius: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    margin: 4px auto;
+    width: 280px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.Toastify__toast--success {
+    color: rgb(2, 148, 2); /* Apple-style success green */
+}
+
+.Toastify__toast--error {
+    color: rgb(228, 7, 7); /* Apple-style error red */
+}
+
+.Toastify__toast-body {
+    flex: 1;
+    font-size: 16px;
+    padding: 12px;
+    text-align: center;
+    margin-right: 20px; /* Ensure spacing between text and icon */
+}
+
+.Toastify__toast-icon {
+    margin-right: 0;
+}
+
+.Toastify__close-button {
+    display: none; /* Remove the close button */
+}
+
+/* Smooth animations for toast appearance and disappearance */
+.Toastify__toast-container .Toastify__toast--animate-in {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.Toastify__toast-container .Toastify__toast--animate-out {
+    transform: scale(0.95);
+    opacity: 0;
+}
