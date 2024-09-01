@@ -2,55 +2,6 @@
 
 const Joi = require("joi");
 
-// const signupValidation = (req, res, next) => {
-
-//     const schema = Joi.object({
-//         name: Joi.string()
-//             .min(3)
-//             .max(100)
-//             .required()
-//             .messages({
-//                 'string.base': 'Name must be a string',
-//                 'string.empty': 'Name cannot be empty',
-//                 'string.min': 'Name should have a minimum length of 3',
-//                 'string.max': 'Name should have a maximum length of 100',
-//                 'any.required': 'Name is required'
-//             }),
-//         email: Joi.string()
-//             .email()
-//             .required()
-//             .messages({
-//                 'string.base': 'Email must be a string',
-//                 'string.empty': 'Email cannot be empty',
-//                 'string.email': 'Email must be a valid email address',
-//                 'any.required': 'Email is required'
-//             }),
-//         password: Joi.string()
-//             .min(8)
-//             .max(100)
-//             .required()
-//             .messages({
-//                 'string.base': 'Password must be a string',
-//                 'string.empty': 'Password cannot be empty',
-//                 'string.min': 'Password should have a minimum length of 8',
-//                 'string.max': 'Password should have a maximum length of 100',
-//                 'any.required': 'Password is required'
-//             }),
-//     });
-
-//     const { error } = schema.validate(req.body, { abortEarly: false });
-
-//     if (error) {
-//         const errors = error.details.map(err => ({
-//             field: err.context.label,
-//             message: err.message
-//         }));
-//         return res.status(400).json({ message: "Validation errors", errors });
-//     }
-
-//     next();
-// };
-
 
 const signupValidation = (req, res, next) => {
     const schema = Joi.object({
@@ -132,8 +83,6 @@ const signupValidation = (req, res, next) => {
   
     next();
   };
-
-
 
 
 const loginValidation = (req, res, next) => {

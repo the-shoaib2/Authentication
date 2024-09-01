@@ -1,4 +1,4 @@
-// Login.js
+// frontend/src/pages/Login.jsx
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';

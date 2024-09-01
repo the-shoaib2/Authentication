@@ -20,11 +20,15 @@ const findUserForgotPassword = async (req, res) => {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
+        // Concatenate first and last name
+        const fullName = `${user.first_name} ${user.last_name}`;
+
         res.status(200).json({
+            
             message: 'User found',
             success: true,
             user: {
-                name: user.name,
+                name: fullName,
                 email: user.email,
                 username: user.username,
                 avatar: user.profilePicture
@@ -42,9 +46,9 @@ const sendOtp = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
 
-        // if (!user) {
-        //     return res.status(404).json({ message: 'User not found.', success: false });
-        // }
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.', success: false });
+        }
 
         const code = await VerificationService.generateVerificationCode(user._id);
         res.status(200).json({ message: 'Verification code sent successfully', success: true, code });
@@ -94,93 +98,30 @@ const resetPassword = async (req, res) => {
     }
 };
 
+
+
+const verifyEmail = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        if (!user || user.isActive) return res.sendStatus(400); // Already active or user not found
+
+        // Here, implement the logic to verify the user's email (e.g., checking a token or code)
+        user.isActive = true;
+        await user.save();
+
+        res.status(200).json({ message: 'Email verified successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 module.exports = {
     findUserForgotPassword,
     sendOtp,
     verifyOtp,
     resetPassword,
+    verifyEmail
 };
 
 
 
-// backend/Controllers/VerificationController.js
-const UserModel = require("../Models/User");
-const { VerificationToken, VerificationCode } = require('../Models/Verification');
-
-
-const verifyTokenValidity = (req, res) => {
-    const token = req.headers['authorization'];
-
-    try {
-        jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        res.status(200).json({ success: true, message: "Token is valid." });
-    } catch (err) {
-        res.status(401).json({ success: false, message: "Invalid or expired token." });
-    }
-};
-
-const verifyEmail = async (req, res) => {
-    const { token, code } = req.body; 
-
-    try {
-        
-
-        if (!verificationToken) {
-            return res.status(400).json({
-                message: "Invalid or expired verification token",
-                success: false
-            });
-        }
-
-        const user = await UserModel.findById(verificationToken.userId);
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found",
-                success: false
-            });
-        }
-
-        // Check if the provided code is valid
-        const verificationCode = await VerificationCode.findOne({
-            userId: user._id,
-            code,
-            expiresAt: { $gt: new Date() }
-        });
-
-        if (!verificationCode) {
-            return res.status(400).json({
-                message: "Invalid or expired verification code",
-                success: false
-            });
-        }
-
-        // Activate the user's account
-        user.isActive = true;
-        await user.save();
-
-
-        // Delete the verification token and code after successful verification
-        await VerificationToken.deleteOne({ _id: verificationToken._id });
-        await VerificationCode.deleteOne({ _id: verificationCode._id });
-
-        res.status(200).json({
-            success: true,
-            message: "Email verified successfully. Your account is now active.",
-            name: user.name,
-            email: user.email,
-            ...tokens,
-        });
-
-    } catch (err) {
-        console.error('Email Verification Error:', err);
-        res.status(500).json({
-            message: "Internal server error",
-            success: false
-        });
-    }
-};
-
-module.exports = {
-    verifyTokenValidity,
-    verifyEmail,
-};

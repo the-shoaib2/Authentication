@@ -1,9 +1,9 @@
-// pages/ResetPassword.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
 import '../../utils/ReactToastifyCustom.css';
 import '../../utils/style/ResetPassword.css';
+import PasswordStrengthMeter from '../../Services/PasswordStrengthMeter'; // Import the PasswordStrengthMeter component
 
 function ResetPassword() {
     const [password, setPassword] = useState('');
@@ -68,6 +68,13 @@ function ResetPassword() {
     return (
         <div className="reset-password-container">
             <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
+            <button
+                className="back-button-forgotpaass icon-button"
+                onClick={() => navigate('/sent-otp-forgot-password')} // Navigate to SentOtpForgotPassword page
+            >
+                <img src="/back-icon.png" alt="Back" />
+            </button>
+        
             <h1>Reset Password</h1>
             <form onSubmit={handleSubmit}>
                 <div className={`input-wrapper ${matchError ? 'error' : ''}`}>
@@ -93,9 +100,9 @@ function ResetPassword() {
                         />
                         <label htmlFor='confirm-password' className='form-label-reset-password'>Confirm Password</label>
                     </div>
+                    <PasswordStrengthMeter password={password} /> 
                 </div>
                 <button type="submit">Reset Password</button>
-                <button type="button" onClick={() => navigate(-2)} className="back-button">Back</button>
             </form>
             <ToastContainer />
         </div>

@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8080;
 
 const AuthRouter = require('./Routes/AuthRouter');
 const UsersRouter = require('./Routes/UsersRouter');
-// const VerificationRouter = require('./Routes/VerificationRouter');
+const VerificationRouter = require('./Routes/VerificationRouter');
 
 app.get('/ping', (req, res) => {
     res.send('Server is Running...😍');
@@ -23,7 +23,7 @@ app.use(cors());
 // Define routes
 app.use('/auth', AuthRouter);
 app.use('/users', UsersRouter);
-// app.use('/verification', VerificationRouter);
+app.use('/verification', VerificationRouter);
 
 // Start the server
 app.listen(PORT, () => {
