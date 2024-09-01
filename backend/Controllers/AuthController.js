@@ -139,74 +139,31 @@
 // backend/Controllers/AuthController.js
 const bcrypt = require('bcrypt');
 const UserModel = require("../Models/User");
-const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./TokenController');
-
-
-
-// const signup = async (req, res) => {
-//     try {
-//       const { firstName, lastName, email, password, phone, dob, gender } = req.body;
-  
-//       // Check if user already exists
-//       const user = await UserModel.findOne({ email });
-//       if (user) {
-//         return res.status(409).json({
-//           message: 'User already exists, you can login',
-//           success: false
-//         });
-//       }
-  
-//       // Hash the password
-//       const hashedPassword = await bcrypt.hash(password, 10);
-  
-//       // Create new user
-//       const newUser = new UserModel({
-//         first_name: firstName,
-//         last_name: lastName,
-//         email,
-//         phone,
-//         password: hashedPassword,
-//         dob,
-//         gender
-//       });
-  
-//       await newUser.save();
-
-//       // Create a verification token
-//       const verificationToken = await generateVerificationToken(newUser);
-  
-//       // Generate tokens
-//       const tokens = await generateTokens(newUser);
-  
-//       res.status(201).json({
-//         message: "Signup successful",
-//         success: true,
-//         name: `${newUser.first_name} ${newUser.last_name}`,
-//         email: newUser.email,
-//         verificationToken,
-//         ...tokens,
-//       });
-//     } catch (err) {
-//       console.error('Signup Error:', err);
-//       res.status(500).json({
-//         message: "Internal server error",
-//         success: false
-//       });
-//     }
-//   };
+const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./VerificationTokenController');
 
 
 const signup = async (req, res) => {
     try {
         const { firstName, lastName, email, password, phone, dob, gender } = req.body;
 
-        // Check if user already exists
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser) {
+        // Check if user with the provided email already exists
+        const existingUserByEmail = await UserModel.findOne({ email });
+        if (existingUserByEmail) {
             return res.status(409).json({
-                message: 'User already exists, you can login',
+                message: 'User with this email already exists, you can login',
                 success: false
             });
+        }
+
+        // Check if user with the provided phone number already exists
+        if (phone) {
+            const existingUserByPhone = await UserModel.findOne({ phone });
+            if (existingUserByPhone) {
+                return res.status(409).json({
+                    message: 'User with this phone number already exists, you can login',
+                    success: false
+                });
+            }
         }
 
         // Hash the password

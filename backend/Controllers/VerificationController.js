@@ -123,7 +123,7 @@ const verifyEmail = async (req, res) => {
     const { token, code } = req.body; 
 
     try {
-        const verificationToken = await VerificationToken.findOne({ token });
+        
 
         if (!verificationToken) {
             return res.status(400).json({

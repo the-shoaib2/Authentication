@@ -137,31 +137,31 @@ module.exports = {
 
 
 
-// backend/Middlewares/VerificationMiddleware.js
+// // backend/Middlewares/VerificationMiddleware.js
 
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
-const verifyToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
+// const verifyToken = (req, res, next) => {
+//     const authHeader = req.headers['authorization'];
 
-    if (!authHeader) {
-        return res.status(403).json({ message: 'No token provided', success: false });
-    }
+//     if (!authHeader) {
+//         return res.status(403).json({ message: 'No token provided', success: false });
+//     }
 
-    const token = authHeader.split(' ')[1];
+//     const token = authHeader.split(' ')[1];
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        console.error('Token Middleware Error:', err);
-        return res.status(401).json({ message: 'Unauthorized', success: false });
-    }
-};
+//     try {
+//         const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+//         req.user = decoded;
+//         next();
+//     } catch (err) {
+//         console.error('Token Middleware Error:', err);
+//         return res.status(401).json({ message: 'Unauthorized', success: false });
+//     }
+// };
 
 
-module.exports = {
-    verifyToken,
-};
+// module.exports = {
+//     verifyToken,
+// };
 

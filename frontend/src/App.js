@@ -11,7 +11,7 @@ import SentOtpForgotPassword from './components/ForgotPassword/SentOtpForgotPass
 import ResetPassword from './components/ForgotPassword/ResetPassword';
 import RefrshHandler from './utils/RefreshHandler';
 import 'react-toastify/dist/ReactToastify.css';
-import VerifyCodeConfirmAccount from './pages/VerifyCodeAccount'; 
+import VerifyCodeConfirmAccount from './pages/VerifyCodeConfirmAccount'; 
 
 // For Debugging..
 import { useLocation } from 'react-router-dom';
