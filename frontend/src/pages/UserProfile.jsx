@@ -419,11 +419,11 @@ function UserProfile() {
                     className="theme-icon"
                   />
                 </button>
-              </li>
+              </li> 
             </ul>
           </div>
-        </>
-      )}
+        </> 
+      )} 
       <div className="actions">
         <button className="action-button" onClick={openLogoutModal}>
           Logout
@@ -436,7 +436,7 @@ function UserProfile() {
             <div className="modal-actions">
               <button
                 className="modal-cancel-button"
-                onClick={closeLogoutModal}
+                onClick={closeLogoutModal} 
               >
                 Cancel
               </button>

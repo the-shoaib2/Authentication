@@ -44,7 +44,7 @@ function FindUserForgotPassword() {
         setShowContent(false);
 
         try {
-            const response = await fetch('http://localhost:8080/verification/forgot-password/find-user', {
+            const response = await fetch('http://localhost:8080/verification/find-user', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ const handleSendOtp = async () => {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/verification/forgot-password/send-otp', {
+        const response = await fetch('http://localhost:8080/verification/verification-code', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email }),
@@ -104,7 +104,7 @@ const handleSendOtp = async () => {
 const handleProceed = () => {
     if (user && searchCompleted) {
         // handleSendOtp();
-        navigate('/forgot-password/sent-otp', { state: { email: user.email } });
+        navigate('/forgot-password/verification-code', { state: { email: user.email } });
     } else {
         handleError('No user found. Please search for a valid user.');
     }

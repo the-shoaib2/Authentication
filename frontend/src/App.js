@@ -43,7 +43,7 @@ function App() {
 
 
                 <Route path='/find-user' element={<FindUserForgotPassword />} />
-                <Route path='/forgot-password/sent-otp' element={<SentOtpForgotPassword />} />
+                <Route path='/forgot-password/verification-code' element={<SentOtpForgotPassword />} />
                 <Route path='/forgot-password/reset-password' element={<ResetPassword />} />
             </Routes>
         </div>

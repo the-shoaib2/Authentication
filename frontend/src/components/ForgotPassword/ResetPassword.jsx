@@ -44,7 +44,7 @@ function ResetPassword() {
         if (hasError) return;
 
         try {
-            const response = await fetch('http://localhost:8080/verification/forgot-password/reset-password', {
+            const response = await fetch('http://localhost:8080/verification/reset-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

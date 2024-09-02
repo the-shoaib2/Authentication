@@ -173,6 +173,7 @@
 
 
 
+// frontend/src/pages/VerifyCodeConfirmAccount.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -214,7 +215,7 @@ function VerifyCodeConfirmAccount() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/auth/verify-email', {
+            const response = await fetch('http://localhost:8080/verification/verify-email', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -246,16 +247,17 @@ function VerifyCodeConfirmAccount() {
             setHasCodeBeenSent(true);
             setIsResendEnabled(false);
             setTimer(60); // Start timer when sending the code
-            const response = await fetch('http://localhost:8080/auth/send-verification-code', {
+            
+            const response = await fetch('http://localhost:8080/verification/verification-code', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${state.token}`, // Use the token
                 },
             });
-
+    
             const result = await response.json();
-
+    
             if (response.ok) {
                 handleSuccess(result.message);
             } else {
@@ -265,21 +267,23 @@ function VerifyCodeConfirmAccount() {
             handleError('Failed to send OTP. Please try again.');
         }
     };
+    
 
     const handleResendOtp = async () => {
         try {
             setIsResendEnabled(false);
             setTimer(60); // Reset timer when resending the code
-            const response = await fetch('http://localhost:8080/auth/resend-verification-code', {
+            
+            const response = await fetch('http://localhost:8080/verification/verification-code', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${state.token}`, // Use the token
                 },
             });
-
+    
             const result = await response.json();
-
+    
             if (response.ok) {
                 handleSuccess(result.message);
             } else {
@@ -289,13 +293,14 @@ function VerifyCodeConfirmAccount() {
             handleError('Failed to resend OTP. Please try again.');
         }
     };
+    
 
     return (
         <div className="otp-wrapper">
             <div>
                 <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
             </div>
-            <h1 className="otp-title">Verification Code</h1>
+            <h1 className="otp-title">Confirm Email</h1>
             <div className="otp-timer">
                 {hasCodeBeenSent ? (
                     <p>We've sent a verification code to your registered email address.</p>

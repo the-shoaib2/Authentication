@@ -40,11 +40,16 @@ function Login() {
                     });
                     const result = await response.json();
                     if (response.ok) {
-                        localStorage.setItem('token', result.accessToken);
-                        localStorage.setItem('refreshToken', result.refreshToken);
-                        localStorage.setItem('loggedInUser', JSON.stringify(result));
-                        handleSuccess('Login successful!');
-                        setTimeout(() => navigate('/home'), 500);
+                        // Check if the user is active
+                        if (!result.isActive) {
+                            navigate('/verify-email', { state: { token: result.verificationToken } });
+                        } else {
+                            localStorage.setItem('token', result.accessToken);
+                            localStorage.setItem('refreshToken', result.refreshToken);
+                            localStorage.setItem('loggedInUser', JSON.stringify(result));
+                            handleSuccess('Login successful!');
+                            setTimeout(() => navigate('/home'), 500);
+                        }
                     } else {
                         handleError(result.message || 'Incorrect email/username or password. Please try again.');
                     }

@@ -11,16 +11,16 @@ const {
 const router = require('express').Router();
 
 // Route to find user for password reset
-router.post('/forgot-password/find-user', searchUserValidation, findUserForgotPassword);
+router.post('/find-user', searchUserValidation, findUserForgotPassword);
 
 // Route to send OTP
-router.post('/forgot-password/send-otp', sendOtpValidation, sendOtp);
+router.post('/verification-code', sendOtpValidation, sendOtp);
 
 // Route to verify OTP
-router.post('/forgot-password/verify-otp', verifyOtpValidation, verifyOtp);
+router.post('/verify-code', verifyOtpValidation, verifyOtp);
 
 // Route to reset password
-router.post('/forgot-password/reset-password', resetPasswordValidation, resetPassword);
+router.post('/reset-password', resetPasswordValidation, resetPassword);
 
 module.exports = router;
 

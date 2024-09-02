@@ -98,6 +98,8 @@
 
 // export default Home;
 
+
+// frontend/src/pages/Home.jsx
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleError } from '../utils/ReactToastify';
@@ -110,7 +112,6 @@ function Home() {
     const [loggedInUser, setLoggedInUser] = useState({});
     const [loading, setLoading] = useState(true);
     const [fadeIn, setFadeIn] = useState(true);
-    const [showPopup, setShowPopup] = useState(false);
     const navigate = useNavigate();
 
     const fetchLoggedInUser = useCallback(async () => {
@@ -148,15 +149,7 @@ function Home() {
         return () => clearTimeout(timeoutId);
     }, [fetchLoggedInUser]); // Use fetchLoggedInUser as a dependency
 
-    useEffect(() => {
-        if (loggedInUser && !loggedInUser.isActive) {
-            const popupTimer = setTimeout(() => {
-                setShowPopup(true);
-            }, 5000); // Show popup after 5 seconds
 
-            return () => clearTimeout(popupTimer);
-        }
-    }, [loggedInUser]);
 
     if (loading) {
         return (
@@ -168,19 +161,6 @@ function Home() {
 
     return (
         <div className={`home-container container ${fadeIn ? 'fade-in' : ''}`}>
-            {showPopup && !loggedInUser.isActive && (
-                <div className="popup-overlay">
-                    <div className="inactive-account-message-container">
-                        <h1>Your account is not confirmed yet.</h1>
-                        <p>Please check your email to confirm your account.</p>
-                        <Link to="/verify-email" className="confirm-account-link">
-                            <button className="confirm-account-button">
-                                Activate Account
-                            </button>
-                        </Link>
-                    </div>
-                </div>
-            )}
             <div className="user-image-icon-container">
                 <Link to="/user-profile" className='pages-link'>
                     <div className="user-icon-image">
@@ -195,3 +175,4 @@ function Home() {
 }
 
 export default Home;
+

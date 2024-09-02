@@ -1,9 +1,11 @@
+// frontend/src/components/ForgotPassword/SentOtpForgotPassword.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
 import '../../utils/ReactToastifyCustom.css';
 import '../../utils/style/SentOtpForgotPassword.css';
-import OtpInput from '../../Services/OtpInput'; // Updated import path
+import OtpInput from '../../Services/OtpInput';
 
 function SentOtpForgotPassword() {
     const [otp, setOtp] = useState('');
@@ -15,42 +17,96 @@ function SentOtpForgotPassword() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const codeSentStatus = localStorage.getItem('codeSentStatus') === 'true';
-        const timerStart = localStorage.getItem('timerStart');
+        const storedCodeSentStatus = localStorage.getItem('codeSentStatus');
+        const storedTimerStart = localStorage.getItem('timerStart');
 
-        if (codeSentStatus && timerStart) {
-            const timeElapsed = Math.floor((Date.now() - parseInt(timerStart, 10)) / 1000);
+        if (storedCodeSentStatus && storedTimerStart) {
+            const timeElapsed = Math.floor((Date.now() - parseInt(storedTimerStart, 10)) / 1000);
             const remainingTime = Math.max(60 - timeElapsed, 0);
 
             setHasCodeBeenSent(true);
             setTimer(remainingTime);
 
             if (remainingTime > 0) {
-                const countdown = setInterval(() => {
-                    setTimer((prev) => {
-                        if (prev <= 1) {
-                            clearInterval(countdown);
-                            setIsResendEnabled(true);
-                            return 0;
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
-                return () => clearInterval(countdown);
+                startCountdown(remainingTime);
             } else {
                 setIsResendEnabled(true);
             }
         }
 
-        // Cleanup function to clear local storage when leaving the page
         return () => clearLocalStorage();
-
     }, []);
+
+    const startCountdown = (duration) => {
+        const countdown = setInterval(() => {
+            setTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(countdown);
+                    setIsResendEnabled(true);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
+    const handleSendOtp = async () => {
+        try {
+            setHasCodeBeenSent(true);
+            setIsResendEnabled(false);
+            localStorage.setItem('codeSentStatus', 'true');
+            localStorage.setItem('timerStart', Date.now().toString());
+
+            setTimer(60);
+            startCountdown(60);
+
+            const response = await fetch('http://localhost:8080/verification/verification-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: state.email }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                handleSuccess(result.message);
+            } else {
+                handleError(result.message);
+            }
+        } catch (err) {
+            handleError('Failed to send OTP. Please try again.');
+        }
+    };
+
+    const handleResendOtp = async () => {
+        try {
+            setIsResendEnabled(false);
+            setTimer(60);
+            localStorage.setItem('timerStart', Date.now().toString());
+            startCountdown(60);
+
+            const response = await fetch('http://localhost:8080/verification/verification-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: state.email }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                handleSuccess(result.message);
+            } else {
+                handleError(result.message);
+            }
+        } catch (err) {
+            handleError('Failed to resend OTP. Please try again.');
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://localhost:8080/verification/forgot-password/verify-otp', {
+            const response = await fetch('http://localhost:8080/verification/verify-code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: state.email, otp }),
@@ -70,76 +126,6 @@ function SentOtpForgotPassword() {
         }
     };
 
-    const handleSendOtp = async () => {
-        try {
-            setHasCodeBeenSent(true);
-            localStorage.setItem('codeSentStatus', 'true');
-            localStorage.setItem('timerStart', Date.now().toString());
-
-            setTimer(60);
-            setIsResendEnabled(false);
-
-            const response = await fetch('http://localhost:8080/verification/forgot-password/send-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: state.email }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                handleSuccess(result.message);
-            } else {
-                handleError(result.message);
-            }
-
-            startCountdown();
-
-        } catch (err) {
-            handleError('Failed to send OTP. Please try again.');
-        }
-    };
-
-    const handleResendOtp = async () => {
-        try {
-            setIsResendEnabled(false);
-            setTimer(60);
-            localStorage.setItem('timerStart', Date.now().toString());
-
-            const response = await fetch('http://localhost:8080/verification/forgot-password/send-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: state.email }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                handleSuccess(result.message);
-            } else {
-                handleError(result.message);
-            }
-
-            startCountdown();
-
-        } catch (err) {
-            handleError('Failed to resend OTP. Please try again.');
-        }
-    };
-
-    const startCountdown = () => {
-        const countdown = setInterval(() => {
-            setTimer((prev) => {
-                if (prev <= 1) {
-                    clearInterval(countdown);
-                    setIsResendEnabled(true);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-    };
-
     const clearLocalStorage = () => {
         localStorage.removeItem('codeSentStatus');
         localStorage.removeItem('timerStart');
@@ -157,9 +143,11 @@ function SentOtpForgotPassword() {
                 ) : (
                     <p>Click the button to send the verification code to your email.</p>
                 )}
-                <div className="timer">
-                    <p>Time Remaining: {timer} s</p>
-                </div>
+                {hasCodeBeenSent && (
+                    <div className="timer">
+                        <p>Time Remaining: {timer} s</p>
+                    </div>
+                )}
             </div>
             <form onSubmit={handleSubmit}>
                 {!hasCodeBeenSent ? (
@@ -173,12 +161,12 @@ function SentOtpForgotPassword() {
                 ) : (
                     <OtpInput
                         length={6}
-                        onOtpSubmit={(otp) => setOtp(otp)}
-                        onOtpComplete={(complete) => setIsComplete(complete)}
+                        onOtpSubmit={setOtp}
+                        onOtpComplete={setIsComplete}
                     />
                 )}
                 <div className="otp-buttons">
-                    {timer === 0 && isResendEnabled ? (
+                    {timer === 0 && isResendEnabled && (
                         <>
                             <div className="otp-message">
                                 <p>Didn't receive the code?</p>
@@ -191,20 +179,16 @@ function SentOtpForgotPassword() {
                                 Resend Code
                             </button>
                         </>
-                    ) : hasCodeBeenSent ? (
-                        <>
-                            <div className="otp-message">
-                                <br />
-                            </div>
-                            <button
-                                type="submit"
-                                className={`otp-btn verify ${isComplete ? 'active' : ''}`}
-                                disabled={!isComplete}
-                            >
-                                Verify Code
-                            </button>
-                        </>
-                    ) : null}
+                    )}
+                    {hasCodeBeenSent && (
+                        <button
+                            type="submit"
+                            className={`otp-btn verify ${isComplete ? 'active' : ''}`}
+                            disabled={!isComplete}
+                        >
+                            Verify Code
+                        </button>
+                    )}
                 </div>
             </form>
             <ToastContainer />
