@@ -61,7 +61,7 @@ function Login() {
 
     return (
         <div className={`login-page-container general-page-container ${fadeIn ? 'fade-in' : ''}`}> 
-            <img src='/images/icon/app-icon.ico' alt='App Icon' className='login-page-app-icon' />
+            <img src='/images/icon/app-icon.png' alt='App Icon' className='login-page-app-icon' />
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <div className='login-page-form-group'>

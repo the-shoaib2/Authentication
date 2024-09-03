@@ -109,13 +109,12 @@ function Signup() {
   };
 
   return (
-    <div className={`signup-container container ${fadeIn ? "fade-in" : ""}`}>
-      <img src="/images/icon/app-icon.ico" alt="App Icon" className="app-icon" />
-      <h1>Sign up</h1>
-      <form onSubmit={handleSubmit}>
-        {/* Form fields and labels */}
-        <div className="form-group-container">
-          <div className="singup-form-group form-group">
+    <div className={`signup-page__container ${fadeIn ? "signup-page__fade-in" : ""}`}>
+      <img src="/images/icon/app-icon.png" alt="App Icon" className="signup-page__app-icon" />
+      <h1 className="signup-page__title">Sign up</h1>
+      <form onSubmit={handleSubmit} className="signup-page__form">
+        <div className="signup-page__form-group-container">
+          <div className="signup-page__form-group">
             <input
               type="text"
               id="firstName"
@@ -123,12 +122,13 @@ function Signup() {
               value={formData.firstName}
               onChange={handleChange}
               required
+              className="signup-page__input"
             />
-            <label htmlFor="firstName" className="form-label">
+            <label htmlFor="firstName" className="signup-page__form-label">
               First Name
             </label>
           </div>
-          <div className="singup-form-group form-group">
+          <div className="signup-page__form-group">
             <input
               type="text"
               id="lastName"
@@ -136,14 +136,15 @@ function Signup() {
               value={formData.lastName}
               onChange={handleChange}
               required
+              className="signup-page__input"
             />
-            <label htmlFor="lastName" className="form-label">
+            <label htmlFor="lastName" className="signup-page__form-label">
               Last Name
             </label>
           </div>
         </div>
 
-        <div className="singup-form-group form-group">
+        <div className="signup-page__form-group">
           <input
             type="email"
             id="email"
@@ -151,16 +152,17 @@ function Signup() {
             value={formData.email}
             onChange={handleChange}
             required
+            className="signup-page__input"
           />
-          <label htmlFor="email" className="form-label">
+          <label htmlFor="email" className="signup-page__form-label">
             Email
           </label>
         </div>
 
-        <div className="form-group-container">
-          <div className="form-group">
+        <div className="signup-page__form-group-container">
+          <div className="signup-page__form-group">
             <input
-              className="phone-input"
+              className="signup-page__input signup-page__phone-input"
               type="tel"
               id="phone"
               placeholder=""
@@ -168,16 +170,17 @@ function Signup() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="phone" className="form-label">
+            <label htmlFor="phone" className="signup-page__form-label">
               Phone Number
             </label>
           </div>
-          <div className="form-group">
+          <div className="signup-page__form-group">
             <select
               id="gender"
               value={formData.gender}
               onChange={handleChange}
               required
+              className="signup-page__select"
             >
               <option value="" disabled>
                 Select Gender
@@ -189,8 +192,8 @@ function Signup() {
           </div>
         </div>
 
-        <div className="form-group-container">
-          <div className="form-group">
+        <div className="signup-page__form-group-container">
+          <div className="signup-page__form-group">
             <input
               type="password"
               id="password"
@@ -198,12 +201,13 @@ function Signup() {
               value={formData.password}
               onChange={handleChange}
               required
+              className="signup-page__input"
             />
-            <label htmlFor="password" className="form-label">
+            <label htmlFor="password" className="signup-page__form-label">
               Password
             </label>
           </div>
-          <div className="form-group">
+          <div className="signup-page__form-group">
             <input
               type="password"
               id="confirmPassword"
@@ -211,15 +215,16 @@ function Signup() {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
+              className="signup-page__input"
             />
-            <label htmlFor="confirmPassword" className="form-label">
+            <label htmlFor="confirmPassword" className="signup-page__form-label">
               Confirm Password
             </label>
           </div>
         </div>
 
-        <div className="form-group-container dob">
-          <div className="form-group">
+        <div className="signup-page__form-group-container signup-page__dob-container">
+          <div className="signup-page__form-group">
             <select
               id="dobDay"
               value={formData.dob.day}
@@ -230,6 +235,7 @@ function Signup() {
                 }))
               }
               required
+              className="signup-page__select"
             >
               <option value="" disabled>
                 Day
@@ -241,7 +247,7 @@ function Signup() {
               ))}
             </select>
           </div>
-          <div className="form-group">
+          <div className="signup-page__form-group">
             <select
               id="dobMonth"
               value={formData.dob.month}
@@ -252,6 +258,7 @@ function Signup() {
                 }))
               }
               required
+              className="signup-page__select"
             >
               <option value="" disabled>
                 Month
@@ -263,7 +270,7 @@ function Signup() {
               ))}
             </select>
           </div>
-          <div className="form-group">
+          <div className="signup-page__form-group">
             <select
               id="dobYear"
               value={formData.dob.year}
@@ -274,6 +281,7 @@ function Signup() {
                 }))
               }
               required
+              className="signup-page__select"
             >
               <option value="" disabled>
                 Year
@@ -287,29 +295,29 @@ function Signup() {
           </div>
         </div>
 
-        <button className="signup-button" type="submit">
+        <button className="signup-page__submit-button" type="submit">
           Sign up
         </button>
-        <span>
+        <span className="signup-page__login-link-container">
           Already have an account?{" "}
-          <Link to="/login" className="pages-link">
+          <Link to="/login" className="signup-page__login-link">
             Login
           </Link>
         </span>
       </form>
-      <span className="terms">
-        By creating an account, you agree to our
-        <Link to="/terms" className="terms-pages-link">
-          {" "}
-          Terms of Use
-        </Link>
-        ,
-        <Link to="/privacy-policy" className="terms-pages-link">
-          {" "}
-          Privacy Policy
-        </Link>
-        .
-      </span>
+      <div className="signup-page__terms-container">
+        <span className="signup-page__terms">
+          By creating an account, you agree to our
+          <Link to="/terms" className="signup-page__terms-link">
+            {" "}Terms of Use
+          </Link>
+          {" "}and
+          <Link to="/privacy-policy" className="signup-page__terms-link">
+            {" "}Privacy Policy
+          </Link>
+          .
+        </span>
+      </div>
       <ToastContainer />
       <LoadingOverlay loading={loading} fadeOut={fadeOut} />
     </div>

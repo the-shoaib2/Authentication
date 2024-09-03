@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function ConfirmAccountPopup({ isActive, email, token }) {
-    if (isActive) return null;
+function ConfirmAccountPopup({ isActive, email, token, show }) {
+    if (isActive || !show) return null;
 
     return (
         <div className="popup-overlay">

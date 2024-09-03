@@ -121,7 +121,7 @@ function VerifyCodeConfirmAccount() {
     return (
         <div className="otp-wrapper">
             <div>
-                <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
+                <img src='/images/icon/app-icon.png' alt='App Icon' className='app-icon' />
             </div>
             <h1 className="otp-title">Confirm Email</h1>
             <div className="otp-timer">

@@ -7,12 +7,14 @@ import '../assets/style/home.css';
 import '../assets/style/loading.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import UserProfile from './UserProfile';
+import ConfirmAccountPopup from '../components/ConfirmAccountPopup';
 
 function Home() {
     const [loggedInUser, setLoggedInUser] = useState({});
     const [loading, setLoading] = useState(true);
     const [fadeIn, setFadeIn] = useState(true);
     const [showProfile, setShowProfile] = useState(false);
+    const [showConfirmPopup, setShowConfirmPopup] = useState(false);
     const navigate = useNavigate();
 
     const fetchLoggedInUser = useCallback(async () => {
@@ -47,8 +49,17 @@ function Home() {
             setFadeIn(false);
         }, 500);
 
-        return () => clearTimeout(timeoutId);
-    }, [fetchLoggedInUser]); // Use fetchLoggedInUser as a dependency
+        // Add a new interval to show the popup every 5 seconds
+        const popupInterval = setInterval(() => {
+            setShowConfirmPopup(true);
+            setTimeout(() => setShowConfirmPopup(false), 3000); // Hide after 3 seconds
+        }, 5000);
+
+        return () => {
+            clearTimeout(timeoutId);
+            clearInterval(popupInterval);
+        };
+    }, [fetchLoggedInUser]);
 
     if (loading) {
         return <LoadingOverlay loading={loading} fadeOut={false} />;
@@ -65,6 +76,12 @@ function Home() {
                     <UserProfile onClose={() => setShowProfile(false)} />
                 </div>
             )}
+            <ConfirmAccountPopup 
+                isActive={loggedInUser.isActive}
+                email={loggedInUser.email}
+                token={localStorage.getItem('token')}
+                show={showConfirmPopup}
+            />
             <ToastContainer />
         </div>
     );
