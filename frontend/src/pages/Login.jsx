@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../utils/ReactToastify';
-import '../utils/ReactToastifyCustom.css';
-import '../utils/loading.css';
-import '../utils/style/animations.css'; 
+import '../assets/style/ReactToastifyCustom.css';
+import '../assets/style/loading.css';
+import '../assets/style/animations.css'; 
+import '../assets/style/Login.css';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 function Login() {
     const [emailOrUsername, setEmailOrUsername] = useState('');
@@ -40,16 +42,11 @@ function Login() {
                     });
                     const result = await response.json();
                     if (response.ok) {
-                        // Check if the user is active
-                        if (!result.isActive) {
-                            navigate('/verify-email', { state: { token: result.verificationToken } });
-                        } else {
-                            localStorage.setItem('token', result.accessToken);
-                            localStorage.setItem('refreshToken', result.refreshToken);
-                            localStorage.setItem('loggedInUser', JSON.stringify(result));
-                            handleSuccess('Login successful!');
-                            setTimeout(() => navigate('/home'), 500);
-                        }
+                        localStorage.setItem('token', result.accessToken);
+                        localStorage.setItem('refreshToken', result.refreshToken);
+                        localStorage.setItem('loggedInUser', JSON.stringify(result));
+                        handleSuccess('Login successful!');
+                        setTimeout(() => navigate('/home'), 500);
                     } else {
                         handleError(result.message || 'Incorrect email/username or password. Please try again.');
                     }
@@ -63,11 +60,11 @@ function Login() {
     };
 
     return (
-        <div className={`login-container container ${fadeIn ? 'fade-in' : ''}`}> 
-            <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
+        <div className={`login-page-container general-page-container ${fadeIn ? 'fade-in' : ''}`}> 
+            <img src='/images/icon/app-icon.ico' alt='App Icon' className='login-page-app-icon' />
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-                <div className='form-group'>
+                <div className='login-page-form-group'>
                     <input
                         type='text'
                         id='emailOrUsername'
@@ -76,9 +73,9 @@ function Login() {
                         onChange={(e) => setEmailOrUsername(e.target.value)}
                         required
                     />
-                    <label htmlFor='emailOrUsername' className='form-label'>Email or Username</label>
+                    <label htmlFor='emailOrUsername' className='login-page-form-label'>Email or Username</label>
                 </div>
-                <div className='form-group'>
+                <div className='login-page-form-group'>
                     <input
                         type='password'
                         id='password'
@@ -87,18 +84,14 @@ function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    <label htmlFor='password' className='form-label'>Password</label>
+                    <label htmlFor='password' className='login-page-form-label'>Password</label>
                 </div>
-                <button type='submit'>Login</button>
-                <Link to="/find-user" className='pages-link'>Forgot Password?</Link>
-                <span>Don't have an account? <Link to="/signup" className='pages-link'>Signup</Link></span>
+                <button type='submit' className='login-page-submit-button'>Login</button>
+                <Link to="/find-user" className='login-page-navigation-link'>Forgot Password?</Link>
+                <span className='login-page-info-text'>Don't have an account? <Link to="/signup" className='login-page-navigation-link'>Signup</Link></span>
             </form>
             <ToastContainer />
-            {loading && (
-                <div className={`loading-overlay ${fadeOut ? 'hidden' : ''}`}>
-                    <img src='/apple-loading.gif' alt='Loading...' className='loading-spinner' />
-                </div>
-            )}
+            <LoadingOverlay loading={loading} fadeOut={fadeOut} />
         </div>
     );
 }

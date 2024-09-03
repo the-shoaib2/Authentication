@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
-import '../../utils/ReactToastifyCustom.css';
-import '../../utils/style/animations.css';
-import '../../utils/style/FindUserForgotPassword.css';
+import '../../assets/style/ReactToastifyCustom.css';
+import '../../assets/style/animations.css';
+import '../../assets/style/FindUserForgotPassword.css';
 
 function FindUserForgotPassword() {
     const [emailOrUsername, setEmailOrUsername] = useState('');
@@ -74,32 +74,7 @@ function FindUserForgotPassword() {
         }
     };
 
-// ... [Imports and previous code]
-const handleSendOtp = async () => {
-    if (!user) {
-        handleError('No user found. Please perform a search first.');
-        return;
-    }
 
-    try {
-        const response = await fetch('http://localhost:8080/verification/verification-code', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: user.email }),
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            handleSuccess(result.message);
-            navigate('/forgot-password/sent-otp', { state: { email: user.email } });
-        } else {
-            handleError(result.message);
-        }
-    } catch (err) {
-        handleError('Failed to send OTP. Please try again.');
-    }
-};
 
 const handleProceed = () => {
     if (user && searchCompleted) {

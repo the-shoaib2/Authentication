@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
-import '../../utils/ReactToastifyCustom.css';
-import '../../utils/style/ResetPassword.css';
+import '../../assets/style/ReactToastifyCustom.css';
+import '../../assets/style/ResetPassword.css';
 import PasswordStrengthMeter from '../../Services/PasswordStrengthMeter'; // Import the PasswordStrengthMeter component
 
 function ResetPassword() {

@@ -1,17 +1,15 @@
-
 // App.js
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
-import UserProfile from './pages/UserProfile';
 import FindUserForgotPassword from './components/ForgotPassword/FindUserForgotPassword';
-import SentOtpForgotPassword from './components/ForgotPassword/SentOtpForgotPassword';
+import SentOtpForgotPassword from './components/ForgotPassword/VerificationCodeForgotPassword';
 import ResetPassword from './components/ForgotPassword/ResetPassword';
 import RefrshHandler from './utils/RefreshHandler';
 import 'react-toastify/dist/ReactToastify.css';
-import VerifyCodeConfirmAccount from './pages/VerifyCodeConfirmAccount'; 
+import VerifyCodeConfirmAccount from './components/VerifyCodeConfirmAccount'; 
 
 // For Debugging..
 import { useLocation } from 'react-router-dom';
@@ -39,9 +37,6 @@ function App() {
                 <Route path='/signup' element={<Signup />} />
                 <Route path="/verify-email"  element={<VerifyCodeConfirmAccount/>} /> 
                 <Route path='/home' element={<PrivateRoute element={<Home />} />} />
-                <Route path="/user-profile" element={<UserProfile />} />
-
-
                 <Route path='/find-user' element={<FindUserForgotPassword />} />
                 <Route path='/forgot-password/verification-code' element={<SentOtpForgotPassword />} />
                 <Route path='/forgot-password/reset-password' element={<ResetPassword />} />

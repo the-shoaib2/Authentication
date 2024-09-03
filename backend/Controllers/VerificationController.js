@@ -69,6 +69,11 @@ const verifyOtp = async (req, res) => {
         }
 
         await VerificationService.validateVerificationCode(user._id, otp);
+
+         // Update user's isActive status
+         user.isActive = true;
+         await user.save();
+         
         res.status(200).json({ message: 'Verification code verified successfully', success: true });
     } catch (err) {
         console.error('Verify Verification code Error:', err);

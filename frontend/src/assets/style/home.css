@@ -1,0 +1,167 @@
+/* ------------------------------------------------
+   Home Container
+   - Centers the content both horizontally and vertically
+   - Adds an optional background color
+--------------------------------------------------- */
+.home-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9; /* Optional: Add a background color */
+    /* border-radius: 30px; */
+    box-shadow: 0px 0px 24px hsla(0, 0%, 0%, 0.25);
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ------------------------------------------------
+   User Icon Container
+   - Container for the user image and name
+   - Includes padding, border-radius, and shadow
+   - Adds hover effects for interactivity
+--------------------------------------------------- */
+.user-image-icon-container {
+    /* display: flex; */
+    align-items: center;
+    background: #fff;
+    border-radius: 15px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect on user card */
+.user-image-icon-container:hover {
+    background: #fdfdfd;
+    transform: scale(1.002);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ------------------------------------------------
+   Avatar Image Styles
+   - Styles for the user avatar image
+   - Includes size, border, and hover effects
+--------------------------------------------------- */
+.user-icon-image {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f1f1;
+    margin-right: 20px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 0 2px rgb(230, 230, 230); /* Gray border */
+}
+
+/* Hover effect with smooth animation and additional borders */
+.user-icon-image:hover {
+    box-shadow: 0 0 0 2px rgb(58, 44, 248),
+                0 0 10px rgba(5, 108, 243, 0.63); 
+    transform: scale(1.002); 
+}
+
+/* Image inside the avatar */
+.user-icon-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the entire container */
+}
+
+/* ------------------------------------------------
+   User Name Styles
+   - Styles for the user's name
+   - Includes font size, color, and line height
+--------------------------------------------------- */
+.user-name {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* ------------------------------------------------
+   Toast Container
+   - Overrides the default Toast styles if needed
+--------------------------------------------------- */
+.ToastContainer {
+    /* Customize toast styles here if needed */
+}
+
+/* ------------------------------------------------
+   Popup Overlay Styles
+   - Covers the whole screen with a semi-transparent background
+   - Centers the popup container
+--------------------------------------------------- */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure it appears above other content */
+}
+
+/* ------------------------------------------------
+   Inactive Account Popup Container
+   - Styles the popup container with padding, background, and border radius
+--------------------------------------------------- */
+.inactive-account-message-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Inactive Account Message Container */
+.inactive-account-message-container h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.inactive-account-message-container p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Confirm Account Button */
+.confirm-account-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.confirm-account-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-account-link {
+    text-decoration: none;
+}

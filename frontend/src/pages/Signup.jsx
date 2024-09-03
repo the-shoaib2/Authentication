@@ -7,9 +7,11 @@ import {
   handleError,
   ToastContainer,
 } from "../utils/ReactToastify";
-import "../utils/ReactToastifyCustom.css";
-import "../utils/style/animations.css";
-import "../utils/loading.css";
+import "../assets/style/ReactToastifyCustom.css";
+import "../assets/style/animations.css";
+import "../assets/style/loading.css";
+import LoadingOverlay from '../components/LoadingOverlay';
+import "../assets/style/Signup.css";
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -80,9 +82,13 @@ function Signup() {
 
           const result = await response.json();
           if (response.ok) {
-            // Instead of setting tokens and navigating to home, redirect to verify code page
             handleSuccess("Signup successful! Please verify your email.");
-            setTimeout(() => navigate('/verify-email', { state: { token: result.verificationToken } }), 500);
+            setTimeout(() => navigate('/verify-email', { 
+              state: { 
+                token: result.verificationToken,
+                email: formData.email 
+              } 
+            }), 500);
           } else {
             if (result.errors) {
               const errorMessages = result.errors
@@ -104,7 +110,7 @@ function Signup() {
 
   return (
     <div className={`signup-container container ${fadeIn ? "fade-in" : ""}`}>
-      <img src="/app-icon.ico" alt="App Icon" className="app-icon" />
+      <img src="/images/icon/app-icon.ico" alt="App Icon" className="app-icon" />
       <h1>Sign up</h1>
       <form onSubmit={handleSubmit}>
         {/* Form fields and labels */}
@@ -305,11 +311,7 @@ function Signup() {
         .
       </span>
       <ToastContainer />
-      {loading && (
-                <div className={`loading-overlay ${fadeOut ? 'hidden' : ''}`}>
-                    <img src='/apple-loading.gif' alt='Loading...' className='loading-spinner' />
-                </div>
-      )}
+      <LoadingOverlay loading={loading} fadeOut={fadeOut} />
     </div>
   );
 }
