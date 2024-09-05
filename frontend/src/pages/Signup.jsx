@@ -12,6 +12,7 @@ import "../assets/style/animations.css";
 import "../assets/style/loading.css";
 import LoadingOverlay from '../components/LoadingOverlay';
 import "../assets/style/Signup.css";
+import { refreshToken } from '../utils/RefreshHandler';
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -83,6 +84,9 @@ function Signup() {
           const result = await response.json();
           if (response.ok) {
             handleSuccess("Signup successful! Please verify your email.");
+            localStorage.setItem('token', result.accessToken);
+            localStorage.setItem('refreshToken', result.refreshToken);
+            await refreshToken(); // Refresh the token immediately after signup
             setTimeout(() => navigate('/verify-email', { 
               state: { 
                 token: result.verificationToken,
@@ -109,7 +113,7 @@ function Signup() {
   };
 
   return (
-    <div className={`signup-page__container ${fadeIn ? "signup-page__fade-in" : ""}`}>
+    <div className={`signup-page__container fade-in ${fadeIn ? 'fade-in-bottom' : ''}`}>
       <img src="/images/icon/app-icon.png" alt="App Icon" className="signup-page__app-icon" />
       <h1 className="signup-page__title">Sign up</h1>
       <form onSubmit={handleSubmit} className="signup-page__form">

@@ -1,9 +1,30 @@
-// RefrshHandler.js 
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import { toast } from 'react-toastify';
 
-function RefrshHandler({ setIsAuthenticated }) {
+export async function refreshToken() {
+  try {
+    const response = await fetch('http://localhost:8080/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        refreshToken: localStorage.getItem('refreshToken'),
+      }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      localStorage.setItem('token', data.accessToken);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    return false;
+  }
+}
+
+function RefreshHandler({ setIsAuthenticated }) {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -25,4 +46,4 @@ function RefrshHandler({ setIsAuthenticated }) {
     return null;
 }
 
-export default RefrshHandler;
+export default RefreshHandler;

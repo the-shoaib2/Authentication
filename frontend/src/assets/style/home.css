@@ -4,17 +4,38 @@
    - Adds an optional background color
 --------------------------------------------------- */
 .home-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background-image: url('../../../public/images/background.gif'); */
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    background-color: #f9f9f9; /* Optional: Add a background color */
-    /* border-radius: 30px; */
-    box-shadow: 0px 0px 24px hsla(0, 0%, 0%, 0.25);
-    animation: fadeIn 0.5s ease-out;
+    backdrop-filter: blur(30px);
+    background-color: #49494918;
 }
 
 /* ------------------------------------------------
@@ -91,13 +112,7 @@
     line-height: 1.2;
 }
 
-/* ------------------------------------------------
-   Toast Container
-   - Overrides the default Toast styles if needed
---------------------------------------------------- */
-.ToastContainer {
-    /* Customize toast styles here if needed */
-}
+
 
 /* ------------------------------------------------
    Popup Overlay Styles
@@ -122,6 +137,7 @@
    - Styles the popup container with padding, background, and border radius
 --------------------------------------------------- */
 .inactive-account-message-container {
+    position: relative;
     background: #fff;
     padding: 20px;
     border-radius: 15px;
@@ -164,4 +180,230 @@
 
 .confirm-account-link {
     text-decoration: none;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    position: relative;
+    z-index: 1001; /* Ensure it's above the confirm-account-bar */
+}
+
+.history-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.history-button.active {
+    transform: rotate(-180deg);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.history-button img {
+    width: 24px;
+    height: 24px;
+}
+
+.user-icon-image {
+    width: 40px;
+    height: 40px;
+}
+
+.user-icon-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.main-home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-side-panel {
+    position: fixed;
+    top: 0;
+    right: -700px;
+    width: 700px;
+    height: 100vh;
+    transition: right 0.3s ease-in-out;
+    overflow-y: hidden;
+}
+
+.profile-side-panel.show {
+    right: 0;
+}
+
+.centered-profile {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: 100%;
+    max-width: 720px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    animation: fadeInforprofile 0.3s ease-in-out;
+}
+
+
+.main-container {
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, filter 0.3s ease-in-out;
+    opacity: 1;
+    visibility: visible;
+}
+
+.main-container.hide-services {
+    opacity: 0;
+    visibility: hidden;
+    filter: blur(5px);
+}
+
+.top-services-main-container{
+    display: flex;
+}
+
+.top-services-container{
+    display: flex;
+    width: 180px;
+    height: 100px;
+    margin: 8px;
+    border-radius: 15px;
+    background: #f1f1f1;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+
+}
+.services-level{
+    font-size: medium;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.main-input-container{
+    width: 100%;
+    height: 100px;
+    background: wheat;
+}
+.close-popup-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.close-popup-button:hover {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.close-popup-button:focus {
+    outline: none;
+}
+
+.close-popup-button::before,
+.close-popup-button::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background-color: currentColor;
+}
+
+.close-popup-button::before {
+    transform: rotate(45deg);
+}
+
+.close-popup-button::after {
+    transform: rotate(-45deg);
+}
+
+.confirm-account-bar {
+    position: relative;
+    width: 100%;
+    background-color: #cfcfcf;
+    color: #333;
+    padding: 2px 100px;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    animation: fadeInBottomEffect 0.5s ease-out;
+    margin-top:-10px;
+    max-height: 40px;
+    overflow: hidden;
+}
+
+.confirm-account-message {
+    font-size: 14px;
+    text-align: center; /* Center text */
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.confirm-email-button {
+    background-color:  #FF3B30;;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    text-decoration: none; /* This ensures no underline */
+    display: inline-block; /* This helps maintain button-like appearance */
+}
+
+.confirm-email-button:hover {
+    background-color: #4E4CC6;
+    text-decoration: none; /* Ensure no underline on hover */
+}
+
+/* Add this new style */
+.confirm-email-link {
+    text-decoration: none;
+}
+
+.top-services-container {
+    display: flex;
+    width: 180px;
+    height: 100px;
+    margin: 8px;
+    border-radius: 15px;
+    background: #f1f1f1;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
 }

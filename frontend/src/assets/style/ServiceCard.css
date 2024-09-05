@@ -1,15 +1,22 @@
+:root {
+    --card-background: #ffffff;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: rgba(0, 0, 0, 0.15);
+    --text-color: #1d1d1f;
+}
+
 .service-card {
-    background-color: #ffffff;
+    background-color: var(--card-background);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--card-shadow);
 }
 
 .service-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 8px var(--card-shadow-hover);
 }
 
 .service-icon {
@@ -21,5 +28,5 @@
 .service-name {
     font-size: 1rem;
     font-weight: 500;
-    color: #1d1d1f;
+    color: var(--text-color);
 }

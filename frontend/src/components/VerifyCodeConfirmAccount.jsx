@@ -50,8 +50,10 @@ function VerifyCodeConfirmAccount() {
             if (response.ok) {
                 handleSuccess(result.message);
                 
-                // Save token to localStorage or cookies if provided by backend
-                localStorage.setItem('authToken', result.token);
+                // Save token to localStorage if provided by backend
+                if (result.token) {
+                    localStorage.setItem('authToken', result.token);
+                }
                 
                 // Navigate to home
                 navigate('/home');
@@ -59,6 +61,7 @@ function VerifyCodeConfirmAccount() {
                 handleError(result.message);
             }
         } catch (err) {
+            console.error('Verification error:', err);
             handleError('Network error. Please check your connection and try again.');
         }
     };

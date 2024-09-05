@@ -5,29 +5,78 @@
 @keyframes fadeInBottomEffect {
     from {
         opacity: 0;
-        transform: translateY(20px); 
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateY(0); 
+        transform: translateY(0);
     }
 }
 
 .fade-in-bottom {
-    animation: fadeInBottomEffect 0.5s ease-out; 
+    animation: fadeInBottomEffect 0.5s ease-out;
 }
-/* ------------------------------------------------
-   Fade-In Animation (General)
-   This animation gradually increases the opacity of an element.
---------------------------------------------------- */
+
 @keyframes fadeInEffect {
     to {
-        opacity: 1; 
+        opacity: 1;
     }
 }
 
 .fade-in {
-    opacity: 0;
-    animation: fadeInEffect 0.5s forwards; 
+    animation: fadeInOverlay 0.3s ease-in-out forwards;
 }
 
+@keyframes fadeInforprofile {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.fade-in-center {
+    animation: fadeInforprofile 0.3s ease-in-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInCenterProfile {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.fade-in-center-profile {
+    animation: fadeInCenterProfile 0.3s ease-in-out;
+}

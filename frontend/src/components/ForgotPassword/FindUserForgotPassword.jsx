@@ -20,22 +20,14 @@ function FindUserForgotPassword() {
 
     useEffect(() => {
         if (fadeIn) {
-            const timeoutId = setTimeout(() => {
-                setFadeIn(false);
-            }, 500);
+            const timeoutId = setTimeout(() => setFadeIn(false), 500);
             return () => clearTimeout(timeoutId);
         }
     }, [fadeIn]);
 
     useEffect(() => {
-        if (loading) {
-            const timerId = setTimeout(() => {
-                setShowContent(true);
-            }, 500);
-            return () => clearTimeout(timerId);
-        } else {
-            setShowContent(true);
-        }
+        const timerId = setTimeout(() => setShowContent(!loading), 500);
+        return () => clearTimeout(timerId);
     }, [loading]);
 
     const handleSearch = async (event) => {
@@ -74,20 +66,14 @@ function FindUserForgotPassword() {
         }
     };
 
-
-
-const handleProceed = () => {
-    if (user && searchCompleted) {
-        // handleSendOtp();
-        navigate('/forgot-password/verification-code', { state: { email: user.email } });
-    } else {
-        handleError('No user found. Please search for a valid user.');
-    }
-};
-
-
-    
-    
+    const handleProceed = () => {
+        if (user && searchCompleted) {
+            // handleSendOtp();
+            navigate('/forgot-password/verification-code', { state: { email: user.email } });
+        } else {
+            handleError('No user found. Please search for a valid user.');
+        }
+    };
 
     const handleInputChange = (event) => {
         const value = event.target.value;
@@ -96,22 +82,18 @@ const handleProceed = () => {
     };
 
     const updateSuggestions = (value) => {
-        const suggestionList = [];
         const domains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com'];
+        let suggestionList = [];
 
         if (value.includes('@')) {
             const [, domain] = value.split('@');
             if (domain.length > 0) {
-                domains.forEach((d) => {
-                    if (d.startsWith(domain)) {
-                        suggestionList.push(`${value.split('@')[0]}@${d}`);
-                    }
-                });
+                suggestionList = domains
+                    .filter(d => d.startsWith(domain))
+                    .map(d => `${value.split('@')[0]}@${d}`);
             }
         } else {
-            domains.forEach((d) => {
-                suggestionList.push(`${value}@${d}`);
-            });
+            suggestionList = domains.map(d => `${value}@${d}`);
         }
 
         setSuggestions(suggestionList);
@@ -128,13 +110,13 @@ const handleProceed = () => {
             <div className="header-container">
                 <div className="icon-container-position">
                     <Link to="/login" className='icon-container'>
-                        <img src="/back-icon.png" alt="Back" className="back-icon" />
+                        <img src="/images/icon/back-icon.png" alt="Back" className="back-icon" />
                     </Link>
                 </div>
 
                 <div className="center-content">
                     <div className="logo-container">
-                        <img src="/app-icon.ico" alt="App Icon" className="app-icon" />
+                        <img src="/images/icon/app-icon.png" alt="App Icon" className="app-icon" />
                     </div>
                     <h1 className="page-title">Forgot Password</h1>
                 </div>
@@ -150,7 +132,7 @@ const handleProceed = () => {
                         required
                     />
                     <button type="submit" disabled={loading} className="search-icon-wrapper">
-                        <img src="/search.ico" alt="Search icon" className="search-icon-img" />
+                        <img src="/images/icon/search.ico" alt="Search icon" className="search-icon-img" />
                     </button>
                     {showSuggestions && (
                         <ul className="suggestion-list">
@@ -181,7 +163,7 @@ const handleProceed = () => {
             <div className="found-user-wrapper">
                 {loading && !showContent ? (
                     <div className="loading-overlay">
-                        <img src='/apple-loading.gif' alt='Loading spinner' className='loading-spinner' />
+                        <img src='/images/icon/apple-loading.gif' alt='Loading spinner' className='loading-spinner' />
                     </div>
                 ) : (
                     <div className={`found-user-content ${user && searchCompleted ? 'fade-in-bottom' : ''}`}>
@@ -192,7 +174,7 @@ const handleProceed = () => {
                                 style={{ cursor: 'pointer' }}
                             >
                                 <div className="user-card-image">
-                                    <img src='/avater.png' alt='User avatar' className='profilePicture' />
+                                    <img src='/images/avater/avater.png' alt='User avatar' className='profilePicture' />
                                 </div>
                                 <div className="user-card-details">
                                     <h3>{user.name}</h3>
@@ -205,6 +187,7 @@ const handleProceed = () => {
                             </div>
                         )}
                     </div>
+
                 )}
             </div>
 

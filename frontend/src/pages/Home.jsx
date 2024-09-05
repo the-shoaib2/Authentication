@@ -1,91 +1,125 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { handleError } from '../utils/ReactToastify';
-import { ToastContainer } from 'react-toastify';
-import '../assets/style/ReactToastifyCustom.css';
-import '../assets/style/home.css';
-import '../assets/style/loading.css';
-import LoadingOverlay from '../components/LoadingOverlay';
-import UserProfile from './UserProfile';
-import ConfirmAccountPopup from '../components/ConfirmAccountPopup';
+import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { handleError } from "../utils/ReactToastify";
+import { ToastContainer } from "react-toastify";
+import "../assets/style/ReactToastifyCustom.css";
+import "../assets/style/home.css";
+import "../assets/style/loading.css";
+import LoadingOverlay from "../components/LoadingOverlay";
+import ConfirmAccountPopup from "../components/ConfirmAccountPopup";
+import HistorySidebar from "../components/HistorySidebar";
+import ServicesSection from "../components/ServicesSection";
+
+const LazyUserProfile = lazy(() => import('./UserProfile'));
 
 function Home() {
-    const [loggedInUser, setLoggedInUser] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [fadeIn, setFadeIn] = useState(true);
-    const [showProfile, setShowProfile] = useState(false);
-    const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-    const navigate = useNavigate();
+  const [loggedInUser, setLoggedInUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
+  const [showHistorySidebar, setShowHistorySidebar] = useState(false);
+  const navigate = useNavigate();
 
-    const fetchLoggedInUser = useCallback(async () => {
-        setLoading(true);
-        try {
-            const url = "http://localhost:8080/Users/me";
-            const headers = {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            };
-            const response = await fetch(url, headers);
-            const result = await response.json();
-            if (response.ok) {
-                setLoggedInUser(result);
-            } else {
-                handleError(result.message || 'Failed to fetch user data. Please try again.');
-                navigate('/login');
-            }
-        } catch (err) {
-            handleError('Network error. Please check your connection and try again.');
-            navigate('/login');
-        } finally {
-            setLoading(false);
-        }
-    }, [navigate]);
+  const fetchLoggedInUser = useCallback(async () => {
+    setLoading(true);
+    try {
+      const url = "http://localhost:8080/Users/me";
+      const headers = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
+      const response = await fetch(url, headers);
+      const result = await response.json();
+      if (response.ok) {
+        setLoggedInUser(result);
+      } else {
+        handleError(
+          result.message || "Failed to fetch user data. Please try again."
+        );
+        navigate("/login");
+      }
+    } catch (err) {
+      handleError("Network error. Please check your connection and try again.");
+      navigate("/login");
+    } finally {
+      setLoading(false);
+    }
+  }, [navigate]);
 
-    useEffect(() => {
-        fetchLoggedInUser();
+  useEffect(() => {
+    fetchLoggedInUser();
 
-        const timeoutId = setTimeout(() => {
-            setFadeIn(false);
-        }, 500);
+    let popupTimer;
 
-        // Add a new interval to show the popup every 5 seconds
-        const popupInterval = setInterval(() => {
-            setShowConfirmPopup(true);
-            setTimeout(() => setShowConfirmPopup(false), 3000); // Hide after 3 seconds
-        }, 5000);
-
-        return () => {
-            clearTimeout(timeoutId);
-            clearInterval(popupInterval);
-        };
-    }, [fetchLoggedInUser]);
-
-    if (loading) {
-        return <LoadingOverlay loading={loading} fadeOut={false} />;
+    if (!loggedInUser.isActive) {
+      popupTimer = setTimeout(() => {
+        setShowConfirmPopup(true);
+      }, 30  * 1000); // Show popup after 30 minutes
     }
 
-    return (
-        <div className={`home-container ${fadeIn ? 'fade-in' : ''}`}>
-            <div className="user-icon-image" onClick={() => setShowProfile(!showProfile)}>
-                <img src='/images/avater/avater.png' className='profilePicture' alt='Profile' />
-            </div>
-            <h1 className="user-name">{loggedInUser.name}</h1>
-            {showProfile && (
-                <div className="profile-side-panel">
-                    <UserProfile onClose={() => setShowProfile(false)} />
-                </div>
-            )}
-            <ConfirmAccountPopup 
-                isActive={loggedInUser.isActive}
-                email={loggedInUser.email}
-                token={localStorage.getItem('token')}
-                show={showConfirmPopup}
-            />
-            <ToastContainer />
+    return () => {
+      if (popupTimer) clearTimeout(popupTimer);
+    };
+  }, [fetchLoggedInUser, loggedInUser.isActive]);
+
+  const toggleProfile = useCallback(() => {
+    setShowProfile(prev => !prev);
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowConfirmPopup(false);
+  };
+
+  if (loading) {
+    return <LoadingOverlay loading={loading} fadeOut={false} />;
+  }
+
+  return (
+    <div className="home-container">
+      <div className="background-overlay"></div>
+      <div className={`content-wrapper ${showProfile ? 'blur-background' : ''}`}>
+        <div className="top-bar">
+          <button 
+            className={`history-button ${showHistorySidebar ? 'active' : ''}`} 
+            onClick={() => setShowHistorySidebar(prev => !prev)}
+            disabled={showHistorySidebar}
+          >
+            <img src="/images/icon/history-icon.png" alt="History" />
+          </button>
+          <div className="user-icon-image" onClick={toggleProfile}>
+            <img src="/images/avater/avater.png" className="profilePicture" alt="Profile" />
+          </div>
         </div>
-    );
+        
+        <ConfirmAccountPopup
+          isActive={loggedInUser.isActive}
+          email={loggedInUser.email}
+          token={localStorage.getItem("token")}
+          show={showConfirmPopup}
+          onClose={handleClosePopup}
+        />
+
+        <div className={`main-container ${showProfile ? 'hide-services' : ''}`}>
+          <ServicesSection userName={loggedInUser.name} />
+        </div>
+
+        <Suspense fallback={<div className="loading-profile">Loading profile...</div>}>
+          {showProfile && (
+            <div className="centered-profile fade-in-center-profile">
+              <LazyUserProfile user={loggedInUser} onClose={toggleProfile} />
+            </div>
+          )}
+        </Suspense>
+
+      </div>
+      <ToastContainer />
+      <HistorySidebar
+        show={showHistorySidebar}
+        onClose={() => setShowHistorySidebar(false)}
+      />
+    </div>
+  );
 }
 
 export default Home;
-

@@ -8,30 +8,19 @@
   margin: 0;
 }
 
-/* ------------------------------------------------
-                   Style for logo
---------------------------------------------------- */
-.app-icon {
-  display: block;
-  margin: 0 auto 0px; 
-  width: 80px; 
-  height: 80px; 
-}
 
 
-/* ------------------------------------------------
-                   Style for body
---------------------------------------------------- */
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: 'Poppins', sans-serif;
-  background-color: #f4f4f4;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+

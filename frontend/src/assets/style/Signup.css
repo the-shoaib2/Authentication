@@ -4,14 +4,14 @@
   /* Colors */
   --color-background: #f4f4f4;
   --color-white: #FFF;
-  --color-input-bg: #f1f1f1;
-  --color-text: #666666;
-  --color-border-focus: #1877F2;
-  --color-label-focus: #1B66C9;
-  --color-button: #06e011;
-  --color-button-hover: #1da501;
-  --color-link: #1B66C9;
-  --color-link-hover: #1654a7;
+  --color-input-bg: #f0f0f0;
+  --color-text: #8E8E93;
+  --color-border-focus: #5E5CE6;
+  --color-label-focus: #5E5CE6;
+  --color-button: #5E5CE6;
+  --color-button-hover: #514ED8;
+  --color-link: #5E5CE6;
+  --color-link-hover: #514ED8;
 
   /* Sizes */
   --size-icon: 80px;
@@ -21,7 +21,7 @@
   --size-input-font: 15px;
   --size-label-font: 15px;
   --size-button-font: 18px;
-  --size-link-font: 14px;
+  --size-link-font: 15px;
   --size-terms-font: 12px;
 
   /* Spacing */
@@ -293,14 +293,6 @@ body {
   background-size: 12px 12px;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {

@@ -4,13 +4,13 @@
              Root Variables for Colors, Sizes, and Fonts
 --------------------------------------------------- */
 :root {
-  --primary-color: #1877F2;
-  --primary-hover: rgb(6, 6, 182);
-  --secondary-color: #1B66C9;
+  --primary-color: #5856D6;
+  --primary-hover: #4A49B7;
+  --secondary-color: #7A79E0;
   --input-bg-color: #f1f1f1;
-  --input-focus-border: #1877F2;
+  --input-focus-border: #5856D6;
   --input-label-color: #666666;
-  --input-label-focus: #1B66C9;
+  --input-label-focus: #7A79E0;
   --text-color: #555555;
   --box-shadow-color: hsla(0, 0%, 0%, 0.25);
   --container-bg-color: #FFF;

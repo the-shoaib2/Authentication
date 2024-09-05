@@ -66,18 +66,18 @@ function ResetPassword() {
     };
 
     return (
-        <div className="reset-password-container">
-            <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
+        <div className="reset-password-container fade-in-bottom">
+            <img src='/images/app-icon.ico' alt='App Icon' className='app-icon fade-in' />
             <button
-                className="back-button-forgotpaass icon-button"
+                className="back-button-forgotpaass icon-button fade-in"
                 onClick={() => navigate('/sent-otp-forgot-password')} // Navigate to SentOtpForgotPassword page
             >
-                <img src="/back-icon.png" alt="Back" />
+                <img src="/images/icon/back-icon.png" alt="Back" />
             </button>
         
-            <h1>Reset Password</h1>
+            <h1 className="fade-in">Reset Password</h1>
             <form onSubmit={handleSubmit}>
-                <div className={`input-wrapper ${matchError ? 'error' : ''}`}>
+                <div className={`input-wrapper ${matchError ? 'error' : ''} fade-in`}>
                     <div className={`form-group-reset-password ${passwordError ? 'error' : ''}`}>
                         <input
                             type='password'
@@ -102,7 +102,7 @@ function ResetPassword() {
                     </div>
                     <PasswordStrengthMeter password={password} /> 
                 </div>
-                <button type="submit">Reset Password</button>
+                <button type="submit" className="scale-in">Reset Password</button>
             </form>
             <ToastContainer />
         </div>

@@ -8,6 +8,7 @@ import FindUserForgotPassword from './components/ForgotPassword/FindUserForgotPa
 import SentOtpForgotPassword from './components/ForgotPassword/VerificationCodeForgotPassword';
 import ResetPassword from './components/ForgotPassword/ResetPassword';
 import RefrshHandler from './utils/RefreshHandler';
+import ProtectedRoute from './utils/ProtectedRoute';
 import 'react-toastify/dist/ReactToastify.css';
 import VerifyCodeConfirmAccount from './components/VerifyCodeConfirmAccount'; 
 
@@ -23,11 +24,6 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     console.log('Is authenticated:', isAuthenticated);
 
-
-    const PrivateRoute = ({ element }) => {
-        return isAuthenticated ? element : <Navigate to="/login" />
-    }
-
     return (
         <div className="App">
             <RefrshHandler setIsAuthenticated={setIsAuthenticated} />
@@ -35,8 +31,18 @@ function App() {
                 <Route path='/' element={<Navigate to="/login" />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/signup' element={<Signup />} />
-                <Route path="/verify-email"  element={<VerifyCodeConfirmAccount/>} /> 
-                <Route path='/home' element={<PrivateRoute element={<Home />} />} />
+                <Route path="/verify-email" element={
+                    <ProtectedRoute 
+                        element={VerifyCodeConfirmAccount} 
+                        isAuthenticated={isAuthenticated} 
+                    />
+                } />
+                <Route path='/home' element={
+                    <ProtectedRoute 
+                        element={Home} 
+                        isAuthenticated={isAuthenticated} 
+                    />
+                } />
                 <Route path='/find-user' element={<FindUserForgotPassword />} />
                 <Route path='/forgot-password/verification-code' element={<SentOtpForgotPassword />} />
                 <Route path='/forgot-password/reset-password' element={<ResetPassword />} />

@@ -132,7 +132,7 @@ function SentOtpForgotPassword() {
     return (
 <div className="otp-wrapper">
             <div>
-                <img src='/app-icon.ico' alt='App Icon' className='app-icon' />
+                <img src='/images/app-icon.ico' alt='App Icon' className='app-icon' />
             </div>
             <h1 className="otp-title">Verification code</h1>
             <div className="otp-timer">

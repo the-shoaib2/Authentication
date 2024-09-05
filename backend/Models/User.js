@@ -1,4 +1,3 @@
-
 // backend/Models/User.js
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
@@ -81,10 +80,16 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  accountExpiryDate: {
+    type: Date,
+    default: function () {
+      return this.isActive ? null : new Date(+new Date() + 15 * 24 * 60 * 60 * 1000);
+    }
+  },
   status: {
     type: String,
-    enum: ['active', 'inactive', 'deleted'],
-    default: 'inactive', // Default status when a user is created
+    enum: ['active', 'inactive'],
+    default: 'inactive',
   },
   lastLogin: {
     type: Date,
@@ -120,12 +125,10 @@ UserSchema.pre('save', function (next) {
 
 // Method to activate a user
 UserSchema.methods.activate = function () {
-  if (this.status !== 'deleted') {
-    this.status = 'active';
-    return this.save();
-  } else {
-    throw new Error('Cannot activate a deleted user.');
-  }
+  this.status = 'active';
+  this.isActive = true;
+  this.accountExpiryDate = null;
+  return this.save();
 };
 
 // Method to deactivate a user
@@ -142,6 +145,27 @@ UserSchema.methods.deactivate = function () {
 UserSchema.methods.deleteUser = function () {
   this.status = 'deleted';
   return this.save();
+};
+
+// Add a new method to check if the account has expired
+UserSchema.methods.isAccountExpired = function () {
+  return this.accountExpiryDate && this.accountExpiryDate < new Date();
+};
+
+// Add a pre-save hook to ensure accountExpiryDate is null when isActive is true
+UserSchema.pre('save', function (next) {
+  if (this.isActive) {
+    this.accountExpiryDate = null;
+  }
+  next();
+});
+
+// New method to move user to deleted accounts
+UserSchema.methods.moveToDeletedAccounts = async function () {
+  const deletedUser = new DeletedUserModel(this.toObject());
+  await deletedUser.save();
+  await this.deleteOne();
+  return deletedUser;
 };
 
 const UserModel = mongoose.model("users", UserSchema);

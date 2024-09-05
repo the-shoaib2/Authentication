@@ -26,13 +26,3 @@ module.exports = router;
 
 
 
-
-
-// // backend/Routes/VerificationRouter.js
-// const { verifyEmail } = require("../Controllers/VerificationController");
-// // const { verificationValidation } = require('../Middlewares/VerificationMiddleware');
-
-// const router = require('express').Router();
-
-
-// module.exports = router;
