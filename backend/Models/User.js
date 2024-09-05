@@ -1,6 +1,7 @@
 // backend/Models/User.js
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
+const DeletedUserModel = require('./DeletedUser');
 
 const Schema = mongoose.Schema;
 
@@ -82,8 +83,8 @@ const UserSchema = new Schema({
   },
   accountExpiryDate: {
     type: Date,
-    default: function () {
-      return this.isActive ? null : new Date(+new Date() + 15 * 24 * 60 * 60 * 1000);
+    default: function() {
+      return new Date(Date.now() + 15 * 24 * 60 * 60 * 1000); // 15 days from now
     }
   },
   status: {
@@ -141,15 +142,9 @@ UserSchema.methods.deactivate = function () {
   }
 };
 
-// Method to delete a user
-UserSchema.methods.deleteUser = function () {
-  this.status = 'deleted';
-  return this.save();
-};
-
 // Add a new method to check if the account has expired
-UserSchema.methods.isAccountExpired = function () {
-  return this.accountExpiryDate && this.accountExpiryDate < new Date();
+UserSchema.methods.isAccountExpired = function() {
+  return this.accountExpiryDate < new Date();
 };
 
 // Add a pre-save hook to ensure accountExpiryDate is null when isActive is true
