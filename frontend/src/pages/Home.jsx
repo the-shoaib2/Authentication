@@ -32,7 +32,11 @@ function Home() {
       const response = await fetch(url, headers);
       const result = await response.json();
       if (response.ok) {
-        setLoggedInUser(result);
+        setLoggedInUser({
+          ...result,
+          isActive: result.isActive,
+          accountExpiryDate: result.accountExpiryDate
+        });
       } else {
         handleError(
           result.message || "Failed to fetch user data. Please try again."
@@ -55,7 +59,7 @@ function Home() {
     if (!loggedInUser.isActive) {
       popupTimer = setTimeout(() => {
         setShowConfirmPopup(true);
-      }, 30  * 1000); // Show popup after 30 minutes
+      }, 30 * 60 * 1000); // Show popup after 30 minutes
     }
 
     return () => {
@@ -70,6 +74,30 @@ function Home() {
   const handleClosePopup = () => {
     setShowConfirmPopup(false);
   };
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:8080/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          refreshToken: localStorage.getItem("refreshToken"),
+        }),
+      });
+      if (response.ok) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        navigate("/login");
+      } else {
+        handleError("Failed to log out. Please try again.");
+      }
+    } catch (err) {
+      handleError("Network error. Please check your connection and try again.");
+    }
+  }, [navigate]);
 
   if (loading) {
     return <LoadingOverlay loading={loading} fadeOut={false} />;
@@ -98,6 +126,8 @@ function Home() {
           token={localStorage.getItem("token")}
           show={showConfirmPopup}
           onClose={handleClosePopup}
+          accountExpiryDate={loggedInUser.accountExpiryDate}
+          onLogout={handleLogout}
         />
 
         <div className={`main-container ${showProfile ? 'hide-services' : ''}`}>

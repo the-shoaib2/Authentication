@@ -367,8 +367,8 @@
     text-align: center; /* Center text */
     margin-right: 10px;
     font-weight: 500;
+   color: #ff3131;
 }
-
 .confirm-email-button {
     background-color:  #FF3B30;;
     color: white;

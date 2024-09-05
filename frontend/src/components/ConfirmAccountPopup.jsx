@@ -1,28 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExpiryDate }) {
+function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExpiryDate, onLogout }) {
     const [showPopup, setShowPopup] = useState(false);
     const [remainingDays, setRemainingDays] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isActive && !show) {
-            const timer = setTimeout(() => {
-                setShowPopup(true);
-            }, 30 * 60 * 1000); // 30 minutes
-            return () => clearTimeout(timer);
+        if (!isActive && show) {
+            setShowPopup(true);
         }
     }, [isActive, show]);
 
     useEffect(() => {
         if (accountExpiryDate) {
-            const now = new Date();
-            const expiryDate = new Date(accountExpiryDate);
-            const timeDiff = expiryDate.getTime() - now.getTime();
-            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            setRemainingDays(daysDiff > 0 ? daysDiff : 0);
+            const checkAccountStatus = async () => {
+                try {
+                    const response = await fetch('http://localhost:8080/Users/check-account-status', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.expired) {
+                        onLogout();
+                        navigate('/login');
+                    } else {
+                        setRemainingDays(data.remainingDays);
+                    }
+                } catch (error) {
+                    console.error('Error checking account status:', error);
+                }
+            };
+            checkAccountStatus();
         }
-    }, [accountExpiryDate]);
+    }, [accountExpiryDate, token, onLogout, navigate]);
 
     if (isActive) return null;
 
@@ -32,59 +45,56 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExp
     };
 
     const getMessage = () => {
-        if (isActive) {
-            return "Your account is confirmed. Thank you!";
-        } else if (remainingDays > 0) {
-            return `Please confirm your email. Your account will expire in ${remainingDays} day${remainingDays > 1 ? 's' : ''}. Expiry date: ${new Date(accountExpiryDate).toLocaleDateString()}`;
+        if (remainingDays > 0) {
+            return `Confirm your email within ${remainingDays} day${remainingDays > 1 ? 's' : ''}. Expires: ${new Date(accountExpiryDate).toLocaleDateString()}. Account will be auto-deleted after expiration.  Note: Account deletion unavailable after confirmation.`;
         } else {
-            return "Your account has expired. Please contact support to reactivate your account.";
+            return "Your account has expired and will be deleted soon. Please contact support if you wish to reactivate it.";
         }
     };
 
-    if (show || showPopup) {
-        return (
-            <div className="popup-overlay">
-                <div className="inactive-account-message-container">
-                    <button className="close-popup-button" onClick={handleClose}>
-                        {/* &times; */}
-                    </button>
-                    <h1>Your account is not confirmed yet.</h1>
-                    <p>{getMessage()}</p>
+    return (
+        <>
+            <div className="confirm-account-bar">
+                <span className="confirm-account-message">
+                    {getMessage()}
+                </span>
+                {remainingDays > 0 && (
                     <Link 
                         to="/verify-email" 
-                        className="confirm-account-link" 
+                        className="confirm-email-button"
                         state={{ 
                             token: token,
                             email: email
                         }}
                     >
-                        <button className="confirm-account-button">
-                            Activate Account
-                        </button>
+                        Confirm Email
                     </Link>
-                </div>
+                )}
             </div>
-        );
-    }
-
-    return (
-        <div className="confirm-account-bar">
-            <span className="confirm-account-message">
-                {getMessage()}
-            </span>
-            {remainingDays > 0 && (
-                <Link 
-                    to="/verify-email" 
-                    className="confirm-email-button"
-                    state={{ 
-                        token: token,
-                        email: email
-                    }}
-                >
-                    Confirm Email
-                </Link>
+            {showPopup && remainingDays > 0 && (
+                <div className="popup-overlay">
+                    <div className="inactive-account-message-container">
+                        <button className="close-popup-button" onClick={handleClose}>
+                            &times;
+                        </button>
+                        <h1>Your account is not confirmed yet.</h1>
+                        <p>{getMessage()}</p>
+                        <Link 
+                            to="/verify-email" 
+                            className="confirm-account-link" 
+                            state={{ 
+                                token: token,
+                                email: email
+                            }}
+                        >
+                            <button className="confirm-account-button">
+                                Activate Account
+                            </button>
+                        </Link>
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

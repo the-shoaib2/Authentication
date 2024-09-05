@@ -46,8 +46,8 @@ function UserProfile({ user, onClose }) {
   };
 
   const settingsItems = [
-    { title: "Account", icon: "🔐" },
-    { title: "Privacy", icon: "🔒" },
+    { title: "Account", icon: "👤" },
+    { title: "Privacy", icon: "🔐" },
     { title: "Appearance", icon: "🎨" },
     { title: "Notifications", icon: "🔔" },
     { title: "Language", icon: "🌐" },
