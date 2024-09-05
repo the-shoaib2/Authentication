@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function ConfirmAccountPopup({ isActive, email, token, show, onClose }) {
+function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExpiryDate }) {
     const [showPopup, setShowPopup] = useState(false);
+    const [remainingDays, setRemainingDays] = useState(0);
 
     useEffect(() => {
         if (!isActive && !show) {
@@ -13,11 +14,31 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose }) {
         }
     }, [isActive, show]);
 
+    useEffect(() => {
+        if (accountExpiryDate) {
+            const now = new Date();
+            const expiryDate = new Date(accountExpiryDate);
+            const timeDiff = expiryDate.getTime() - now.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            setRemainingDays(daysDiff > 0 ? daysDiff : 0);
+        }
+    }, [accountExpiryDate]);
+
     if (isActive) return null;
 
     const handleClose = () => {
         setShowPopup(false);
         if (onClose) onClose();
+    };
+
+    const getMessage = () => {
+        if (isActive) {
+            return "Your account is confirmed. Thank you!";
+        } else if (remainingDays > 0) {
+            return `Please confirm your email. Your account will expire in ${remainingDays} day${remainingDays > 1 ? 's' : ''}. Expiry date: ${new Date(accountExpiryDate).toLocaleDateString()}`;
+        } else {
+            return "Your account has expired. Please contact support to reactivate your account.";
+        }
     };
 
     if (show || showPopup) {
@@ -28,7 +49,7 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose }) {
                         {/* &times; */}
                     </button>
                     <h1>Your account is not confirmed yet.</h1>
-                    <p>Please check your email to confirm your account.</p>
+                    <p>{getMessage()}</p>
                     <Link 
                         to="/verify-email" 
                         className="confirm-account-link" 
@@ -49,18 +70,20 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose }) {
     return (
         <div className="confirm-account-bar">
             <span className="confirm-account-message">
-                Please confirm your email. Your account will be deleted after 15 days if not confirmed.
+                {getMessage()}
             </span>
-            <Link 
-                to="/verify-email" 
-                className="confirm-email-button"
-                state={{ 
-                    token: token,
-                    email: email
-                }}
-            >
-                Confirm Email
-            </Link>
+            {remainingDays > 0 && (
+                <Link 
+                    to="/verify-email" 
+                    className="confirm-email-button"
+                    state={{ 
+                        token: token,
+                        email: email
+                    }}
+                >
+                    Confirm Email
+                </Link>
+            )}
         </div>
     );
 }

@@ -70,9 +70,9 @@
 --------------------------------------------------- */
 .user-icon-image {
     flex-shrink: 0;
-    width: 60px;
-    height: 60px;
-    border: 2px solid #fff;
+    width: 32px;
+    height: 32px;
+    border: none;
     border-radius: 50%;
     overflow: hidden;
     display: flex;
@@ -82,14 +82,12 @@
     margin-right: 20px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 0 2px rgb(230, 230, 230); /* Gray border */
 }
 
 /* Hover effect with smooth animation and additional borders */
 .user-icon-image:hover {
-    box-shadow: 0 0 0 2px rgb(58, 44, 248),
-                0 0 10px rgba(5, 108, 243, 0.63); 
-    transform: scale(1.002); 
+    box-shadow: 0 0 10px rgba(98, 0, 255, 0.63);
+    transform: scale(1.05);
 }
 
 /* Image inside the avatar */
@@ -406,4 +404,9 @@
     justify-content: center;
     align-items: center;
     font-family: 'Poppins', sans-serif;
+}
+
+.confirm-account-message.expired-message {
+    color: #FF3B30;
+    font-weight: bold;
 }
