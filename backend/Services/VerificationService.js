@@ -1,6 +1,5 @@
-const { VerificationAttempt } = require('../Models/Verification');
+const { VerificationAttempt, VerificationCode } = require('../Models/Verification');
 const User = require('../Models/User');
-const { VerificationCode } = require('../Models/Verification');
 
 const getVerificationAttempts = async (userId) => {
     let attempt = await VerificationAttempt.findOne({ userId });
@@ -65,9 +64,16 @@ const getCooldownPeriod = async (userId) => {
 };
 
 const generateVerificationCode = async (userId) => {
-    // Implement your code generation logic here
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    // Save the code to the database or cache
+    const expiresAt = new Date(Date.now() +  60 * 1000); 
+
+    const newVerificationCode = new VerificationCode({
+        userId,
+        code,
+        expiresAt
+    });
+
+    await newVerificationCode.save();
     return code;
 };
 

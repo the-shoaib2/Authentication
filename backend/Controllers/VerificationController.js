@@ -3,6 +3,7 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const VerificationService = require('../Services/VerificationService');
+const  VerificationCode  = require('../Models/Verification');
 
 const findUserForgotPassword = async (req, res) => {
     try {
@@ -74,7 +75,11 @@ const sendOtp = async (req, res) => {
 
         // TODO: Send the code to the user's email
 
-        res.status(200).json({ message: 'Verification code sent successfully', success: true });
+        // Code is now saved in the database by generateVerificationCode function
+        // TODO: Implement email sending logic here
+        console.log(`Verification code for ${email}: ${code}`);
+
+        res.status(200).json({ message: 'Verification code sent successfully', success: true ,code });
     } catch (err) {
         console.error('Send Verification code Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });

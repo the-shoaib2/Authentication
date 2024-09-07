@@ -48,7 +48,7 @@ const signup = async (req, res) => {
         console.log('New user saved:', newUser);
 
         // Create a verification token
-        // const verificationToken = await generateVerificationToken(newUser);
+        const verificationToken = await generateVerificationToken(newUser);
 
         // Generate tokens
         const tokens = await generateTokens(newUser);
@@ -108,7 +108,7 @@ const login = async (req, res) => {
         const tokens = await generateTokens(user);
 
         // // Generate a verification token for the user (if required)
-        // const verificationToken = await generateVerificationToken(user);
+        const verificationToken = await generateVerificationToken(user);
 
         res.status(200).json({
             message: "Login Success",
