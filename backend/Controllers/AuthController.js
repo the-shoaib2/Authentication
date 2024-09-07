@@ -1,10 +1,13 @@
 const bcrypt = require('bcrypt');
 const UserModel = require("../Models/User");
 const DeletedUserModel = require("../Models/DeletedUser");
-const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./VerificationTokenController');
+const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./TokenController');
 const fuzzySearch = require('../SearchEngine/FuzzySearch');
+const asyncHandler = require('../utils/asyncHandler');
+const ApiError = require('../utils/ApiError');
+const ApiResponse = require('../utils/ApiResponse');
 
-const signup = async (req, res) => {
+const signup = asyncHandler(async (req, res) => {
     try {
         const { firstName, lastName, email, password, phone, dob, gender } = req.body;
 
@@ -68,10 +71,9 @@ const signup = async (req, res) => {
             success: false
         });
     }
-};
+});
 
-
-const login = async (req, res) => {
+const login = asyncHandler(async (req, res) => {
     try {
         const { emailOrUsername, password } = req.body;
         const trimmedInput = emailOrUsername.trim();
@@ -82,8 +84,7 @@ const login = async (req, res) => {
         }).select('+password');  // Explicitly select the password field
 
         if (!user) {
-            console.log('User not found');
-            return res.status(403).json({ message: 'Invalid email or username', success: false });
+            throw ApiError.forbidden('Invalid email or username');
         }
 
         // Update the last login time
@@ -126,10 +127,9 @@ const login = async (req, res) => {
             success: false
         });
     }
-};
+});
 
-
-const logout = async (req, res) => {
+const logout = asyncHandler(async (req, res) => {
     try {
         const { refreshToken } = req.body;
 
@@ -151,9 +151,9 @@ const logout = async (req, res) => {
         console.error('Logout Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
-const deleteUser = async (req, res) => {
+const deleteUser = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
         const user = await UserModel.findById(id);
@@ -177,9 +177,9 @@ const deleteUser = async (req, res) => {
         console.error('Error deleting user:', error);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
-const searchDeletedAccounts = async (req, res) => {
+const searchDeletedAccounts = asyncHandler(async (req, res) => {
     try {
         const { searchTerm } = req.body;
 
@@ -208,9 +208,9 @@ const searchDeletedAccounts = async (req, res) => {
         console.error('Error searching deleted accounts:', error);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
-const recoverAccount = async (req, res) => {
+const recoverAccount = asyncHandler(async (req, res) => {
     try {
         const { id } = req.body;
 
@@ -238,19 +238,19 @@ const recoverAccount = async (req, res) => {
 
         const tokens = await generateTokens(recoveredUser);
 
-        res.status(200).json({
-            message: 'Account recovered successfully',
-            success: true,
-            name: `${recoveredUser.first_name} ${recoveredUser.last_name}`,
-            email: recoveredUser.email,
-            username: recoveredUser.username,
-            ...tokens
-        });
+        return res.status(200).json(
+            new ApiResponse(200, {
+                name: `${recoveredUser.first_name} ${recoveredUser.last_name}`,
+                email: recoveredUser.email,
+                username: recoveredUser.username,
+                ...tokens
+            }, 'Account recovered successfully')
+        );
     } catch (error) {
         console.error('Error recovering account:', error);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
 module.exports = {
     signup,

@@ -3,11 +3,13 @@
 const jwt = require('jsonwebtoken');
 const UserModel = require("../Models/User");
 const { VerificationToken } = require('../Models/Verification');
+const asyncHandler = require('../utils/asyncHandler');
+const ApiError = require('../utils/ApiError');
 
 // Function to generate a verification token using JWT
 const generateVerificationToken = async (user) => {
     if (!process.env.JWT_ACCESS_SECRET) {
-        throw new Error('JWT_ACCESS_SECRET is not defined');
+        throw ApiError.internalError('JWT_ACCESS_SECRET is not defined');
     }
 
     const token = jwt.sign(
@@ -78,7 +80,7 @@ const parseDuration = (duration) => {
     }
 };
 
-const refreshAccessToken = async (req, res) => {
+const refreshAccessToken = asyncHandler(async (req, res) => {
     try {
         const { refreshToken } = req.body;
 
@@ -104,7 +106,7 @@ const refreshAccessToken = async (req, res) => {
         console.error('Refresh Token Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
 module.exports = {
     generateVerificationToken,

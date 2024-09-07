@@ -1,11 +1,13 @@
-//VerificationController.js
-
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const VerificationService = require('../Services/VerificationService');
 const  VerificationCode  = require('../Models/Verification');
+const asyncHandler = require('../utils/asyncHandler');
+const ApiError = require('../utils/ApiError');
+const ApiResponse = require('../utils/ApiResponse');
 
-const findUserForgotPassword = async (req, res) => {
+// Wrap each controller function with asyncHandler
+const findUserForgotPassword = asyncHandler(async (req, res) => {
     try {
         const { emailOrUsername } = req.body;
 
@@ -18,31 +20,30 @@ const findUserForgotPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'User not found.', success: false });
+            throw ApiError.notFound('User not found');
         }
 
         // Concatenate first and last name
         const fullName = `${user.first_name} ${user.last_name}`;
 
-        res.status(200).json({
-            
-            message: 'User found',
-            success: true,
-            user: {
-                name: fullName,
-                email: user.email,
-                username: user.username,
-                avatar: user.profilePicture
-            }
-        });
+        return res.status(200).json(
+            new ApiResponse(200, {
+                user: {
+                    name: fullName,
+                    email: user.email,
+                    username: user.username,
+                    avatar: user.profilePicture
+                }
+            }, 'User found')
+        );
     } catch (err) {
         console.error('Find User Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
 // Send OTP to user
-const sendOtp = async (req, res) => {
+const sendOtp = asyncHandler(async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
@@ -84,10 +85,10 @@ const sendOtp = async (req, res) => {
         console.error('Send Verification code Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
 // Verify OTP provided by user
-const verifyOtp = async (req, res) => {
+const verifyOtp = asyncHandler(async (req, res) => {
     try {
         const { email, otp } = req.body;
         const user = await User.findOne({ email });
@@ -114,10 +115,10 @@ const verifyOtp = async (req, res) => {
         console.error('Verify Verification code Error:', err);
         res.status(400).json({ message: err.message, success: false });
     }
-};
+});
 
 // Reset user password
-const resetPassword = async (req, res) => {
+const resetPassword = asyncHandler(async (req, res) => {
     try {
         const { email, newPassword } = req.body;
         const user = await User.findOne({ email });
@@ -136,11 +137,9 @@ const resetPassword = async (req, res) => {
         console.error('Reset Password Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
     }
-};
+});
 
-
-
-const verifyEmail = async (req, res) => {
+const verifyEmail = asyncHandler(async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user || user.isActive) return res.sendStatus(400); // Already active or user not found
@@ -153,7 +152,7 @@ const verifyEmail = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Internal server error' });
     }
-};
+});
 
 module.exports = {
     findUserForgotPassword,

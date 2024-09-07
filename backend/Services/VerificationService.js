@@ -1,5 +1,6 @@
 const { VerificationAttempt, VerificationCode } = require('../Models/Verification');
 const User = require('../Models/User');
+const ApiError = require('../utils/ApiError');
 
 const getVerificationAttempts = async (userId) => {
     let attempt = await VerificationAttempt.findOne({ userId });
@@ -85,7 +86,7 @@ const validateVerificationCode = async (userId, code) => {
     });
 
     if (!verificationCode) {
-        throw new Error('Invalid or expired verification code');
+        throw ApiError.badRequest('Invalid or expired verification code');
     }
 
     verificationCode.verified = true;
