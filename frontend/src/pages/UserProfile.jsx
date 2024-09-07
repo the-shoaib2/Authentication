@@ -125,5 +125,5 @@ function UserProfile({ user, onClose }) {
   );
 }
 
-export default UserProfile;
+export default React.memo(UserProfile);
 

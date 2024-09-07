@@ -9,6 +9,7 @@ import '../assets/style/animations.css';
 import '../assets/style/Login.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { refreshToken } from '../utils/RefreshHandler';
+import('../pages/UserProfile').then(() => console.log('UserProfile preloaded'));
 
 function Login() {
     const [emailOrUsername, setEmailOrUsername] = useState('');

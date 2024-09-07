@@ -11,6 +11,7 @@ import HistorySidebar from "../components/HistorySidebar";
 import ServicesSection from "../components/ServicesSection";
 
 const LazyUserProfile = lazy(() => import('./UserProfile'));
+const ProfileLoadingSpinner = () => <div className="loading-spinner"></div>;
 
 function Home() {
   const [loggedInUser, setLoggedInUser] = useState({});
@@ -134,7 +135,7 @@ function Home() {
           <ServicesSection userName={loggedInUser.name} />
         </div>
 
-        <Suspense fallback={<div className="loading-profile">Loading profile...</div>}>
+        <Suspense fallback={<ProfileLoadingSpinner />}>
           {showProfile && (
             <div className="centered-profile fade-in-center-profile">
               <LazyUserProfile user={loggedInUser} onClose={toggleProfile} />
