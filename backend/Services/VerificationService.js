@@ -1,52 +1,99 @@
-// VerificationService.js
-const crypto = require('crypto');
-const { VerificationCode } = require('../Models/Verification');
+const { VerificationAttempt } = require('../Models/Verification');
 const User = require('../Models/User');
-// const { sendVerificationCodeEmail } = require('./EmailService');
+const { VerificationCode } = require('../Models/Verification');
+
+const getVerificationAttempts = async (userId) => {
+    let attempt = await VerificationAttempt.findOne({ userId });
+    if (!attempt) {
+        attempt = new VerificationAttempt({ userId });
+        await attempt.save();
+    }
+    return attempt;
+};
+
+const MAX_ATTEMPTS = 3;
+const COOLDOWN_DURATION = 5 * 60 * 1000; // 5 minutes
+const LOCK_DURATION = 72 * 60 * 60 * 1000; // 72 hours
+
+const incrementAttempts = async (userId) => {
+    const attempt = await getVerificationAttempts(userId);
+    await attempt.incrementAttempt();
+    
+    if (attempt.attempts >= 9) {
+        await lockAccount(userId);
+    } else if (attempt.attempts >= MAX_ATTEMPTS) {
+        await setCooldown(userId);
+    }
+};
+
+const setCooldown = async (userId) => {
+    const attempt = await getVerificationAttempts(userId);
+    attempt.cooldownEnd = new Date(Date.now() + COOLDOWN_DURATION);
+    await attempt.save();
+};
+
+const lockAccount = async (userId) => {
+    const user = await User.findById(userId);
+    user.isLocked = true;
+    user.lockExpiresAt = new Date(Date.now() + LOCK_DURATION);
+    await user.save();
+};
+
+const checkLockStatus = async (userId) => {
+    const user = await User.findById(userId);
+    if (user.isLocked && user.lockExpiresAt > new Date()) {
+        return true;
+    } else if (user.isLocked) {
+        user.isLocked = false;
+        user.lockExpiresAt = null;
+        await user.save();
+    }
+    return false;
+};
+
+const resetAttempts = async (userId) => {
+    const attempt = await getVerificationAttempts(userId);
+    await attempt.resetAttempts();
+};
+
+const getCooldownPeriod = async (userId) => {
+    const attempt = await getVerificationAttempts(userId);
+    if (attempt.cooldownEnd && attempt.cooldownEnd > new Date()) {
+        return Math.ceil((attempt.cooldownEnd - new Date()) / 1000);
+    }
+    return 0;
+};
 
 const generateVerificationCode = async (userId) => {
-    // Generate a 6-digit random verification code
-    const code = crypto.randomInt(100000, 999999).toString();
-    
-    // Set the expiration time to 1 minute from now
-    const expiresAt = new Date(Date.now() + 60000);
-
-    // Create and save the verification code in the database
-    const verificationCode = new VerificationCode({
-        code,
-        userId,
-        expiresAt
-    });
-
-    await verificationCode.save();
-
-    // Fetch the user's email to send the verification code
-    const user = await User.findById(userId);
-
-    // Send the verification code via email
-    // await sendVerificationCodeEmail(user.email, code);
-
+    // Implement your code generation logic here
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    // Save the code to the database or cache
     return code;
 };
 
 const validateVerificationCode = async (userId, code) => {
-    const currentDate = new Date();
+    const verificationCode = await VerificationCode.findOne({ 
+        userId, 
+        code, 
+        expiresAt: { $gt: new Date() } 
+    });
 
-    // Find the verification code in the database
-    const verificationCode = await VerificationCode.findOne({ userId, code });
+    if (!verificationCode) {
+        throw new Error('Invalid or expired verification code');
+    }
 
-    if (!verificationCode) throw new Error('Invalid verification code.');
-    if (verificationCode.expiresAt < currentDate) throw new Error('Verification code expired.');
-    if (verificationCode.verified) throw new Error('Verification code already used.');
-
-    // Mark the verification code as used
     verificationCode.verified = true;
     await verificationCode.save();
-
-    return true;
 };
 
 module.exports = {
+    getVerificationAttempts,
+    incrementAttempts,
+    resetAttempts,
+    getCooldownPeriod,
     generateVerificationCode,
+    setCooldown,
+    lockAccount,
+    checkLockStatus,
     validateVerificationCode
 };

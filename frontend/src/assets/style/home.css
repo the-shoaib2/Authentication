@@ -410,3 +410,28 @@
     color: #FF3B30;
     font-weight: bold;
 }
+
+.confirm-account-bar.warning {
+    background-color: #ffcccc;
+    color: #ff0000;
+}
+
+.confirm-account-bar.warning .confirm-email-button {
+    background-color: #ff0000;
+}
+
+.confirm-account-bar.warning .confirm-email-button:hover {
+    background-color: #cc0000;
+}
+
+.account-status-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    z-index: 1000;
+}

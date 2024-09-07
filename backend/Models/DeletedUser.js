@@ -1,50 +1,66 @@
 const mongoose = require("mongoose");
+
 const Schema = mongoose.Schema;
 
 const DeletedUserSchema = new Schema({
-  // Copy all fields from UserSchema
-  // ... (existing fields remain unchanged)
+    originalUserId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        required: true,
+    },
+    user_id: {
+        type: String,
+        required: true,
+    },
+    first_name: String,
+    last_name: String,
+    email: String,
+    phone: String,
+    password: String,
+    dob: {
+        day: Number,
+        month: Number,
+        year: Number,
+    },
+    gender: String,
+    username: String,
+    profile_picture: String,
+    isActive: Boolean,
+    status: {
+        type: String,
+        default: 'deleted'
+    },
+    lastLogin: Date,
+    createdAt: Date,
+    updatedAt: Date,
+    deletedAt: {
+        type: Date,
+        default: Date.now,
+    },
+    deletionCount: {
+        type: Number,
+        default: 1,
+    },
+    accountExpiryDate: Date,
+    two_factor_enabled: Boolean,
+    two_factor_secret: String,
+    refreshToken: String,
+    refreshTokenExpiry: Date,
+}, { 
+    timestamps: true,
+    strict: false,
+});
 
-  deletedAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, { timestamps: true });
+// Remove all indexes
+DeletedUserSchema.index({}, { unique: false });
 
-// Method to restore a deleted user
-DeletedUserSchema.methods.restoreUser = async function () {
-  const UserModel = mongoose.model("users");
-  const restoredUser = new UserModel(this.toObject());
-  restoredUser.status = 'active';
-  restoredUser.isActive = true;
-  
-  // Use Promise.all for concurrent operations
-  await Promise.all([
-    restoredUser.save(),
-    this.deleteOne()
-  ]);
-  
-  return restoredUser;
-};
+// Create a compound index on originalUserId and deletedAt
+DeletedUserSchema.index({ originalUserId: 1, deletedAt: 1 }, { unique: false });
 
-// Static method to delete a user and move to DeletedUser collection
-DeletedUserSchema.statics.deleteUser = async function (userId) {
-  const UserModel = mongoose.model("users");
-  
-  // Use findOneAndDelete for atomic operation
-  const user = await UserModel.findOneAndDelete({ _id: userId });
-  
-  if (!user) {
-    throw new Error("User not found");
-  }
+// Remove the 'id' field from the schema
+DeletedUserSchema.set('toObject', { virtuals: true });
+DeletedUserSchema.set('toJSON', { virtuals: true });
 
-  // Create a new DeletedUser document
-  const deletedUser = new this(user.toObject());
-  await deletedUser.save();
-
-  return deletedUser;
-};
-
-const DeletedUserModel = mongoose.model("deletedUsers", DeletedUserSchema);
+const DeletedUserModel = mongoose.model("deleted_users", DeletedUserSchema, "deleted_users");
 
 module.exports = DeletedUserModel;

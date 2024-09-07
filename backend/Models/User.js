@@ -6,7 +6,7 @@ const DeletedUserModel = require('./DeletedUser');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  id: {
+  user_id: {
     type: String,
     default: uuidv4,
     unique: true,
@@ -89,7 +89,7 @@ const UserSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'inactive'],
+    enum: ['active', 'inactive', 'deleted'],
     default: 'inactive',
   },
   lastLogin: {
@@ -157,8 +157,30 @@ UserSchema.pre('save', function (next) {
 
 // New method to move user to deleted accounts
 UserSchema.methods.moveToDeletedAccounts = async function () {
-  const deletedUser = new DeletedUserModel(this.toObject());
-  await deletedUser.save();
+  const userData = this.toObject();
+  delete userData._id;
+  delete userData.id;
+  
+  let deletedUser = await DeletedUserModel.findOne({ originalUserId: this._id });
+  
+  if (deletedUser) {
+    deletedUser.deletionCount += 1;
+    deletedUser.deletedAt = new Date();
+    Object.assign(deletedUser, userData);
+  } else {
+    deletedUser = new DeletedUserModel({
+      ...userData,
+      originalUserId: this._id,
+      status: 'deleted',
+      deletionCount: 1
+    });
+  }
+  
+  await DeletedUserModel.findOneAndUpdate(
+    { originalUserId: this._id },
+    deletedUser.toObject(),
+    { upsert: true, new: true, setDefaultsOnInsert: true }
+  );
   await this.deleteOne();
   return deletedUser;
 };

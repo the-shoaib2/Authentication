@@ -50,8 +50,31 @@ const sendOtp = async (req, res) => {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
+        const isLocked = await VerificationService.checkLockStatus(user._id);
+        if (isLocked) {
+            return res.status(403).json({ 
+                message: 'Account is temporarily locked. Please try again later.', 
+                success: false,
+                isLocked: true
+            });
+        }
+
+        const cooldownPeriod = await VerificationService.getCooldownPeriod(user._id);
+
+        if (cooldownPeriod > 0) {
+            return res.status(429).json({ 
+                message: 'Too many attempts. Please try again later.', 
+                success: false, 
+                cooldownPeriod 
+            });
+        }
+
         const code = await VerificationService.generateVerificationCode(user._id);
-        res.status(200).json({ message: 'Verification code sent successfully', success: true, code });
+        await VerificationService.incrementAttempts(user._id);
+
+        // TODO: Send the code to the user's email
+
+        res.status(200).json({ message: 'Verification code sent successfully', success: true });
     } catch (err) {
         console.error('Send Verification code Error:', err);
         res.status(500).json({ message: 'Internal server error', success: false });
@@ -70,11 +93,18 @@ const verifyOtp = async (req, res) => {
 
         await VerificationService.validateVerificationCode(user._id, otp);
 
-         // Update user's isActive status
-         user.isActive = true;
-         await user.save();
+        // Reset attempts after successful verification
+        await VerificationService.resetAttempts(user._id);
+
+        // Update user's isActive status
+        user.isActive = true;
+        await user.save();
          
-        res.status(200).json({ message: 'Verification code verified successfully', success: true });
+        res.status(200).json({ 
+            message: 'Your account is now activated successfuly.', 
+            success: true,
+            isActive: true
+        });
     } catch (err) {
         console.error('Verify Verification code Error:', err);
         res.status(400).json({ message: err.message, success: false });
@@ -127,6 +157,5 @@ module.exports = {
     resetPassword,
     verifyEmail
 };
-
 
 

@@ -35,9 +35,35 @@ VerificationCodeSchema.pre('save', async function (next) {
     next();
 });
 
+const VerificationAttemptSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    attempts: { type: Number, default: 0 },
+    lastAttempt: { type: Date, default: Date.now },
+    cooldownEnd: { type: Date, default: null }
+});
+
+VerificationAttemptSchema.methods.incrementAttempt = function() {
+    this.attempts += 1;
+    this.lastAttempt = new Date();
+    if (this.attempts >= 3) {
+        this.cooldownEnd = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes cooldown
+    }
+    return this.save();
+};
+
+VerificationAttemptSchema.methods.resetAttempts = function() {
+    this.attempts = 0;
+    this.lastAttempt = null;
+    this.cooldownEnd = null;
+    return this.save();
+};
+
+const VerificationAttempt = mongoose.model('VerificationAttempt', VerificationAttemptSchema);
+
 module.exports = {
     VerificationCode: mongoose.model('VerificationCode', VerificationCodeSchema),
-    VerificationToken: mongoose.model('VerificationToken', VerificationTokenSchema)
+    VerificationToken: mongoose.model('VerificationToken', VerificationTokenSchema),
+    VerificationAttempt
 };
 
 

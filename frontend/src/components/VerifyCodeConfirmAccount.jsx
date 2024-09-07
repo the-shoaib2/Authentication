@@ -13,65 +13,50 @@ function VerifyCodeConfirmAccount() {
     const [isResendEnabled, setIsResendEnabled] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
     const [hasCodeBeenSent, setHasCodeBeenSent] = useState(false);
-    const { state } = useLocation(); // Get token from location state
+    const [isInCooldown, setIsInCooldown] = useState(false);
+    const [isLocked, setIsLocked] = useState(false);
+    const { state } = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!state?.token || !state?.email) {
-            handleError('Unauthorized access. Please log in.');
-            navigate('/login');
-        }
-    }, [state, navigate]);
+        const storedCodeSentStatus = localStorage.getItem('confirmAccountCodeSent');
+        const storedTimerStart = localStorage.getItem('confirmAccountTimerStart');
 
-    // Handle countdown timer
-    useEffect(() => {
-        if (timer > 0) {
-            const countdown = setInterval(() => {
-                setTimer((prev) => prev - 1);
-            }, 1000);
+        if (storedCodeSentStatus && storedTimerStart) {
+            const timeElapsed = Math.floor((Date.now() - parseInt(storedTimerStart, 10)) / 1000);
+            const remainingTime = Math.max(60 - timeElapsed, 0);
 
-            return () => clearInterval(countdown);
-        } else {
-            setIsResendEnabled(true);
-        }
-    }, [timer]);
+            setHasCodeBeenSent(true);
+            setTimer(remainingTime);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await fetch('http://localhost:8080/verification/verify-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: state.email, otp }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                handleSuccess(result.message);
-                
-                // Save token to localStorage if provided by backend
-                if (result.token) {
-                    localStorage.setItem('authToken', result.token);
-                }
-                
-                // Navigate to home
-                navigate('/home');
+            if (remainingTime > 0) {
+                startCountdown(remainingTime);
             } else {
-                handleError(result.message);
+                setIsResendEnabled(true);
             }
-        } catch (err) {
-            console.error('Verification error:', err);
-            handleError('Network error. Please check your connection and try again.');
         }
+
+        return () => clearLocalStorage();
+    }, []);
+
+    const startCountdown = (duration) => {
+        setTimer(duration);
+        setIsInCooldown(duration > 60);
+        const countdown = setInterval(() => {
+            setTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(countdown);
+                    setIsResendEnabled(true);
+                    setIsInCooldown(false);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
     const handleSendOtp = async () => {
         try {
-            setHasCodeBeenSent(true);
-            setIsResendEnabled(false);
-            setTimer(60);
-            
             const response = await fetch('http://localhost:8080/verification/verification-code', {
                 method: 'POST',
                 headers: { 
@@ -80,11 +65,23 @@ function VerifyCodeConfirmAccount() {
                 },
                 body: JSON.stringify({ email: state.email }),
             });
-    
+
             const result = await response.json();
-    
+
             if (response.ok) {
+                setHasCodeBeenSent(true);
+                setIsResendEnabled(false);
+                localStorage.setItem('confirmAccountCodeSent', 'true');
+                localStorage.setItem('confirmAccountTimerStart', Date.now().toString());
+                startCountdown(60);
                 handleSuccess(result.message);
+            } else if (response.status === 429) {
+                startCountdown(result.cooldownPeriod);
+                setIsInCooldown(true);
+                handleError(result.message);
+            } else if (result.isLocked) {
+                setIsLocked(true);
+                handleError(result.message);
             } else {
                 handleError(result.message);
             }
@@ -92,34 +89,50 @@ function VerifyCodeConfirmAccount() {
             handleError('Failed to send OTP. Please try again.');
         }
     };
-    
 
     const handleResendOtp = async () => {
+        await handleSendOtp();
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            setIsResendEnabled(false);
-            setTimer(60); // Reset timer when resending the code
-            
-            const response = await fetch('http://localhost:8080/verification/verification-code', {
+            const response = await fetch('http://localhost:8080/verification/verify-code', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${state.token}`,
                 },
-                body: JSON.stringify({ email: state.email }),
+                body: JSON.stringify({ email: state.email, otp }),
             });
-    
+
             const result = await response.json();
-    
+
             if (response.ok) {
                 handleSuccess(result.message);
+                clearLocalStorage();
+                navigate('/home');
             } else {
                 handleError(result.message);
             }
         } catch (err) {
-            handleError('Failed to resend OTP. Please try again.');
+            handleError('Network error. Please check your connection and try again.');
         }
     };
-    
+
+    const clearLocalStorage = () => {
+        localStorage.removeItem('confirmAccountCodeSent');
+        localStorage.removeItem('confirmAccountTimerStart');
+    };
+
+    if (isLocked) {
+        return (
+            <div className="otp-wrapper">
+                <h1 className="otp-title">Account Locked</h1>
+                <p>Your account has been temporarily locked due to too many verification attempts. Please try again after 72 hours.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="otp-wrapper">
@@ -128,18 +141,22 @@ function VerifyCodeConfirmAccount() {
             </div>
             <h1 className="otp-title">Confirm Email</h1>
             <div className="otp-timer">
-                {hasCodeBeenSent ? (
+                {isInCooldown ? (
+                    <p>Too many attempts. Please wait for {timer} seconds before trying again.</p>
+                ) : hasCodeBeenSent ? (
                     <p>We've sent a verification code to your registered email address.</p>
                 ) : (
                     <p>Click the button to send the verification code to your email.</p>
                 )}
-                <div className="timer">
-                    <p>Time Remaining: {timer} s</p>
-                </div>
+                {(hasCodeBeenSent || isInCooldown) && (
+                    <div className="timer">
+                        <p>Time Remaining: {timer} s</p>
+                    </div>
+                )}
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="otp-buttons">
-                    {!hasCodeBeenSent ? (
+                    {!hasCodeBeenSent && !isInCooldown ? (
                         <button
                             type="button"
                             className="otp-btn send"

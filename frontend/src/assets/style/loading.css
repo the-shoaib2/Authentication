@@ -22,8 +22,8 @@
 
 /* Loading spinner with modern look */
 .loading-spinner {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     padding: 5px;
     border-radius: 15px; 
     display: flex;

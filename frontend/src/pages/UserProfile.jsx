@@ -45,6 +45,30 @@ function UserProfile({ user, onClose }) {
     setTimeout(() => setShowLogoutModal(false), 300);
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/auth/delete/${user._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        handleSuccess(data.message);
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("loggedInUser");
+        setTimeout(() => navigate("/login"), 500);
+      } else {
+        handleError(data.message || "Failed to delete user. Please try again.");
+      }
+    } catch (err) {
+      handleError("Network error. Please check your connection and try again.");
+    }
+  };
+
   const settingsItems = [
     { title: "Account", icon: "👤" },
     { title: "Privacy", icon: "🔐" },
@@ -76,6 +100,9 @@ function UserProfile({ user, onClose }) {
       <div className="logout-container">
         <button className="logout-button" onClick={openLogoutModal}>
           Logout
+        </button>
+        <button className="delete-button" onClick={handleDeleteUser}>
+          Delete Account
         </button>
       </div>
 

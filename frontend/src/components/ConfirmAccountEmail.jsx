@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExpiryDate, onLogout }) {
     const [showPopup, setShowPopup] = useState(false);
     const [remainingDays, setRemainingDays] = useState(0);
+    const [remainingMinutes, setRemainingMinutes] = useState(0);
+    const [isExpired, setIsExpired] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,16 +26,25 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExp
                     });
                     const data = await response.json();
                     if (data.expired) {
+                        setIsExpired(true);
                         onLogout();
                         navigate('/login');
                     } else {
                         setRemainingDays(data.remainingDays);
+                        setRemainingMinutes(data.remainingMinutes);
+                        setIsExpired(false);
                     }
                 } catch (error) {
                     console.error('Error checking account status:', error);
                 }
             };
             checkAccountStatus();
+
+            // Set up an interval to check the status every minute
+            const intervalId = setInterval(checkAccountStatus, 60000);
+
+            // Clean up the interval on component unmount
+            return () => clearInterval(intervalId);
         }
     }, [accountExpiryDate, token, onLogout, navigate]);
 
@@ -45,20 +56,22 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExp
     };
 
     const getMessage = () => {
-        if (remainingDays > 0) {
-            return `Confirm your email within ${remainingDays} day${remainingDays > 1 ? 's' : ''}. Expires: ${new Date(accountExpiryDate).toLocaleDateString()}. Account will be auto-deleted after expiration.  Note: Account deletion unavailable after confirmation.`;
-        } else {
+        if (isExpired) {
             return "Your account has expired and will be deleted soon. Please contact support if you wish to reactivate it.";
+        } else if (remainingMinutes <= 5) {
+            return `Your account will expire in ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}. Please confirm your email immediately to avoid account deletion.`;
+        } else if (remainingDays > 0) {
+            return `Confirm your email within ${remainingDays} day${remainingDays !== 1 ? 's' : ''}. Expires: ${new Date(accountExpiryDate).toLocaleDateString()}. Account will be auto-deleted after expiration. Note: Account deletion unavailable after confirmation.`;
         }
     };
 
     return (
         <>
-            <div className="confirm-account-bar">
+            <div className={`confirm-account-bar ${isExpired || remainingMinutes <= 5 ? 'warning' : ''}`}>
                 <span className="confirm-account-message">
                     {getMessage()}
                 </span>
-                {remainingDays > 0 && (
+                {!isExpired && (
                     <Link 
                         to="/verify-email" 
                         className="confirm-email-button"
@@ -71,7 +84,7 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExp
                     </Link>
                 )}
             </div>
-            {showPopup && remainingDays > 0 && (
+            {showPopup && !isExpired && (
                 <div className="popup-overlay">
                     <div className="inactive-account-message-container">
                         <button className="close-popup-button" onClick={handleClose}>

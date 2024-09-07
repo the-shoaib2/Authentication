@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { handleError } from "../utils/ReactToastify";
 import { ToastContainer } from "react-toastify";
 import "../assets/style/ReactToastifyCustom.css";
 import "../assets/style/home.css";
 import "../assets/style/loading.css";
 import LoadingOverlay from "../components/LoadingOverlay";
-import ConfirmAccountPopup from "../components/ConfirmAccountPopup";
+import ConfirmAccountPopup from "../components/ConfirmAccountEmail";
 import HistorySidebar from "../components/HistorySidebar";
 import ServicesSection from "../components/ServicesSection";
 
@@ -19,6 +19,8 @@ function Home() {
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showHistorySidebar, setShowHistorySidebar] = useState(false);
   const navigate = useNavigate();
+  const [accountStatus, setAccountStatus] = useState(null);
+  const [showAccountStatus, setShowAccountStatus] = useState(false);
 
   const fetchLoggedInUser = useCallback(async () => {
     setLoading(true);
@@ -32,11 +34,7 @@ function Home() {
       const response = await fetch(url, headers);
       const result = await response.json();
       if (response.ok) {
-        setLoggedInUser({
-          ...result,
-          isActive: result.isActive,
-          accountExpiryDate: result.accountExpiryDate
-        });
+        setLoggedInUser(result);
       } else {
         handleError(
           result.message || "Failed to fetch user data. Please try again."
@@ -59,7 +57,7 @@ function Home() {
     if (!loggedInUser.isActive) {
       popupTimer = setTimeout(() => {
         setShowConfirmPopup(true);
-      }, 30 * 60 * 1000); // Show popup after 30 minutes
+      }, 30  * 1000); // Show popup after 30 minutes
     }
 
     return () => {
@@ -75,29 +73,28 @@ function Home() {
     setShowConfirmPopup(false);
   };
 
-  const handleLogout = useCallback(async () => {
-    try {
-      const response = await fetch("http://localhost:8080/auth/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          refreshToken: localStorage.getItem("refreshToken"),
-        }),
-      });
-      if (response.ok) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
-        navigate("/login");
-      } else {
-        handleError("Failed to log out. Please try again.");
+  useEffect(() => {
+    const checkAccountStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/users/check-account-status', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        const data = await response.json();
+        setAccountStatus(data);
+        setShowAccountStatus(true);
+      } catch (error) {
+        console.error('Error checking account status:', error);
+        setShowAccountStatus(false);
       }
-    } catch (err) {
-      handleError("Network error. Please check your connection and try again.");
-    }
-  }, [navigate]);
+    };
+
+    checkAccountStatus();
+    const intervalId = setInterval(checkAccountStatus, 60000); // Check every minute
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   if (loading) {
     return <LoadingOverlay loading={loading} fadeOut={false} />;
@@ -106,6 +103,11 @@ function Home() {
   return (
     <div className="home-container">
       <div className="background-overlay"></div>
+      {showAccountStatus && accountStatus && (
+        <div className="account-status-banner">
+          Account Status: {accountStatus.status}
+        </div>
+      )}
       <div className={`content-wrapper ${showProfile ? 'blur-background' : ''}`}>
         <div className="top-bar">
           <button 
@@ -126,8 +128,6 @@ function Home() {
           token={localStorage.getItem("token")}
           show={showConfirmPopup}
           onClose={handleClosePopup}
-          accountExpiryDate={loggedInUser.accountExpiryDate}
-          onLogout={handleLogout}
         />
 
         <div className={`main-container ${showProfile ? 'hide-services' : ''}`}>

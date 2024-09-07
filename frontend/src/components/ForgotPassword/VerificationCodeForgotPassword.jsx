@@ -5,12 +5,13 @@ import '../../assets/style/ReactToastifyCustom.css';
 import '../../assets/style/SentOtpForgotPassword.css';
 import OtpInput from '../../Services/OtpInput';
 
-function SentOtpForgotPassword() {
+function VerificationCodeForgotPassword() {
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState(0);
     const [isResendEnabled, setIsResendEnabled] = useState(false);
     const [isComplete, setIsComplete] = useState(false);
     const [hasCodeBeenSent, setHasCodeBeenSent] = useState(false);
+    const [isInCooldown, setIsInCooldown] = useState(false);
     const { state } = useLocation();
     const navigate = useNavigate();
 
@@ -36,11 +37,14 @@ function SentOtpForgotPassword() {
     }, []);
 
     const startCountdown = (duration) => {
+        setTimer(duration);
+        setIsInCooldown(duration > 60);
         const countdown = setInterval(() => {
             setTimer((prev) => {
                 if (prev <= 1) {
                     clearInterval(countdown);
                     setIsResendEnabled(true);
+                    setIsInCooldown(false);
                     return 0;
                 }
                 return prev - 1;
@@ -50,14 +54,6 @@ function SentOtpForgotPassword() {
 
     const handleSendOtp = async () => {
         try {
-            setHasCodeBeenSent(true);
-            setIsResendEnabled(false);
-            localStorage.setItem('codeSentStatus', 'true');
-            localStorage.setItem('timerStart', Date.now().toString());
-
-            setTimer(60);
-            startCountdown(60);
-
             const response = await fetch('http://localhost:8080/verification/verification-code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -67,7 +63,15 @@ function SentOtpForgotPassword() {
             const result = await response.json();
 
             if (response.ok) {
+                setHasCodeBeenSent(true);
+                setIsResendEnabled(false);
+                localStorage.setItem('codeSentStatus', 'true');
+                localStorage.setItem('timerStart', Date.now().toString());
+                startCountdown(60);
                 handleSuccess(result.message);
+            } else if (response.status === 429) {
+                startCountdown(result.cooldownPeriod);
+                handleError(result.message);
             } else {
                 handleError(result.message);
             }
@@ -77,28 +81,7 @@ function SentOtpForgotPassword() {
     };
 
     const handleResendOtp = async () => {
-        try {
-            setIsResendEnabled(false);
-            setTimer(60);
-            localStorage.setItem('timerStart', Date.now().toString());
-            startCountdown(60);
-
-            const response = await fetch('http://localhost:8080/verification/verification-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: state.email }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                handleSuccess(result.message);
-            } else {
-                handleError(result.message);
-            }
-        } catch (err) {
-            handleError('Failed to resend OTP. Please try again.');
-        }
+        await handleSendOtp();
     };
 
     const handleSubmit = async (event) => {
@@ -130,24 +113,28 @@ function SentOtpForgotPassword() {
     };
 
     return (
-<div className="otp-wrapper">
+        <div className="otp-wrapper">
             <div>
                 <img src='/images/app-icon.ico' alt='App Icon' className='app-icon' />
             </div>
             <h1 className="otp-title">Verification code</h1>
             <div className="otp-timer">
-                {hasCodeBeenSent ? (
+                {isInCooldown ? (
+                    <p>Too many attempts. Please wait for {timer} seconds before trying again.</p>
+                ) : hasCodeBeenSent ? (
                     <p>We've sent a verification code to your registered email address.</p>
                 ) : (
                     <p>Click the button to send the verification code to your email.</p>
                 )}
-                <div className="timer">
-                    <p>Time Remaining: {timer} s</p>
-                </div>
+                {(hasCodeBeenSent || isInCooldown) && (
+                    <div className="timer">
+                        <p>Time Remaining: {timer} s</p>
+                    </div>
+                )}
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="otp-buttons">
-                    {!hasCodeBeenSent ? (
+                    {!hasCodeBeenSent && !isInCooldown ? (
                         <button
                             type="button"
                             className="otp-btn send"
@@ -186,4 +173,4 @@ function SentOtpForgotPassword() {
     );
 }
 
-export default SentOtpForgotPassword;
+export default VerificationCodeForgotPassword;
