@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const UserModel = require("../Models/User");
 const DeletedUserModel = require("../Models/DeletedUser");
 const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./VerificationTokenController');
-
+const fuzzySearch = require('../SearchEngine/FuzzySearch');
 
 const signup = async (req, res) => {
     try {
@@ -48,7 +48,7 @@ const signup = async (req, res) => {
         console.log('New user saved:', newUser);
 
         // Create a verification token
-        const verificationToken = await generateVerificationToken(newUser);
+        // const verificationToken = await generateVerificationToken(newUser);
 
         // Generate tokens
         const tokens = await generateTokens(newUser);
@@ -107,8 +107,8 @@ const login = async (req, res) => {
         // Generate tokens
         const tokens = await generateTokens(user);
 
-        // Generate a verification token for the user (if required)
-        const verificationToken = await generateVerificationToken(user);
+        // // Generate a verification token for the user (if required)
+        // const verificationToken = await generateVerificationToken(user);
 
         res.status(200).json({
             message: "Login Success",
@@ -179,10 +179,85 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const searchDeletedAccounts = async (req, res) => {
+    try {
+        const { searchTerm } = req.body;
+
+        const deletedUsers = await DeletedUserModel.find({});
+
+        const searchResults = fuzzySearch(searchTerm, deletedUsers, ['first_name', 'last_name', 'email', 'username', 'phone']);
+
+        if (searchResults.length === 0) {
+            return res.status(404).json({ message: 'No matching deleted accounts found', success: false });
+        }
+
+        const matchedAccounts = searchResults.map(result => ({
+            id: result.obj._id,
+            name: `${result.obj.first_name} ${result.obj.last_name}`,
+            email: result.obj.email,
+            username: result.obj.username,
+            phone: result.obj.phone
+        }));
+
+        res.status(200).json({
+            message: 'Matching deleted accounts found',
+            success: true,
+            accounts: matchedAccounts
+        });
+    } catch (error) {
+        console.error('Error searching deleted accounts:', error);
+        res.status(500).json({ message: 'Internal server error', success: false });
+    }
+};
+
+const recoverAccount = async (req, res) => {
+    try {
+        const { id } = req.body;
+
+        const deletedUser = await DeletedUserModel.findById(id);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'No deleted account found with this ID', success: false });
+        }
+
+        const recoveredUser = new UserModel({
+            first_name: deletedUser.first_name,
+            last_name: deletedUser.last_name,
+            email: deletedUser.email,
+            phone: deletedUser.phone,
+            password: deletedUser.password,
+            dob: deletedUser.dob,
+            gender: deletedUser.gender,
+            username: deletedUser.username,
+            accountExpiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) // 15 days from now
+        });
+
+        await recoveredUser.save();
+
+        await DeletedUserModel.findByIdAndDelete(deletedUser._id);
+
+        const tokens = await generateTokens(recoveredUser);
+
+        res.status(200).json({
+            message: 'Account recovered successfully',
+            success: true,
+            name: `${recoveredUser.first_name} ${recoveredUser.last_name}`,
+            email: recoveredUser.email,
+            username: recoveredUser.username,
+            ...tokens
+        });
+    } catch (error) {
+        console.error('Error recovering account:', error);
+        res.status(500).json({ message: 'Internal server error', success: false });
+    }
+};
+
 module.exports = {
     signup,
     login,
     logout,
     refreshAccessToken,
-    deleteUser
+    deleteUser,
+    searchDeletedAccounts,
+    recoverAccount
 };
