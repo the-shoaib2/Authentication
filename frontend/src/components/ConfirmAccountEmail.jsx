@@ -88,7 +88,7 @@ function ConfirmAccountPopup({ isActive, email, token, show, onClose, accountExp
                 <div className="popup-overlay">
                     <div className="inactive-account-message-container">
                         <button className="close-popup-button" onClick={handleClose}>
-                            &times;
+                            {/* &times; */}
                         </button>
                         <h1>Your account is not confirmed yet.</h1>
                         <p>{getMessage()}</p>
