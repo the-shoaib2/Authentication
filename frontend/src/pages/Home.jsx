@@ -9,6 +9,7 @@ import LoadingOverlay from "../components/LoadingOverlay";
 import ConfirmAccountPopup from "../components/ConfirmAccountEmail";
 import HistorySidebar from "../components/HistorySidebar";
 import ServicesSection from "../components/ServicesSection";
+import PromptInput from '../Services/PromptInput';
 
 const LazyUserProfile = lazy(() => import('./UserProfile'));
 const ProfileLoadingSpinner = () => <div className="loading-spinner"></div>;
@@ -92,11 +93,10 @@ function Home() {
     };
 
     checkAccountStatus();
-    const intervalId = setInterval(checkAccountStatus, 60000); // Check every minute
+    const intervalId = setInterval(checkAccountStatus, 100); // Check every 1 mili
 
     return () => clearInterval(intervalId);
   }, []);
-
   if (loading) {
     return <LoadingOverlay loading={loading} fadeOut={false} />;
   }
@@ -119,7 +119,15 @@ function Home() {
             <img src="/images/icon/history-icon.png" alt="History" />
           </button>
           <div className="user-icon-image" onClick={toggleProfile}>
-            <img src="/images/avater/avater.png" className="profilePicture" alt="Profile" />
+            <img src="/images/avater/avater.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
+            {showProfile && (
+              <div className="close-profile-button fade-in" onClick={(e) => {
+                e.stopPropagation();
+                toggleProfile();
+              }}>
+                
+              </div>
+            )}
           </div>
         </div>
         
@@ -149,6 +157,7 @@ function Home() {
         show={showHistorySidebar}
         onClose={() => setShowHistorySidebar(false)}
       />
+      <PromptInput />
     </div>
   );
 }

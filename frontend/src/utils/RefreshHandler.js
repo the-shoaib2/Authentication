@@ -24,6 +24,26 @@ export async function refreshToken() {
   }
 }
 
+export async function checkAuthentication() {
+  const token = localStorage.getItem('token');
+  if (!token) return false;
+  
+  try {
+    const response = await fetch('http://localhost:8080/auth/verify', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      return await refreshToken();
+    }
+    return true;
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    return false;
+  }
+}
+
 function RefreshHandler({ setIsAuthenticated }) {
     const location = useLocation();
     const navigate = useNavigate();
