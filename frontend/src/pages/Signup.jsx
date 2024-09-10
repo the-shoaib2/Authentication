@@ -7,11 +7,11 @@ import {
   handleError,
   ToastContainer,
 } from "../utils/ReactToastify";
-import "../assets/style/ReactToastifyCustom.css";
-import "../assets/style/animations.css";
-import "../assets/style/loading.css";
+import "../assets/style/styleutils/ReactToastifyCustom.css";
+import "../assets/style/styleutils/animations.css";
+import "../assets/style/styleutils/loading.css";
 import LoadingOverlay from '../components/LoadingOverlay';
-import "../assets/style/Signup.css";
+import "../assets/style/Authentication/Signup.css";
 import { refreshToken } from '../utils/RefreshHandler';
 
 function Signup() {

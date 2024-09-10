@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import '../../assets/style/Services/ChatService.css';
+import '../../assets/style/ServicesStyle/ChatService.css';
 
 const ChatService = ({ onClose }) => {
   const [message, setMessage] = useState('');

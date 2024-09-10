@@ -3,10 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../utils/ReactToastify';
-import '../assets/style/ReactToastifyCustom.css';
-import '../assets/style/loading.css';
-import '../assets/style/animations.css';
-import '../assets/style/Login.css';
+import '../assets/style/styleutils/ReactToastifyCustom.css';
+import '../assets/style/styleutils/loading.css';
+import '../assets/style/styleutils/animations.css';
+import '../assets/style/Authentication/Login.css';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { refreshToken, checkAuthentication } from '../utils/RefreshHandler';
 import('../pages/UserProfile').then(() => console.log('UserProfile preloaded'));

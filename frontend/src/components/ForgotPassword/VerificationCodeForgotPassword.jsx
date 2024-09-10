@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
-import '../../assets/style/ReactToastifyCustom.css';
-import '../../assets/style/SentOtpForgotPassword.css';
-import OtpInput from '../../Services/OtpInput';
+import '../../assets/style/styleutils/ReactToastifyCustom.css';
+import '../../assets/style/Authentication/SentOtpForgotPassword.css';
+import OtpInput from '../../Extension/OtpInput';
 
 function VerificationCodeForgotPassword() {
     const [otp, setOtp] = useState('');

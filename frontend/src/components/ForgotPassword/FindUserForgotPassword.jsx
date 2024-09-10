@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../../utils/ReactToastify';
-import '../../assets/style/ReactToastifyCustom.css';
-import '../../assets/style/animations.css';
-import '../../assets/style/FindUserForgotPassword.css';
+import '../../assets/style/styleutils/ReactToastifyCustom.css';
+import '../../assets/style/styleutils/animations.css';
+import '../../assets/style/Authentication/FindUserForgotPassword.css';
 
 function FindUserForgotPassword() {
     const [emailOrUsername, setEmailOrUsername] = useState('');

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { handleError, handleSuccess } from "../utils/ReactToastify";
-import '../assets/style/ReactToastifyCustom.css';
-import "../assets/style/Profile.css";
+import '../assets/style/styleutils/ReactToastifyCustom.css';
+import "../assets/style/Authentication/Profile.css";
 import { useNavigate } from "react-router-dom";
 
 function UserProfile({ user, onClose }) {

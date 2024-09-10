@@ -1,6 +1,6 @@
 // frontend/src/components/LoadingOverlay.jsx
 import React from 'react';
-import '../assets/style/loading.css';
+import '../assets/style/styleutils/loading.css';
 
 function LoadingOverlay({ loading, fadeOut }) {
     if (!loading) return null;

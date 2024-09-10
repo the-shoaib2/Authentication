@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { handleError } from "../utils/ReactToastify";
 import { ToastContainer } from "react-toastify";
-import "../assets/style/ReactToastifyCustom.css";
-import "../assets/style/home.css";
-import "../assets/style/loading.css";
+import "../assets/style/styleutils/ReactToastifyCustom.css";
+import "../assets/style/Authentication/Home.css";
+import "../assets/style/styleutils/loading.css";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ConfirmAccountPopup from "../components/ConfirmAccountEmail";
 import HistorySidebar from "../components/HistorySidebar";
 import ServicesSection from "../components/ServicesSection";
-import PromptInput from '../Services/PromptInput';
+import PromptInput from '../Extension/PromptInput';
 import ChatService from '../components/Services/ChatServices';
 
 const LazyUserProfile = lazy(() => import('./UserProfile'));
@@ -118,7 +118,9 @@ function Home() {
           {activeService === 'Chat' ? (
             <ChatService onClose={() => setActiveService(null)} />
           ) : (
-            <ServicesSection userName={loggedInUser.name} onServiceClick={handleServiceClick} />
+            <div className="fade-in-bottom">
+              <ServicesSection userName={loggedInUser.name} onServiceClick={handleServiceClick} />
+            </div>
           )}
         </div>
 

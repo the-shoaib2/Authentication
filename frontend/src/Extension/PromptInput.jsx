@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "../assets/style/PromptInput.css";
+import "../assets/style/ExtensionStyle/PromptInput.css";
 
 const MAX_CHARS = 5000;
 

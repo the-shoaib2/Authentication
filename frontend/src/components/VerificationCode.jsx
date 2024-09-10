@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { handleSuccess, handleError, ToastContainer } from '../utils/ReactToastify';
 import '../asstes/style/ReactToastifyCustom.css';
-import '../asstes/style/SentOtpForgotPassword.css';
-import OtpInput from '../Services/OtpInput';
+import '../asstes/style/Authentication/SentOtpForgotPassword.css';
+import OtpInput from '../Extension/OtpInput';
 
 function SentOtpForgotPassword() {
     const [otp, setOtp] = useState('');
