@@ -234,7 +234,7 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 20px;
+    padding: 10px 20px;
     position: relative;
     z-index: 1001; /* Ensure it's above the confirm-account-bar */
 }
@@ -296,7 +296,7 @@
 
 .centered-profile {
     position: fixed;
-    top: 50%;
+    top: 46%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;

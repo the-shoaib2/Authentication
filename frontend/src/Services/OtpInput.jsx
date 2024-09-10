@@ -103,9 +103,10 @@ const OtpInput = ({
     setOtp(newOtp);
     if (pasteData.length === length) {
       onOtpSubmit(newOtp.join(""));
+      setTimeout(() => moveCursorToEnd(inputRefs.current[length - 1]), 0);
     } else {
-      const nextIndex = pasteData.length < length ? pasteData.length : length - 1;
-      inputRefs.current[nextIndex].focus();
+      const nextIndex = Math.min(pasteData.length, length - 1);
+      setTimeout(() => moveCursorToEnd(inputRefs.current[nextIndex]), 0);
     }
   };
 

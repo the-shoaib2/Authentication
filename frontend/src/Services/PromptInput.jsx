@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../assets/style/PromptInput.css";
 
-const MAX_CHARS = 1000;
+const MAX_CHARS = 5000;
 
 const PromptInput = () => {
   const [message, setMessage] = useState("");
@@ -42,7 +42,7 @@ const PromptInput = () => {
         <div className="document-btn-wrapper">
           <button
             className="document-btn"
-            id="add-document-btn"
+            id="add-document"
             onClick={toggleOptions}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#5E5CE6" viewBox="0 0 16 16">

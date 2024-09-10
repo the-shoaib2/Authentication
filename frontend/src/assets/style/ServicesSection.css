@@ -1,0 +1,122 @@
+.services-section {
+    /* height: 500px; */
+    /* background: #f8f8f8; */
+    /* border-radius: 30px; */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* transition: transform 0.1s ease-out; */
+    /* will-change: transform; */
+    /* user-select: none; */
+    /* transform-origin: center; */
+    /* transition: transform 0.3s ease; */
+}
+
+.user-name {
+    font-size: 24px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.top-services-main-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    max-width: 850px; 
+    margin: 0 auto;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.top-services-container {
+    flex: 0 0 calc(14.28% - 10px); 
+    max-width: 100px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: #f8f8f8;
+    transition: all 0.3s ease;
+    padding: 12px 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-services-container:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+}
+
+.services-level {
+    font-size: 12px;
+    text-align: center;
+    font-weight: 500;
+    color: #333;
+    margin-top: 6px;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.service-icon {
+    width: 28px;
+    height: 28px;
+    fill: #5E5CE6; /* Purple color */
+    margin-bottom: 6px;
+    transition: fill 0.3s ease;
+}
+
+.top-services-container:hover .service-icon {
+    fill: #4a49b7; /* Darker purple on hover */
+}
+
+.services-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.services-scroll-container::-webkit-scrollbar {
+    width: 8px;
+    /* display: none; */
+}
+
+.services-scroll-container::-webkit-scrollbar-track {
+    background: #f8f8f8;
+}
+
+.services-scroll-container::-webkit-scrollbar-thumb {
+    background: #dfdfdf;
+    border-radius: 4px;
+}
+
+.services-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #bdbdbd;
+}
+
+.services-scroll-container:active {
+    cursor: grabbing;
+}
+
+.services-section:active {
+    cursor: grabbing;
+}
+
+.services-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
