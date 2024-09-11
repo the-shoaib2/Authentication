@@ -1,3 +1,5 @@
+
+
 .prompt-container {
     font-family: 'Poppins', sans-serif;
     position: fixed;
@@ -13,9 +15,11 @@
 .prompt-input-wrapper {
     display: flex;
     align-items: flex-end;
+    /* margin-bottom: 2px; */
     background-color: #fcfcfc;
     border-radius: 25px;
     padding: 2px 5px; 
+    margin: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
     min-width: 280px;
     transition: box-shadow 0.3s ease;
@@ -59,6 +63,7 @@
     font-size: 14px; /* Reduced font size */
     border-radius: 8px; /* Reduced radius */
     padding: 2px 5px; /* Adjusted padding */
+    margin: 5px;
     outline: none;
     border: none;
     resize: none;
@@ -101,4 +106,3 @@
     color: #8e8ea0;
     margin-top: 3px;
 }
-

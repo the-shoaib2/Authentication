@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import "../assets/style/ExtensionStyle/PromptInput.css";
 
@@ -68,7 +69,7 @@ const PromptInput = () => {
           ref={textareaRef}
           id="message-input"
           className="message-input"
-          placeholder="Send a message..."
+          placeholder="Enter prompt.."
           value={message}
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}

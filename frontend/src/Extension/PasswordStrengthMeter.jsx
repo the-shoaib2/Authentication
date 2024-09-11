@@ -1,5 +1,5 @@
 import { Check, X } from "lucide-react";
-import '../assets/style/Authentication/PasswordStrengthMeter.css';
+import '../assets/style/ExtensionStyle/PasswordStrengthMeter.css';
 
 const PasswordCriteria = ({ password }) => {
 	const criteria = [
