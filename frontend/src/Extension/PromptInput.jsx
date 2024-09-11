@@ -38,7 +38,7 @@ const PromptInput = () => {
 
   return (
     <div className={`prompt-container ${isFocused ? "focused" : ""}`}>
-      <div className="input-wrapper">
+      <div className="prompt-input-wrapper">
         <div className="document-btn-wrapper">
           <button
             className="document-btn"
@@ -82,8 +82,8 @@ const PromptInput = () => {
         />
 
         <button
-          className={`send-btn ${!message.trim() ? 'deactivated' : ''}`}
-          id="send-btn"
+          className={`generate-send-btn ${!message.trim() ? 'deactivated' : ''}`}
+          id="generate-send-btn"
           title={message.trim() ? "Send Message" : "Generate"}
           onClick={handleSendMessage}
           disabled={!message.trim()}

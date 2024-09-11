@@ -1,6 +1,6 @@
 // frontend/src/pages/Signup.jsx
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   handleSuccess,
@@ -8,7 +8,7 @@ import {
   ToastContainer,
 } from "../utils/ReactToastify";
 import "../assets/style/styleutils/ReactToastifyCustom.css";
-import "../assets/style/styleutils/animations.css";
+import '../assets/style/styleutils/animations.css';
 import "../assets/style/styleutils/loading.css";
 import LoadingOverlay from '../components/LoadingOverlay';
 import "../assets/style/Authentication/Signup.css";
@@ -30,16 +30,7 @@ function Signup() {
     gender: "",
   });
   const [loading, setLoading] = useState(false);
-  const [fadeIn, setFadeIn] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setFadeIn(false);
-    }, 500);
-    return () => clearTimeout(timeoutId);
-  }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -58,63 +49,61 @@ function Signup() {
     }
 
     setLoading(true);
-    setFadeOut(false);
 
     setTimeout(async () => {
-      setFadeOut(true);
-      setTimeout(async () => {
-        try {
-          const response = await fetch("http://localhost:8080/auth/signup", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              firstName: formData.firstName,
-              lastName: formData.lastName,
-              email: formData.email,
-              password: formData.password,
-              confirmPassword: formData.confirmPassword,
-              phone: formData.phone,
-              dob: formData.dob,
-              gender: formData.gender,
-            }),
-          });
+      try {
+        const response = await fetch("http://localhost:8080/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            password: formData.password,
+            confirmPassword: formData.confirmPassword,
+            phone: formData.phone,
+            dob: formData.dob,
+            gender: formData.gender,
+          }),
+        });
 
-          const result = await response.json();
-          if (response.ok) {
-            handleSuccess("Signup successful! Please verify your email.");
-            localStorage.setItem('token', result.accessToken);
-            localStorage.setItem('refreshToken', result.refreshToken);
-            await refreshToken(); // Refresh the token immediately after signup
-            setTimeout(() => navigate('/verify-email', { 
-              state: { 
-                token: result.verificationToken,
-                email: formData.email 
-              } 
-            }), 500);
+        const result = await response.json();
+        if (response.ok) {
+          handleSuccess("Signup successful! Please verify your email.");
+          localStorage.setItem('token', result.accessToken);
+          localStorage.setItem('refreshToken', result.refreshToken);
+          await refreshToken(); // Refresh the token immediately after signup
+          setTimeout(() => navigate('/verify-email', { 
+            state: { 
+              token: result.verificationToken,
+              email: formData.email 
+            } 
+          }), 500);
+        } else {
+          if (result.errors) {
+            const errorMessages = result.errors
+              .map((err) => `${err.field}: ${err.message}`)
+              .join(", ");
+            handleError(errorMessages);
           } else {
-            if (result.errors) {
-              const errorMessages = result.errors
-                .map((err) => `${err.field}: ${err.message}`)
-                .join(", ");
-              handleError(errorMessages);
-            } else {
-              handleError(result.message);
-            }
+            handleError(result.message);
           }
-        } catch (err) {
-          handleError("Network error. Please check your connection and try again.");
-        } finally {
-          setLoading(false);
         }
-      }, 250);
+      } catch (err) {
+        handleError("Network error. Please check your connection and try again.");
+      } finally {
+        setLoading(false);
+      }
     }, 1000);
   };
 
   return (
-    <div className={`signup-page__container fade-in ${fadeIn ? 'fade-in-bottom' : ''}`}>
-      <img src="/images/icon/app-icon.png" alt="App Icon" className="signup-page__app-icon" />
+    <div className="signup-page__container fade-in">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="#5E5CE6" className="bi bi-stars signup-page__app-icon" viewBox="0 0 16 16">
+        <path d="M7.657 6.247c.11-.33.576-.33.686 0l.645 1.937a2.89 2.89 0 0 0 1.829 1.828l1.936.645c.33.11.33.576 0 .686l-1.937.645a2.89 2.89 0 0 0-1.828 1.829l-.645 1.936a.361.361 0 0 1-.686 0l-.645-1.937a2.89 2.89 0 0 0-1.828-1.828l-1.937-.645a.361.361 0 0 1 0-.686l1.937-.645a2.89 2.89 0 0 0 1.828-1.828zM3.794 1.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387A1.73 1.73 0 0 0 4.593 5.69l-.387 1.162a.217.217 0 0 1-.412 0L3.407 5.69A1.73 1.73 0 0 0 2.31 4.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387A1.73 1.73 0 0 0 3.407 2.31zM10.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732L9.1 2.137a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
+      </svg>
       <h1 className="signup-page__title">Sign up</h1>
       <form onSubmit={handleSubmit} className="signup-page__form">
         <div className="signup-page__form-group-container">
@@ -323,7 +312,7 @@ function Signup() {
         </span>
       </div>
       <ToastContainer />
-      <LoadingOverlay loading={loading} fadeOut={fadeOut} />
+      <LoadingOverlay loading={loading} />
     </div>
   );
 }

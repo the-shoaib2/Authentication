@@ -10,19 +10,19 @@
     z-index: 1000;
 }
 
-.input-wrapper {
+.prompt-input-wrapper {
     display: flex;
     align-items: flex-end;
     background-color: #fcfcfc;
-    border-radius: 25px; /* Reduced radius */
-    padding: 8px 5px; /* Reduced padding */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+    border-radius: 25px;
+    padding: 2px 5px; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
     min-width: 280px;
     transition: box-shadow 0.3s ease;
 }
 
 .document-btn,
-.send-btn {
+.generate-send-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -35,11 +35,21 @@
 }
 
 .document-btn svg,
-.send-btn svg {
+.generate-send-btn svg {
+    fill: #5E5CE6;
     width: 24px;
     height: 24px;
-    margin: 5px 0;
+    margin: 10px 0;
     transition: fill 0.3s ease;
+}
+
+.generate-send-btn.deactivated {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.generate-send-btn.deactivated svg {
+    fill: #9494b3; /* Light gray for deactivated state */
 }
 
 .message-input {
@@ -92,19 +102,3 @@
     margin-top: 3px;
 }
 
-.send-btn.deactivated {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.send-btn svg {
-    fill: #5E5CE6; /* Purple color */
-    width: 24px;
-    height: 24px;
-    margin: 5px 0;
-    transition: fill 0.3s ease;
-}
-
-.send-btn.deactivated svg {
-    fill: #9494b3; /* Light gray for deactivated state */
-}

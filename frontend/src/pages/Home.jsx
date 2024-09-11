@@ -65,9 +65,9 @@ function Home() {
     setShowProfile(prev => !prev);
   }, []);
 
-  const handleClosePopup = () => {
-    setShowConfirmPopup(false);
-  };
+  // const handleClosePopup = () => {
+    // setShowConfirmPopup(false);
+  // };
 
   const handleServiceClick = (serviceName) => {
     setActiveService(serviceName);
@@ -94,7 +94,7 @@ function Home() {
             </svg>
           </button>
           <div className="user-icon-image" onClick={toggleProfile}>
-            <img src="/images/avater/avater.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
+            <img src="/images/avatar/avater.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
             {showProfile && (
               <div className="close-profile-button fade-in" onClick={(e) => {
                 e.stopPropagation();
@@ -137,7 +137,7 @@ function Home() {
         show={showHistorySidebar}
         onClose={() => setShowHistorySidebar(false)}
       />
-      {!activeService && <PromptInput />}
+      {!activeService && <PromptInput className="fade-in" />}
       <ToastContainer />
     </div>
   );
