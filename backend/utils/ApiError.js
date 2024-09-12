@@ -3,7 +3,7 @@
 class ApiError extends Error {
     constructor(
         statusCode,
-        message = "Something went wrong",
+        message = process.env.DEFAULT_ERROR_MESSAGE || "Something went wrong",
         errors = [],
         stack = ""
     ) {
@@ -19,7 +19,7 @@ class ApiError extends Error {
         }
     }
 
-    static badRequest(message = "Bad Request", errors = []) {
+    static badRequest(message = process.env.BAD_REQUEST_MESSAGE || "Bad Request", errors = []) {
         return new ApiError(400, message, errors);
     }
 
