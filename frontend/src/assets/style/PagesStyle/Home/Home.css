@@ -19,7 +19,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    /* background-image: url('../../../public/images/background.gif'); */
+    /* background-image: url('./background.gif'); */
     background-size: cover;
     background-position: center;
     z-index: -1;

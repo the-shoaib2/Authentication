@@ -1,6 +1,6 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
-const VerificationService = require('../Services/VerificationService');
+const VerificationService = require('../Helpers/VerificationHelpers');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');

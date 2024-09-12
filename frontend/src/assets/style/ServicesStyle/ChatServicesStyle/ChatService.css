@@ -43,7 +43,7 @@
 }
 
 .chat-list-item {
-  padding: 6px;
+  padding: 2px 5px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   border-bottom: 1px solid #e5e5ea;
@@ -119,11 +119,13 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  position: relative; /* Add this */
 }
 
 .massage-box-chat-header {
   display: flex;
-  background: #e5e5ea;
+  background: #f0f0f0;
+  backdrop-filter: blur(10px);
   justify-content: space-between;
   padding: 4px 24px 4px 15px;
   align-items: center;
@@ -151,7 +153,7 @@
 
 .call-buttons-container {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 
@@ -202,6 +204,7 @@
   padding: 15px;
   overflow-y: auto;
   background-color: #ffffff;
+  padding-bottom: 70px; /* Adjust this value based on the height of your input container */
 }
 
 .message-group {
@@ -326,22 +329,30 @@
 .call-buttons-container{
   background: transparent;
 }
+.user-status{
+  display: flex;
+  align-items: flex-end;
 
+}
 .active-status {
   width: 10px;
   height: 10px;
   background-color: #34C759;
   border-radius: 50%;
-  position: absolute;
+  /* position: absolute; */
   bottom: 0;
   right: 0;
   border: 2px solid #ffffff;
+  margin: 0px 0px 2px 0px;
 }
 
 .active-now {
   font-size: 12px;
   color: #34C759;
+  margin: 0px 4px 1px 0px;
 }
+
+
 
 .message-status {
   font-size: 12px;
@@ -368,4 +379,72 @@
 .seen-text {
   font-size: 12px;
   color: #5E5CE6;
+}
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+.welcome-icon {
+  margin-bottom: 20px;
+}
+
+.welcome-title {
+  font-size: 20px;
+  color: #5E5CE6;
+  margin-bottom: 16px;
+}
+
+.welcome-message {
+  font-size: 16px;
+  color: #333;
+  max-width: 400px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.encryption-notice {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.encryption-notice svg {
+  margin-right: 8px;
+}
+
+.icon-btn-user-info-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn-user-info-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #5E5CE6;
+}
+
+.icon-btn-user-info-btn:hover svg {
+  fill: #4a49b7;
+}
+
+.chat-input-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 5px 20px;
+  background-color: #f0f0f0;
 }

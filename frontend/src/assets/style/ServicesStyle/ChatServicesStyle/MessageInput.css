@@ -1,0 +1,155 @@
+.mi-container {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+}
+
+.mi-input-container-with-buttons {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 25px;
+    padding: 2px 5px;
+    transition: all 0.3s ease;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mi-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    flex-grow: 1;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 600px;
+    background-color: #fcfcfc;
+    border-radius: 25px;
+}
+
+.mi-focused .mi-input-wrapper:not(.mi-empty) {
+    flex-grow: 1;
+    max-width: 700px;
+}
+
+/* Hide other buttons when focused and not empty */
+.mi-focused .mi-input-wrapper:not(.mi-empty) ~ .mi-document-btn,
+.mi-focused .mi-input-wrapper:not(.mi-empty) ~ .mi-camera-btn,
+.mi-focused .mi-input-wrapper:not(.mi-empty) ~ .mi-mic-btn {
+    width: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mi-focused .mi-input-wrapper:not(.mi-empty) ~ .mi-generate-send-btn {
+    margin-left: auto;
+}
+
+.mi-document-btn,
+.mi-camera-btn,
+.mi-mic-btn,
+.mi-generate-send-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    opacity: 0.9; /* Add this line to make buttons slightly transparent */
+}
+
+.mi-document-btn:hover,
+.mi-camera-btn:hover,
+.mi-mic-btn:hover,
+.mi-generate-send-btn:hover {
+    opacity: 1; /* Add this block to make buttons fully opaque on hover */
+}
+
+.mi-document-btn svg,
+.mi-camera-btn svg,
+.mi-mic-btn svg,
+.mi-generate-send-btn svg {
+    fill: #5E5CE6;
+    width: 20px;
+    height: 20px;
+    transition: fill 0.3s ease;
+}
+
+.mi-generate-send-btn.mi-deactivated {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.mi-generate-send-btn.mi-deactivated svg {
+    fill: #9494b3;
+}
+
+.mi-message-input {
+    font-family: 'Poppins', sans-serif;
+    flex-grow: 1;
+    background: transparent;
+    font-size: 14px;
+    border-radius: 8px;
+    padding: 8px 15px;
+    margin: 5px;
+    outline: none;
+    border: none;
+    resize: none;
+    overflow-y: auto;
+    min-height: 24px;
+    max-height: 150px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+/* Hide other buttons when focused */
+.mi-focused .mi-document-btn,
+.mi-focused .mi-camera-btn,
+.mi-focused .mi-mic-btn {
+    width: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mi-focused .mi-generate-send-btn {
+    margin-left: auto;
+}
+
+/* Webkit browsers like Chrome, Safari */
+.mi-message-input::-webkit-scrollbar {
+    width: 8px;
+}
+
+.mi-message-input::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+    margin: 2px;
+}
+
+.mi-message-input::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 2px solid #fcfcfc;
+    background-clip: padding-box;
+}
+
+.mi-message-input::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.mi-message-input::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.mi-char-count {
+    text-align: right;
+    font-size: 11px;
+    color: #8e8ea0;
+    margin-top: 3px;
+}
