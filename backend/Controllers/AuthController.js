@@ -7,6 +7,10 @@ const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 
+// Add these lines at the top of the file
+const ACCOUNT_EXPIRY_DAYS = parseInt(process.env.ACCOUNT_EXPIRY_DAYS);
+const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
+
 const signup = asyncHandler(async (req, res) => {
     try {
         const { firstName, lastName, email, password, phone, dob, gender } = req.body;
@@ -32,7 +36,7 @@ const signup = asyncHandler(async (req, res) => {
         }
 
         // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
         console.log('Generated hashed password:', hashedPassword);
 
         // Create new user
@@ -44,7 +48,7 @@ const signup = asyncHandler(async (req, res) => {
             password: hashedPassword,
             dob,
             gender,
-            accountExpiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) // 15 days from now
+            accountExpiryDate: new Date(Date.now() + ACCOUNT_EXPIRY_DAYS * 24 * 60 * 60 * 1000) // 15 days from now
         });
 
         await newUser.save();
@@ -229,7 +233,7 @@ const recoverAccount = asyncHandler(async (req, res) => {
             dob: deletedUser.dob,
             gender: deletedUser.gender,
             username: deletedUser.username,
-            accountExpiryDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000) // 15 days from now
+            accountExpiryDate: new Date(Date.now() + ACCOUNT_EXPIRY_DAYS * 24 * 60 * 60 * 1000) // 15 days from now
         });
 
         await recoveredUser.save();

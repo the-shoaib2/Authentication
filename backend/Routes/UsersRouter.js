@@ -1,11 +1,13 @@
-
 // backend/Routes/UsersRouter.js
 // Loged in User 
 const ensureAuthenticated = require('../Middlewares/Auth');
 const UserModel = require('../Models/User');
 const router = require('express').Router();
 
-router.get('/me', ensureAuthenticated, async (req, res) => {
+// Make sure process.env.ROUTER_GET_ME is defined and is a string
+const GET_ME_ROUTE = process.env.ROUTER_GET_ME;
+
+router.get(GET_ME_ROUTE, ensureAuthenticated, async (req, res) => {
     try {
         const user = await UserModel.findById(req.user._id, { password: 0 }); // Exclude password field
         if (!user) {

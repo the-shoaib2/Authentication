@@ -2,6 +2,10 @@ const { VerificationAttempt, VerificationCode } = require('../Models/Verificatio
 const User = require('../Models/User');
 const ApiError = require('../utils/ApiError');
 
+const MAX_ATTEMPTS = parseInt(process.env.MAX_VERIFICATION_ATTEMPTS) || 5;
+const COOLDOWN_DURATION = parseInt(process.env.VERIFICATION_COOLDOWN_PERIOD) * 60 * 1000 || 15 * 60 * 1000; // Default to 15 minutes
+const LOCK_DURATION = parseInt(process.env.ACCOUNT_LOCK_DURATION) * 60 * 60 * 1000 || 72 * 60 * 60 * 1000; // Default to 72 hours
+
 const getVerificationAttempts = async (userId) => {
     let attempt = await VerificationAttempt.findOne({ userId });
     if (!attempt) {
@@ -10,10 +14,6 @@ const getVerificationAttempts = async (userId) => {
     }
     return attempt;
 };
-
-const MAX_ATTEMPTS = 3;
-const COOLDOWN_DURATION = 5 * 60 * 1000; // 5 minutes
-const LOCK_DURATION = 72 * 60 * 60 * 1000; // 72 hours
 
 const incrementAttempts = async (userId) => {
     const attempt = await getVerificationAttempts(userId);
@@ -65,8 +65,9 @@ const getCooldownPeriod = async (userId) => {
 };
 
 const generateVerificationCode = async (userId) => {
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() +  60 * 1000); 
+    const codeLength = parseInt(process.env.VERIFICATION_CODE_LENGTH) || 6;
+    const code = Math.floor(10 ** (codeLength - 1) + Math.random() * 9 * 10 ** (codeLength - 1)).toString();
+    const expiresAt = new Date(Date.now() + parseInt(process.env.VERIFICATION_CODE_EXPIRY) * 60 * 1000 || 10 * 60 * 1000); // Default to 10 minutes
 
     const newVerificationCode = new VerificationCode({
         userId,

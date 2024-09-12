@@ -2,29 +2,34 @@
 
 const Joi = require("joi");
 
+const MIN_NAME_LENGTH = parseInt(process.env.MIN_NAME_LENGTH) || 3;
+const MAX_NAME_LENGTH = parseInt(process.env.MAX_NAME_LENGTH) || 100;
+const MIN_PASSWORD_LENGTH = parseInt(process.env.MIN_PASSWORD_LENGTH) || 8;
+const MAX_PASSWORD_LENGTH = parseInt(process.env.MAX_PASSWORD_LENGTH) || 100;
+const MIN_DOB_YEAR = parseInt(process.env.MIN_DOB_YEAR) || 1900;
 
 const signupValidation = (req, res, next) => {
     const schema = Joi.object({
       firstName: Joi.string()
-        .min(3)
-        .max(100)
+        .min(MIN_NAME_LENGTH)
+        .max(MAX_NAME_LENGTH)
         .required()
         .messages({
           'string.base': 'First Name must be a string',
           'string.empty': 'First Name cannot be empty',
-          'string.min': 'First Name should have a minimum length of 3',
-          'string.max': 'First Name should have a maximum length of 100',
+          'string.min': `First Name should have a minimum length of ${MIN_NAME_LENGTH}`,
+          'string.max': `First Name should have a maximum length of ${MAX_NAME_LENGTH}`,
           'any.required': 'First Name is required'
         }),
       lastName: Joi.string()
-        .min(3)
-        .max(100)
+        .min(MIN_NAME_LENGTH)
+        .max(MAX_NAME_LENGTH)
         .required()
         .messages({
           'string.base': 'Last Name must be a string',
           'string.empty': 'Last Name cannot be empty',
-          'string.min': 'Last Name should have a minimum length of 3',
-          'string.max': 'Last Name should have a maximum length of 100',
+          'string.min': `Last Name should have a minimum length of ${MIN_NAME_LENGTH}`,
+          'string.max': `Last Name should have a maximum length of ${MAX_NAME_LENGTH}`,
           'any.required': 'Last Name is required'
         }),
       email: Joi.string()
@@ -46,20 +51,20 @@ const signupValidation = (req, res, next) => {
       dob: Joi.object({
         day: Joi.number().integer().min(1).max(31).required(),
         month: Joi.number().integer().min(1).max(12).required(),
-        year: Joi.number().integer().min(1900).max(new Date().getFullYear()).required()
+        year: Joi.number().integer().min(MIN_DOB_YEAR).max(new Date().getFullYear()).required()
       }).required(),
       gender: Joi.string()
         .valid('male', 'female', 'other')
         .required(),
       password: Joi.string()
-        .min(8)
-        .max(100)
+        .min(MIN_PASSWORD_LENGTH)
+        .max(MAX_PASSWORD_LENGTH)
         .required()
         .messages({
           'string.base': 'Password must be a string',
           'string.empty': 'Password cannot be empty',
-          'string.min': 'Password should have a minimum length of 8',
-          'string.max': 'Password should have a maximum length of 100',
+          'string.min': `Password should have a minimum length of ${MIN_PASSWORD_LENGTH}`,
+          'string.max': `Password should have a maximum length of ${MAX_PASSWORD_LENGTH}`,
           'any.required': 'Password is required'
         }),
       confirmPassword: Joi.string()
@@ -95,14 +100,14 @@ const loginValidation = (req, res, next) => {
                 'any.required': 'Email or username is required'
             }),
         password: Joi.string()
-            .min(8)
-            .max(100)
+            .min(MIN_PASSWORD_LENGTH)
+            .max(MAX_PASSWORD_LENGTH)
             .required()
             .messages({
                 'string.base': 'Password must be a string',
                 'string.empty': 'Password cannot be empty',
-                'string.min': 'Password should have a minimum length of 8',
-                'string.max': 'Password should have a maximum length of 100',
+                'string.min': `Password should have a minimum length of ${MIN_PASSWORD_LENGTH}`,
+                'string.max': `Password should have a maximum length of ${MAX_PASSWORD_LENGTH}`,
                 'any.required': 'Password is required'
             }),
     });

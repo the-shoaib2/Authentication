@@ -1,10 +1,17 @@
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const VerificationService = require('../Services/VerificationService');
-const  VerificationCode  = require('../Models/Verification');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
+
+// Add these lines at the top of the file
+const VERIFICATION_CODE_LENGTH = parseInt(process.env.VERIFICATION_CODE_LENGTH);
+const VERIFICATION_CODE_EXPIRY = process.env.VERIFICATION_CODE_EXPIRY;
+const MAX_VERIFICATION_ATTEMPTS = parseInt(process.env.MAX_VERIFICATION_ATTEMPTS);
+const VERIFICATION_COOLDOWN_PERIOD = process.env.VERIFICATION_COOLDOWN_PERIOD;
+const ACCOUNT_LOCK_DURATION = process.env.ACCOUNT_LOCK_DURATION;
+const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
 
 // Wrap each controller function with asyncHandler
 const findUserForgotPassword = asyncHandler(async (req, res) => {
@@ -71,7 +78,8 @@ const sendOtp = asyncHandler(async (req, res) => {
             });
         }
 
-        const code = await VerificationService.generateVerificationCode(user._id);
+        // In the sendOtp function, you might want to pass these values to the VerificationService:
+        const code = await VerificationService.generateVerificationCode(user._id, VERIFICATION_CODE_LENGTH, VERIFICATION_CODE_EXPIRY);
         await VerificationService.incrementAttempts(user._id);
 
         // TODO: Send the code to the user's email
@@ -97,7 +105,8 @@ const verifyOtp = asyncHandler(async (req, res) => {
             return res.status(404).json({ message: 'User not found.', success: false });
         }
 
-        await VerificationService.validateVerificationCode(user._id, otp);
+        // In the verifyOtp function, you might want to pass MAX_VERIFICATION_ATTEMPTS to the VerificationService:
+        await VerificationService.validateVerificationCode(user._id, otp, MAX_VERIFICATION_ATTEMPTS);
 
         // Reset attempts after successful verification
         await VerificationService.resetAttempts(user._id);
@@ -128,7 +137,7 @@ const resetPassword = asyncHandler(async (req, res) => {
         }
 
         // Hash the new password before saving
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
         user.password = hashedPassword;
         await user.save();
 

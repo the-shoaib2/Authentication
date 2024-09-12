@@ -11,10 +11,10 @@ const {
 const router = require('express').Router();
 
 // Route to find user for password reset
-router.post('/find-user', searchUserValidation, findUserForgotPassword);
-router.post('/verification-code', sendOtpValidation, sendOtp);
-router.post('/verify-code', verifyOtpValidation, verifyOtp);
-router.post('/reset-password', resetPasswordValidation, resetPassword);
+router.post(process.env.ROUTER_FIND_USER, searchUserValidation, findUserForgotPassword);
+router.post(process.env.ROUTER_VERIFICATION_CODE, sendOtpValidation, sendOtp);
+router.post(process.env.ROUTER_VERIFY_CODE, verifyOtpValidation, verifyOtp);
+router.post(process.env.ROUTER_RESET_PASSWORD, resetPasswordValidation, resetPassword);
 
 module.exports = router;
 
