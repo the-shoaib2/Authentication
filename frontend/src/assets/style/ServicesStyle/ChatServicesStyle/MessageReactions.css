@@ -1,0 +1,152 @@
+/* Root variables for consistent styling */
+:root {
+  --reaction-bg: #f0f0f0;
+  --reaction-hover-bg: #d1d1d6;
+  --add-reaction-bg: rgba(255, 255, 255, 0.8);
+  --add-reaction-hover-bg: #ffffff;
+  --reaction-icon-color: #606060;
+  --reaction-icon-hover-color: #303030;
+  --reaction-border-color: #e0e0e0;
+  --box-shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-dark: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.message-reaction-container {
+  position: relative;
+  width: 100%;
+}
+
+.message-reaction-container.current-user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message-reaction-container.other-user {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.add-reaction-btn,
+.reaction {
+  position: absolute;
+  bottom: -10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  /* z-index: 2; */
+  padding: 0px;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.message-reaction-container.current-user .add-reaction-btn,
+.message-reaction-container.current-user .reaction {
+  left: -14px;
+  right: auto;
+}
+
+.message-reaction-container.other-user .add-reaction-btn,
+.message-reaction-container.other-user .reaction {
+  right: -14px;
+  left: auto;
+}
+
+.add-reaction-btn:hover,
+.reaction:hover {
+  transform: scale(1.1);
+  background-color: var(--reaction-hover-bg);
+}
+
+.reaction-menu {
+  position: absolute;
+  bottom: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border-radius: 20px;
+  padding: 3px;
+  box-shadow: var(--box-shadow-dark);
+  z-index: 2;
+}
+
+.message-reaction-container.current-user .reaction-menu {
+  right: -15px;
+  left: auto;
+}
+
+.message-reaction-container.other-user .reaction-menu {
+  left: auto;
+  right: -110px;
+}
+
+.reaction-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.2);
+}
+
+.remove-reaction {
+  color: #ff0000;
+}
+
+.reaction-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--reaction-icon-color);
+  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.add-reaction-btn .reaction-icon {
+  color: var(--reaction-icon-color);
+}
+
+.add-reaction-btn:hover .reaction-icon {
+  color: var(--reaction-icon-hover-color);
+  transform: scale(1.1);
+}
+
+.reaction-btn.selected {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.reaction-icon.like-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}
+
+/* Add similar rules for other icons */
+.reaction-icon.love-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}
+
+.reaction-icon.laughing-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}
+
+.reaction-icon.wow-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}
+
+.reaction-icon.sad-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}
+
+.reaction-icon.angry-mask {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3C/svg%3E");
+}

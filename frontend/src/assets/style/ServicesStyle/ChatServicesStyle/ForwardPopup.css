@@ -1,0 +1,122 @@
+.forward-message-popup-overlay {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.forward-message-popup-container {
+  background-color: white;
+  position: absolute;
+  left: 46%;
+  padding: 20px;
+  border-radius: 30px;
+  width: 350px;
+  height: 400px;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.forward-message-popup-title {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.forward-message-user-search-container {
+  margin-bottom: 15px;
+}
+
+.forward-message-user-search-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+}
+
+.forward-message-chat-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.forward-message-chat-list-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.forward-message-chat-item-content {
+  display: flex;
+  align-items: center;
+}
+
+.forward-message-avatar-container {
+  margin-right: 10px;
+}
+
+.forward-message-chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.forward-message-chat-info {
+  flex-grow: 1;
+}
+
+.forward-message-chat-name {
+  font-weight: bold;
+}
+
+.forward-message-checkbox-container {
+  margin-left: 10px;
+}
+
+.forward-message-checkbox-input {
+  width: 20px;
+  height: 20px;
+}
+
+.forward-message-action-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.forward-message-cancel-button,
+.forward-message-confirm-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.forward-message-cancel-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.forward-message-cancel-button:hover {
+  background-color: #e0e0e0;
+}
+
+.forward-message-confirm-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.forward-message-confirm-button:hover {
+  background-color: #0056b3;
+}
+
+.forward-message-confirm-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

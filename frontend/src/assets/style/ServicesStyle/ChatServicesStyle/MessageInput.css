@@ -95,7 +95,7 @@
     font-size: 14px;
     border-radius: 8px;
     padding: 8px 15px;
-    margin: 5px;
+    /* margin: 5px; */
     outline: none;
     border: none;
     resize: none;
@@ -152,4 +152,67 @@
     font-size: 11px;
     color: #8e8ea0;
     margin-top: 3px;
+}
+
+/* ... (previous styles) */
+
+.mi-recording-container {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 23px;
+    padding: 0px;
+    margin-right: 10px;
+    max-width: 300px;
+}
+
+.mi-waveform {
+    border-radius: 10px;
+    margin-right: 10px;
+    width: 150px;
+    height: 40px;
+}
+
+.mi-recording-duration {
+    font-size: 14px;
+    margin-right: 10px;
+    color: #007aff;
+    min-width: 40px;
+}
+
+.mi-stop-recording,
+.mi-audio-control,
+.mi-audio-cancel {
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.mi-stop-recording:hover,
+.mi-audio-control:hover,
+.mi-audio-cancel:hover {
+    opacity: 0.7;
+}
+
+.mi-stop-recording:focus,
+.mi-audio-control:focus,
+.mi-audio-cancel:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.mi-audio-preview {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 5px 10px;
+}
+
+.mi-audio-control,
+.mi-audio-cancel,
+.mi-audio-send {
+    border: none;
+    padding: 0px 6px;
+    cursor: pointer;
 }

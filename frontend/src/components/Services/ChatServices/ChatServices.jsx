@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import "../../../assets/style/ServicesStyle/ChatServicesStyle/ChatService.css";
+import SelectedUserMessages from './SelectedUserMessages';
 import MessageInput from "./MessageInput";
 import StarIcon from "../../StarIcon";
+import MessageReactions from './MessageReactions';
+import ChatList from './ChatList';
 
 const ChatService = ({ onClose }) => {
   const [message, setMessage] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState({});
   const messagesEndRef = useRef(null);
+  const [reactions, setReactions] = useState({});
+  const [openReactionMenuId, setOpenReactionMenuId] = useState(null);
 
   const updateMessageStatus = useCallback(
     (messageObj, newStatus) => {
@@ -32,6 +37,7 @@ const ChatService = ({ onClose }) => {
           timestamp: new Date(),
           status: "sent",
           type: "text",
+          id: Date.now(),
         };
         setMessages((prevMessages) => ({
           ...prevMessages,
@@ -58,6 +64,7 @@ const ChatService = ({ onClose }) => {
           timestamp: new Date(),
           status: "sent",
           type: file.type.startsWith("image/") ? "image" : "file",
+          id: Date.now(),
         };
         setMessages((prevMessages) => ({
           ...prevMessages,
@@ -88,6 +95,7 @@ const ChatService = ({ onClose }) => {
               timestamp: new Date(Date.now() - 1000000),
               status: "seen",
               type: "text",
+              id: Date.now(),
             },
             {
               text: "How can I help you today?",
@@ -95,6 +103,7 @@ const ChatService = ({ onClose }) => {
               timestamp: new Date(Date.now() - 500000),
               status: "seen",
               type: "text",
+              id: Date.now(),
             },
           ],
         };
@@ -111,74 +120,18 @@ const ChatService = ({ onClose }) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }, []);
 
-  const renderChatList = useCallback(
-    () => (
-      <ul className="chat-list">
-        {[
-          {
-            id: 1,
-            name: "John Doe",
-            lastMessage: "Hey, how are you?",
-            time: "2:30 PM",
-            avatar: "/images/avatar/avatar-Alice.png",
-            unread: 2,
-            active: true,
-          },
-          {
-            id: 2,
-            name: "Jane Smith",
-            lastMessage: "Can we meet tomorrow?",
-            time: "Yesterday",
-            avatar: "/images/avatar/avatar-Bob.png",
-            unread: 0,
-            active: false,
-          },
-          {
-            id: 3,
-            name: "Bob Johnson",
-            lastMessage: "Thanks for your help!",
-            time: "2 days ago",
-            avatar: "/images/avatar/avatar-Charlie.png",
-            unread: 5,
-            active: true,
-          },
-        ].map((user) => (
-          <li
-            key={user.id}
-            className={`chat-list-item ${
-              selectedUser?.id === user.id ? "active" : ""
-            }`}
-            onClick={() => handleUserSelect(user)}
-          >
-            <div className="chat-item-content">
-              <div className="avatar-container">
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  
-                  className="chat-avatar"
-                />
-                
-              </div>
-              <div className="chat-info">
-                <div className="chat-header">
-                  <span className="chat-name">{user.name}</span>
-                  <span className="chat-time">{user.time}</span>
-                </div>
-                <div className="chat-footer">
-                  <span className="chat-last-message">{user.lastMessage}</span>
-                  {user.unread > 0 && (
-                    <span className="unread-badge">{user.unread}</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    ),
-    [selectedUser, handleUserSelect]
-  );
+  const handleReaction = useCallback((messageId, reaction) => {
+    setReactions(prevReactions => ({
+      ...prevReactions,
+      [messageId]: reaction === prevReactions[messageId] ? null : reaction
+    }));
+    setOpenReactionMenuId(null);
+  }, []);
+
+  const toggleReactionMenu = useCallback((messageId) => {
+    setOpenReactionMenuId((prevId) => (prevId === messageId ? null : messageId));
+  }, []);
+
 
   const renderMessageGroups = useCallback(() => {
     if (!selectedUser || !messages[selectedUser.id]) {
@@ -240,6 +193,14 @@ const ChatService = ({ onClose }) => {
                       </a>
                     </div>
                   )}
+                  <MessageReactions
+                    messageId={msg.id}
+                    reaction={reactions[msg.id]}
+                    isOpen={openReactionMenuId === msg.id}
+                    onReaction={handleReaction}
+                    onToggleReactionMenu={toggleReactionMenu}
+                    isCurrentUser={msg.sender === "user"}
+                  />
                 </div>
               ))}
             </div>
@@ -266,17 +227,12 @@ const ChatService = ({ onClose }) => {
           )}
         </div>
       ));
-  }, [messages, selectedUser, formatTime]);
+  }, [messages, selectedUser, formatTime, reactions, openReactionMenuId, handleReaction, toggleReactionMenu]);
 
   return (
     <div className="chat-container-main-wrapper">
-      <div className="chat-sidebar">
-        <div className="chat-header-top-bar">
-          <input type="text" className="user-search-bar" placeholder="Search" />
-        </div>
-        {renderChatList()}
-      </div>
-
+      <ChatList selectedUser={selectedUser} handleUserSelect={handleUserSelect} />
+     
       <div className="chat-main">
         {selectedUser ? (
           <>
@@ -288,21 +244,20 @@ const ChatService = ({ onClose }) => {
                     alt={selectedUser.name}
                     className="chat-avatar"
                   />
-                  
                 </div>
                 <div className="massage-box-top-bar-user-info">
                   <p className="massage-box-top-bar-user-name">
                     {selectedUser.name}
                   </p>
                   <div className="user-status">
-                  {selectedUser.active && (
-                    <p className="active-now ">Active now</p>
-                  )}
-      
-                  {selectedUser.active && <div className="active-status"></div>}
+                    {selectedUser.active && (
+                      <p className="active-now ">Active now</p>
+                    )}
 
+                    {selectedUser.active && (
+                      <div className="active-status"></div>
+                    )}
                   </div>
-                  
                 </div>
               </div>
               <div className="call-buttons-container">
@@ -354,10 +309,15 @@ const ChatService = ({ onClose }) => {
               </div>
             </div>
 
-            <div className="chat-messages-container">
-              {renderMessageGroups()}
-              <div ref={messagesEndRef} />
-            </div>
+            <SelectedUserMessages
+              selectedUser={selectedUser}
+              messages={messages}
+              formatTime={formatTime}
+              reactions={reactions}
+              openReactionMenuId={openReactionMenuId}
+              handleReaction={handleReaction}
+              toggleReactionMenu={toggleReactionMenu}
+            />
 
             <div className="chat-input-container">
               <MessageInput
