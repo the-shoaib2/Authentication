@@ -322,6 +322,7 @@ const MessageInput = ({ onSendMessage, onSendFile }) => {
             }}
           />
         </div>
+        
 
         <button
           className={`mi-generate-send-btn ${
