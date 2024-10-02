@@ -1,0 +1,176 @@
+:root {
+    --background-color: #f9f9f9;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --hover-background-color: #f0f0f0;
+    --button-color:#5856d6;
+    --success-button-color: #b1fab1;
+    --success-button-hover-color: #97e697;
+  }
+  
+  .add-friend-container {
+    background-color: var(--background-color);
+    box-shadow: var(--box-shadow);
+  }
+  
+  .add-user-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; 
+  }
+  
+  .add-user {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px; 
+    border-bottom: 1px solid #e5e5ea;
+    transition: background-color 0.3s; 
+  }
+  
+  .add-user:hover {
+    background-color: var(--hover-background-color);
+  }
+  
+  .add-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .add-user-name {
+    flex-grow: 1;
+    font-size: 16px; 
+    color: #333; 
+    font-weight: bold; 
+  }
+  
+  .button-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-friend-button,
+  .add-friend-success-button {
+    display: flex;
+    background: #e5e5ea;
+    padding: 8px 10px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 10px;
+    transition: background 0.3s, transform 0.2s;
+    align-items: center;
+  }
+  
+  .add-friend-button:hover {
+    background-color: var(--button-color); 
+    color: var(--background-color);
+  }
+  .add-friend-button svg{
+    margin-right: 5px;
+    height: 12px;
+    width: 12px;
+  }
+  
+  .add-friend-success-button {
+    background-color: var(--success-button-color);
+    transform: scale(0.95); 
+  }
+  
+  .add-friend-success-button:hover {
+    background-color: var(--success-button-hover-color); 
+  }
+  
+  .request-button {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 8px 14px;
+    cursor: pointer;
+    margin: 4px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  
+  .request-button:hover {
+    background-color:  #cfcfcf;
+    
+  }
+  
+  
+  .button-group {
+    display: flex;
+    gap: 10px;
+    margin: 0px 15px 10px 15px;
+    justify-content: space-around;
+  }
+  
+  .tab-button {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    gap: 2px;
+    border: none;
+    justify-content: center;
+    background: #e5e5ea;
+    color: #8e8e93;
+    padding: 5px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    font-size: 10px;
+    font-weight: 500;
+    flex-direction: row;
+  }
+  
+  .tab-button svg {
+    margin: 0px 5px 0px 0px;
+    height: 15px;
+    width: 15px;
+  }
+  
+  .tab-button:hover {
+    background: var(--button-color);
+    color: var(--background-color);
+  }
+  
+  .tab-button.active {
+    background: var(--button-color);
+    color: var(--background-color);
+    transform: scale(1.0005);
+  }
+
+.request-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.request-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-top: 1px solid #ddd; 
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+}
+
+.request-item:hover {
+  background-color: var(--hover-background-color);
+}
+
+.request-user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.request-user-name {
+  font-weight: bold;
+  flex-grow: 1;
+}
+
+.request-status {
+  color: #888;
+}

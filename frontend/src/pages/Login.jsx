@@ -8,15 +8,13 @@ import '../assets/style/styleutils/loading.css';
 import '../assets/style/styleutils/animations.css';
 import '../assets/style/PagesStyle/Login.css';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { refreshToken, checkAuthentication } from '../utils/RefreshHandler';
+import { checkAuthentication, loginUser } from '../utils/ApiService'; 
 import StarIcon from '../components/StarIcon';
-import('./UserProfile').then(() => console.log('UserProfile preloaded'));
 
 function Login() {
     const [emailOrUsername, setEmailOrUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [fadeIn, setFadeIn] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
     const navigate = useNavigate();
 
@@ -30,53 +28,35 @@ function Login() {
         checkExistingAuth();
     }, [navigate]);
 
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setFadeIn(false);
-        }, 500);
-        return () => clearTimeout(timeoutId);
-    }, []);
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
         setFadeOut(false);
 
-        setTimeout(async () => {
-            setFadeOut(true);
-            setTimeout(async () => {
-                try {
-                    const response = await fetch("http://localhost:8080/auth/login", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ emailOrUsername, password }),
-                    });
-                    const result = await response.json();
-                    if (response.ok) {
-                        localStorage.setItem('token', result.accessToken);
-                        localStorage.setItem('refreshToken', result.refreshToken);
-                        localStorage.setItem('loggedInUser', JSON.stringify(result));
-                        handleSuccess('Login successful!');
-                        await refreshToken(); // Refresh the token immediately after login
-                        setTimeout(() => navigate('/home'), 500);
-                    } else {
-                        handleError(result.message || 'Incorrect email/username or password. Please try again.');
-                    }
-                } catch (err) {
-                    handleError('Network error. Please check your connection and try again.');
-                } finally {
-                    setLoading(false);
-                }
-            }, 250);
-        }, 1000);
+        try {
+            const result = await loginUser(emailOrUsername, password);
+            if (result.success) {
+                handleSuccess('Login successful!');
+                navigate('/home', { replace: true });
+            } else {
+                handleError(result.message);
+            }
+        } catch (err) {
+            handleError('Network error. Please check your connection and try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleForgotPassword = (event) => {
+        event.preventDefault();
+        navigate('/find-user'); 
     };
 
     return (
         <>
-            <div className={`login-page-wrapper fade-in`}>
-                <div className={`login-page-container general-page-container ${fadeIn ? 'fade-in-bottom' : ''}`}>
+            <div className={`login-page-wrapper fade-in`}>  
+                <div className={`login-page-container general-page-container`}>  
                     <StarIcon className="login-page-app-icon animate-stars" />
                     <h1>Login</h1>
                     <form onSubmit={handleSubmit}>
@@ -103,7 +83,7 @@ function Login() {
                             <label htmlFor='password' className='login-page-form-label'>Password</label>
                         </div>
                         <button type='submit' className='login-page-submit-button'>Login</button>
-                        <Link to="/find-user" className='login-page-navigation-link'>Forgot Password?</Link>
+                        <Link to="#" onClick={handleForgotPassword} className='login-page-navigation-link'>Forgot Password?</Link> 
                         <span className='login-page-info-text'>Don't have an account? <Link to="/signup" className='login-page-navigation-link'>Signup</Link></span>
                     </form>
                 </div>

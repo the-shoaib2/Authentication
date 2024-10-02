@@ -14,7 +14,6 @@
 }
 
 .fade-in-bottom,
-.fade-in,
 .document-options,
 .fade-in-input-wrapper {
     animation: fadeInMoveUp 0.5s ease-out;
@@ -78,4 +77,34 @@
 
 .fade-in-overlay {
     animation: fadeIn 0.3s ease-out;
+}
+
+/* Add fade-out animation */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 0.3s ease-out forwards; /* Added fade-out class */
+}
+
+/* Add scale-out animation */
+@keyframes scaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.scale-out {
+    animation: scaleOut 0.3s ease-out forwards; /* Added scale-out class */
 }

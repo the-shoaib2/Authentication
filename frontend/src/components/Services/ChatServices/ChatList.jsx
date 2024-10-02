@@ -4,9 +4,7 @@ import "../../../assets/style/ServicesStyle/ChatServicesStyle/ChatList.css";
 const ChatList = ({ selectedUser, handleUserSelect }) => {
   return (
     <div className="chat-sidebar">
-      <div className="chat-header-top-bar">
-        <input type="text" className="user-search-bar" placeholder="Search" />
-      </div>
+
       <ul className="chat-list">
         {[ 
           {

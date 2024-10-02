@@ -59,7 +59,7 @@ const SelectedUserMessages = ({ selectedUser, messages, formatTime, reactions, o
   };
 
   const renderMessageGroups = useCallback(() => {
-    if (!selectedUser || !messages[selectedUser.id]) {
+    if (!selectedUser || !messages[selectedUser.id] || messages[selectedUser.id].length === 0) {
       return null;
     }
 
@@ -181,7 +181,7 @@ const SelectedUserMessages = ({ selectedUser, messages, formatTime, reactions, o
               )}
             </div>
           ))}
-        <div ref={messagesEndRef} /> {/* Add this line */}
+        <div ref={messagesEndRef} />
       </>
     );
   }, [messages, selectedUser, formatTime, reactions, openReactionMenuId, handleReaction, toggleReactionMenu, isMobile, editingMessageId]);
@@ -199,6 +199,7 @@ const SelectedUserMessages = ({ selectedUser, messages, formatTime, reactions, o
     </div>
   );
 };
+
 
 const EditMessageForm = ({ message, onSubmit, onCancel }) => {
   const [editedText, setEditedText] = useState(message.text);

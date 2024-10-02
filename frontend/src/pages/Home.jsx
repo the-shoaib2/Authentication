@@ -4,6 +4,7 @@ import { handleError } from "../utils/ReactToastify";
 import { ToastContainer } from "react-toastify";
 import "../assets/style/styleutils/ReactToastifyCustom.css";
 import "../assets/style/PagesStyle/Home/Home.css";
+import "../assets/style/PagesStyle/Home/TopBar.css";
 import "../assets/style/styleutils/loading.css";
 import LoadingOverlay from "../components/LoadingOverlay";
 import ConfirmAccountPopup from "../components/EmailVerification/ConfirmAccountEmail";
@@ -11,6 +12,7 @@ import HistorySidebar from "../components/HomeComponents/HistorySidebar";
 import ServicesSection from "../components/HomeComponents/ServicesSection";
 import PromptInput from '../Extension/PromptInput';
 import ChatService from '../components/Services/ChatServices/ChatServices';
+import { fetchLoggedInUser } from '../utils/ApiService';
 
 const LazyUserProfile = lazy(() => import('./UserProfile'));
 const ProfileLoadingSpinner = () => <div className="loading-spinner"></div>;
@@ -24,27 +26,13 @@ function Home() {
   const [activeService, setActiveService] = useState(null);
   const navigate = useNavigate();
 
-  const fetchLoggedInUser = useCallback(async () => {
+  const fetchUser = useCallback(async () => {
     setLoading(true);
     try {
-      const url = "http://localhost:8080/Users/me";
-      const headers = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      };
-      const response = await fetch(url, headers);
-      const result = await response.json();
-      if (response.ok) {
-        setLoggedInUser(result);
-      } else {
-        handleError(
-          result.message || "Failed to fetch user data. Please try again."
-        );
-        navigate("/login");
-      }
+      const result = await fetchLoggedInUser();
+      setLoggedInUser(result);
     } catch (err) {
-      handleError("Network error. Please check your connection and try again.");
+      handleError(err.message || "Failed to fetch user data. Please try again.");
       navigate("/login");
     } finally {
       setLoading(false);
@@ -52,8 +40,8 @@ function Home() {
   }, [navigate]);
 
   useEffect(() => {
-    fetchLoggedInUser();
-  }, [fetchLoggedInUser]);
+    fetchUser();
+  }, [fetchUser]);
 
   useEffect(() => {
     if (!loggedInUser.isActive) {
@@ -63,11 +51,8 @@ function Home() {
 
   const toggleProfile = useCallback(() => {
     setShowProfile(prev => !prev);
-  }, []);
-
-  // const handleClosePopup = () => {
-    // setShowConfirmPopup(false);
-  // };
+    if (!showProfile) setActiveService(null); 
+  }, [showProfile]);
 
   const handleServiceClick = (serviceName) => {
     setActiveService(serviceName);
@@ -94,7 +79,7 @@ function Home() {
             </svg>
           </button>
           <div className="user-icon-image" onClick={toggleProfile}>
-            <img src="/images/avatar/avater.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
+            <img src="images/avatar/avatar-Alice.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
             {showProfile && (
               <div className="close-profile-button fade-in" onClick={(e) => {
                 e.stopPropagation();
@@ -137,7 +122,7 @@ function Home() {
         show={showHistorySidebar}
         onClose={() => setShowHistorySidebar(false)}
       />
-      {!activeService && <PromptInput className="fade-in" />}
+      {!activeService && !showProfile && <PromptInput className="fade-in" />} 
       <ToastContainer />
     </div>
   );

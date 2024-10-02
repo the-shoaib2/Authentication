@@ -229,47 +229,6 @@
     text-decoration: none;
 }
 
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 10px 20px;
-    position: relative;
-    z-index: 1001; /* Ensure it's above the confirm-account-bar */
-}
-
-.history-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.history-button.active {
-    transform: rotate(-180deg);
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-.history-button img {
-    width: 24px;
-    height: 24px;
-}
-
-.user-icon-image {
-    width: 40px;
-    height: 40px;
-}
-
-.user-icon-image img {
-    cursor: pointer;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
 .main-home-container {
     display: flex;
     flex-direction: column;
@@ -296,13 +255,13 @@
 
 .centered-profile {
     position: fixed;
-    top: 46%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 1000;
     width: 100%;
     max-width: 720px;
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
     background-color: rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(15px);
@@ -513,10 +472,3 @@
     background-color: #333;
 }
 
-.close-profile-button::before {
-  transform: rotate(45deg);
-}
-
-.close-profile-button::after {
-  transform: rotate(-45deg);
-}

@@ -81,7 +81,7 @@ body {
   animation: var(--animation-fade-in);
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-  max-height: 50vh;
+  max-height: 100vh;
   overflow-y: auto;
   padding-top: 20px;
   padding-bottom: 20px;
@@ -260,7 +260,7 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 5px;
 }
 
 .signup-page__terms {

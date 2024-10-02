@@ -3,7 +3,7 @@
 .prompt-container {
     font-family: 'Poppins', sans-serif;
     position: fixed;
-    bottom: 20px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;

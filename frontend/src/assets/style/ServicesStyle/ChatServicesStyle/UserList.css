@@ -1,0 +1,177 @@
+:root {
+    --background-color: #f9f9f9;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --hover-background-color: #f0f0f0;
+    --button-color: #5856d6;
+    --success-button-color: #b1fab1;
+    --success-button-hover-color: #97e697;
+  }
+  
+  .add-user-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .add-user {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e5ea;
+    transition: background-color 0.3s;
+  }
+  
+  .add-user:hover {
+    background-color: var(--hover-background-color);
+  }
+  
+  .add-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .add-user-name {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+  
+  
+  .button-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-friend-button,
+  .add-friend-success-button {
+    display: flex;
+    background: #e5e5ea;
+    padding: 5px 8px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 10px;
+    transition: background 0.3s, transform 0.2s;
+    align-items: center;
+  }
+  
+  .add-friend-button:hover {
+    background-color: var(--button-color);
+    color: var(--background-color);
+  }
+  
+  .add-friend-button svg {
+    margin-right: 5px;
+    height: 12px;
+    width: 12px;
+  }
+  
+  .add-friend-success-button {
+    background-color: var(--success-button-color);
+    transform: scale(0.95);
+  }
+  
+  .add-friend-success-button:hover {
+    background-color: var(--success-button-hover-color);
+  }
+  
+  .request-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  .request-list li{
+   color: #888;
+  }
+  
+  .request-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-top: 1px solid #ddd;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s;
+  }
+  
+  .request-item:hover {
+    background-color: var(--hover-background-color);
+  }
+  
+  .request-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .request-user-name {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .request-status {
+    color: #888;
+  }
+  
+  .accept-button,
+  .reject-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .reject-button {
+    background-color: #f44336; /* Red */
+  }
+  
+  .accept-button:hover {
+    background-color: #45a049; /* Darker green */
+  }
+  
+  .reject-button:hover {
+    background-color: #d32f2f; /* Darker red */
+  }
+  
+  .cancel-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .cancel-button:hover {
+    background-color: #d32f2f; /* Darker red */
+  }
+  
+  .friend-button {
+    background-color: #1fd326;
+    color: #ffffff;
+    border: none;
+    padding: 6px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    border-radius: 30px;
+    cursor: not-allowed;
+    transition: background-color 0.3s;
+}
+
+.friend-button:hover {
+    background-color: #45a049;
+}

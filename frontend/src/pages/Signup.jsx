@@ -8,12 +8,14 @@ import {
   ToastContainer,
 } from "../utils/ReactToastify";
 import "../assets/style/styleutils/ReactToastifyCustom.css";
+import '../assets/style/styleutils/loading.css';
 import '../assets/style/styleutils/animations.css';
-import "../assets/style/styleutils/loading.css";
 import LoadingOverlay from '../components/LoadingOverlay';
 import "../assets/style/PagesStyle/Signup.css";
-import { refreshToken } from '../utils/RefreshHandler';
 import StarIcon from '../components/StarIcon';
+import Popup from '../components/AgreementPopup'; 
+import PrivacyPolicy from '../components/PrivacyPolicy'; 
+import TermsOfUse from '../components/TermsOfUse'; 
 
 function Signup() {
   const [formData, setFormData] = useState({
@@ -32,6 +34,8 @@ function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({ title: '', content: null });
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -73,9 +77,8 @@ function Signup() {
         const result = await response.json();
         if (response.ok) {
           handleSuccess("Signup successful! Please verify your email.");
-          localStorage.setItem('token', result.accessToken);
-          localStorage.setItem('refreshToken', result.refreshToken);
-          await refreshToken(); // Refresh the token immediately after signup
+       
+        //
           setTimeout(() => navigate('/verify-email', { 
             state: { 
               token: result.verificationToken,
@@ -100,8 +103,21 @@ function Signup() {
     }, 1000);
   };
 
+  const handleShowPopup = (type) => {
+    if (type === 'privacy') {
+      setPopupContent({ title: 'Privacy Policy', content: <PrivacyPolicy /> });
+    } else if (type === 'terms') {
+      setPopupContent({ title: 'Terms of Use', content: <TermsOfUse /> });
+    }
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
-    <div className="signup-page__container fade-in">
+    <div className="signup-page__container fade-in"> 
       <StarIcon width={48} height={48} fill="#5E5CE6" className="signup-page__app-icon" />
       <h1 className="signup-page__title">Sign up</h1>
       <form onSubmit={handleSubmit} className="signup-page__form">
@@ -300,16 +316,30 @@ function Signup() {
       <div className="signup-page__terms-container">
         <span className="signup-page__terms">
           By creating an account, you agree to our
-          <Link to="/terms" className="signup-page__terms-link">
+          <span 
+            onClick={() => handleShowPopup('terms')} 
+            className="signup-page__terms-link"
+            style={{ cursor: 'pointer' }}
+          >
             {" "}Terms of Use
-          </Link>
+          </span>
           {" "}and
-          <Link to="/privacy-policy" className="signup-page__terms-link">
+          <span 
+            onClick={() => handleShowPopup('privacy')} 
+            className="signup-page__terms-link"
+            style={{ cursor: 'pointer' }}
+          >
             {" "}Privacy Policy
-          </Link>
-          .
+          </span>
         </span>
       </div>
+      {showPopup && (
+        <Popup 
+          title={popupContent.title} 
+          content={popupContent.content} 
+          onClose={handleClosePopup} 
+        />
+      )}
       <ToastContainer />
       <LoadingOverlay loading={loading} />
     </div>

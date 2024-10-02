@@ -17,6 +17,10 @@
   --otp-massage-color: #333;
 }
 
+body {
+  font-family: 'Poppins', sans-serif; /* Apply the font to the body */
+}
+
 .otp-wrapper {
     display: flex;
     flex-direction: column;
@@ -54,7 +58,7 @@
     align-items: center;
     flex-direction: column;
     animation: fadeInEffect 0.6s ease-out 0.2s;
-    opacity: 0;
+    opacity: 1;
     animation-fill-mode: forwards;
 }
 
@@ -89,8 +93,8 @@
     cursor: pointer;
     margin: 20px auto 10px;
     transition: background-color 0.3s, transform 0.3s;
+    opacity: 1; 
     animation: fadeInBottomEffect 0.5s ease-out 0.4s;
-    opacity: 0;
     animation-fill-mode: forwards;
 }
 
@@ -102,7 +106,7 @@
     align-items: center;
     flex-direction: column;
     animation: fadeInEffect 0.6s ease-out 0.5s;
-    opacity: 0;
+    opacity: 1;
     animation-fill-mode: forwards;
 }
 
@@ -153,7 +157,7 @@
     justify-content: space-between;
     margin-bottom: 40px;
     animation: fadeInEffect 0.6s ease-out 0.3s;
-    opacity: 0;
+    opacity: 1;
     animation-fill-mode: forwards;
 }
 
@@ -173,7 +177,7 @@
     border-radius: 10px; /* More rounded corners */
     transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
     animation: scaleIn 0.3s ease-out forwards;
-    opacity: 0;
+    opacity: 1;
 }
 
 .otpField:focus {

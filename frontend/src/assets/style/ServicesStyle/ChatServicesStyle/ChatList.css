@@ -5,22 +5,6 @@
   flex-direction: column;
 }
 
-.chat-header-top-bar {
-  padding: 15px;
-}
-
-.user-search-bar {
-  width: 100%;
-  padding: 8px 15px;
-  border-radius: 30px;
-  font-size: 15px;
-  background-color: #e5e5ea;
-}
-
-.user-search-bar::placeholder {
-  color: #8e8e93;
-}
-
 .chat-list {
   list-style-type: none;
   padding: 0;
