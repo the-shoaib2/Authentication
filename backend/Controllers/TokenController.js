@@ -2,37 +2,9 @@
 
 const jwt = require('jsonwebtoken');
 const UserModel = require("../Models/User");
-const { VerificationToken } = require('../Models/Verification');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
-
-// Function to generate a verification token using JWT
-const generateVerificationToken = async (user) => {
-    if (!process.env.JWT_ACCESS_SECRET) {
-        throw ApiError.internalError('JWT_ACCESS_SECRET is not defined');
-    }
-
-    const token = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_ACCESS_SECRET,
-        { expiresIn: process.env.VERIFICATION_TOKEN_EXPIRES }
-    );
-
-    // Calculate the expiration time based on the environment variable
-    const expiresInMilliseconds = parseDuration(process.env.VERIFICATION_TOKEN_EXPIRES);
-
-    // Create a new verification token entry in the database
-    const newToken = new VerificationToken({
-        userId: user._id,
-        token,
-        expiresAt: new Date(Date.now() + expiresInMilliseconds), // Dynamic expiration
-    });
-
-    // Save the verification token to the database
-    await newToken.save();
-
-    return token;
-};
+const ApiResponse = require('../utils/ApiResponse');
 
 const generateAccessToken = (user) => {
     return jwt.sign(
@@ -54,7 +26,6 @@ const generateTokens = async (user) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // Save refresh token and its expiry date to the database
     user.refreshToken = refreshToken;
     user.refreshTokenExpiry = new Date(Date.now() + parseDuration(process.env.JWT_REFRESH_EXPIRES));
     await user.save();
@@ -80,38 +51,69 @@ const parseDuration = (duration) => {
     }
 };
 
+// Function to refresh access token
 const refreshAccessToken = asyncHandler(async (req, res) => {
+    
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+    console.log("Incoming Refresh Token:", incomingRefreshToken);
+
+    if (!incomingRefreshToken) {
+        throw new ApiError(401, "Unauthorized request.");
+    }
+
     try {
-        const { refreshToken } = req.body;
+        const decodedToken = jwt.verify(
+            incomingRefreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
 
-        if (!refreshToken) {
-            return res.status(400).json({ message: 'No refresh token provided', success: false });
+        const user = await UserModel.findById(decodedToken._id);
+
+        if (!user) {
+            throw new ApiError(401, "Invalid refresh token.");
         }
 
-        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-        const user = await UserModel.findOne({ _id: decoded._id, refreshToken });
-
-        if (!user || user.refreshTokenExpiry < Date.now()) {
-            return res.status(403).json({ message: 'Invalid or expired refresh token', success: false });
+        if (incomingRefreshToken !== user.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or used.");
         }
 
-        const tokens = await generateTokens(user);
+        const { accessToken, refreshToken: newRefreshToken } = await generateTokens(user); // Updated to use generateTokens
 
-        res.status(200).json({
-            message: 'Token refreshed successfully',
-            success: true,
-            ...tokens
-        });
-    } catch (err) {
-        console.error('Refresh Token Error:', err);
-        res.status(500).json({ message: 'Internal server error', success: false });
+        // Set cookies using the helper function
+        setAuthCookies(res, accessToken, newRefreshToken);
+
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    { accessToken, refreshToken: newRefreshToken },
+                    "Access token refreshed."
+                )
+            );
+    } catch (error) {
+        throw new ApiError(401, error.message || "Invalid refresh token.");
     }
 });
 
+// Helper function to set authentication cookies
+const setAuthCookies = (res, accessToken, refreshToken) => {
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+        path: '/',
+    };
+
+    res.cookie("accessToken", accessToken, options);
+    res.cookie("refreshToken", refreshToken, options);
+};
+
 module.exports = {
-    generateVerificationToken,
     generateAccessToken,
     generateRefreshToken,
     generateTokens,
-    refreshAccessToken
+    refreshAccessToken,
+    setAuthCookies,
 };

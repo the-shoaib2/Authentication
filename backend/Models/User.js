@@ -1,4 +1,3 @@
-// backend/Models/User.js
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require('uuid');
 const DeletedUserModel = require('./DeletedUser');
@@ -79,17 +78,17 @@ const UserSchema = new Schema({
   },
   isActive: {
     type: Boolean,
-    default: false,
+    default: false,  // false 
   },
   accountExpiryDate: {
     type: Date,
-    default: function() {
+    default: function () {
       return new Date(Date.now() + 15 * 24 * 60 * 60 * 1000); // 15 days from now
     }
   },
   status: {
     type: String,
-    enum: ['active', 'inactive', 'deleted'],
+    enum: ['active', 'inactive', 'deactive', 'deleted'],
     default: 'inactive',
   },
   lastLogin: {
@@ -104,6 +103,26 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  onlineStatus: {
+    type: Boolean,
+    default: false,
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now,
+  },
+  friends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users'
+  }],
+  mutedUsers: [{
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    muteUntil: { type: Date }
+  }],
+  blockedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
 });
 
 // Pre-save hook to generate username if not provided and set default profile picture
@@ -135,7 +154,7 @@ UserSchema.methods.activate = function () {
 // Method to deactivate a user
 UserSchema.methods.deactivate = function () {
   if (this.status !== 'deleted') {
-    this.status = 'inactive';
+    this.status = 'deactive';
     return this.save();
   } else {
     throw new Error('Cannot deactivate a deleted user.');
@@ -143,7 +162,7 @@ UserSchema.methods.deactivate = function () {
 };
 
 // Add a new method to check if the account has expired
-UserSchema.methods.isAccountExpired = function() {
+UserSchema.methods.isAccountExpired = function () {
   return this.accountExpiryDate < new Date();
 };
 
@@ -159,10 +178,9 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.moveToDeletedAccounts = async function () {
   const userData = this.toObject();
   delete userData._id;
-  delete userData.id;
-  
+
   let deletedUser = await DeletedUserModel.findOne({ originalUserId: this._id });
-  
+
   if (deletedUser) {
     deletedUser.deletionCount += 1;
     deletedUser.deletedAt = new Date();
@@ -175,7 +193,7 @@ UserSchema.methods.moveToDeletedAccounts = async function () {
       deletionCount: 1
     });
   }
-  
+
   await DeletedUserModel.findOneAndUpdate(
     { originalUserId: this._id },
     deletedUser.toObject(),
@@ -183,6 +201,17 @@ UserSchema.methods.moveToDeletedAccounts = async function () {
   );
   await this.deleteOne();
   return deletedUser;
+};
+
+// Method to update online status
+UserSchema.methods.updateOnlineStatus = function (status) {
+  this.onlineStatus = status;
+  if (status) {
+    this.lastActive = null; // Clear lastActive if user is online
+  } else {
+    this.lastActive = Date.now(); // Set lastActive time if user is offline
+  }
+  return this.save();
 };
 
 const UserModel = mongoose.model("users", UserSchema);

@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const UserModel = require("../Models/User");
 const DeletedUserModel = require("../Models/DeletedUser");
-const { generateTokens, refreshAccessToken, generateVerificationToken } = require('./TokenController');
+const { generateTokens, refreshAccessToken, setAuthCookies } = require('./TokenController');
 const fuzzySearch = require('../SearchEngine/FuzzySearch');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiError = require('../utils/ApiError');
@@ -11,6 +11,8 @@ const ApiResponse = require('../utils/ApiResponse');
 const ACCOUNT_EXPIRY_DAYS = parseInt(process.env.ACCOUNT_EXPIRY_DAYS);
 const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
 
+
+
 const signup = asyncHandler(async (req, res) => {
     try {
         const { firstName, lastName, email, password, phone, dob, gender } = req.body;
@@ -18,26 +20,19 @@ const signup = asyncHandler(async (req, res) => {
         // Check if user with the provided email already exists
         const existingUserByEmail = await UserModel.findOne({ email });
         if (existingUserByEmail) {
-            return res.status(409).json({
-                message: 'User with this email already exists, you can login',
-                success: false
-            });
+            throw ApiError.badRequest('User with this email already exists, you can login');
         }
 
         // Check if user with the provided phone number already exists
         if (phone) {
             const existingUserByPhone = await UserModel.findOne({ phone });
             if (existingUserByPhone) {
-                return res.status(409).json({
-                    message: 'User with this phone number already exists, you can login',
-                    success: false
-                });
+                throw ApiError.badRequest('User with this phone number already exists, you can login');
             }
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
-        console.log('Generated hashed password:', hashedPassword);
 
         // Create new user
         const newUser = new UserModel({
@@ -48,32 +43,28 @@ const signup = asyncHandler(async (req, res) => {
             password: hashedPassword,
             dob,
             gender,
-            accountExpiryDate: new Date(Date.now() + ACCOUNT_EXPIRY_DAYS * 24 * 60 * 60 * 1000) // 15 days from now
+            accountExpiryDate: new Date(Date.now() + ACCOUNT_EXPIRY_DAYS * 24 * 60 * 60 * 1000)
         });
 
         await newUser.save();
-        console.log('New user saved:', newUser);
-
-        // Create a verification token
-        const verificationToken = await generateVerificationToken(newUser);
 
         // Generate tokens
         const tokens = await generateTokens(newUser);
+        const { accessToken, refreshToken } = tokens;
 
-        res.status(201).json({
-            message: "Signup successful",
-            success: true,
-            name: `${newUser.first_name} ${newUser.last_name}`,
-            email: newUser.email,
-            verificationToken,
-            ...tokens,
-        });
+        // Set cookies using the helper function
+        setAuthCookies(res, accessToken, refreshToken);
+
+        res
+            .status(201)
+            .json({
+                message: "Signup successful! Please verify your email.",
+                success: true,
+                name: `${newUser.first_name} ${newUser.last_name}`,
+                email: newUser.email,
+            });
     } catch (err) {
-        console.error('Signup Error:', err);
-        res.status(500).json({
-            message: "Internal server error",
-            success: false
-        });
+        throw new ApiError(500, err.message || "Internal server error");
     }
 });
 
@@ -81,79 +72,85 @@ const login = asyncHandler(async (req, res) => {
     try {
         const { emailOrUsername, password } = req.body;
         const trimmedInput = emailOrUsername.trim();
-        console.log('Login attempt with:', trimmedInput);
 
         const user = await UserModel.findOne({
             $or: [{ email: trimmedInput }, { username: trimmedInput }]
-        }).select('+password');  // Explicitly select the password field
+        }).select('+password');
 
         if (!user) {
-            throw ApiError.forbidden('Invalid email or username');
+            throw ApiError.unauthorized('Invalid email or username');
         }
 
         // Update the last login time
         user.lastLogin = new Date();
         await user.save();
 
-        console.log('User found, password hash:', user.password);
-
-        if (!user.password) {
-            console.log('Password hash is undefined');
-            return res.status(500).json({ message: 'Password is not set for this user.', success: false });
-        }
-
         const isPassEqual = await bcrypt.compare(password, user.password);
-
         if (!isPassEqual) {
-            console.log('Incorrect password');
-            return res.status(403).json({ message: 'Incorrect password', success: false });
+            throw ApiError.unauthorized('Incorrect password');
         }
 
         // Generate tokens
         const tokens = await generateTokens(user);
+        const { accessToken, refreshToken } = tokens;
 
-        // // Generate a verification token for the user (if required)
-        const verificationToken = await generateVerificationToken(user);
+        // Save refresh token in the user document
+        user.refreshToken = refreshToken;
+        await user.save();
 
-        res.status(200).json({
-            message: "Login Success",
-            success: true,
-            ...tokens,
-            verificationToken, // Include the verification token in the response
-            name: `${user.first_name} ${user.last_name}`,
-            isActive: user.isActive,
-            accountExpiryDate: user.accountExpiryDate
-        });
+        console.log("Token:", tokens);
+
+        // Set cookies using the helper function
+        setAuthCookies(res, accessToken, refreshToken);
+
+        res
+            .status(200)
+            .json({
+                message: "Login successful!",
+                success: true,
+                name: `${user.first_name} ${user.last_name}`,
+                isActive: user.isActive,
+                accountExpiryDate: user.accountExpiryDate,
+            });
     } catch (err) {
-        console.error('Login Error:', err);
-        res.status(500).json({
-            message: "Internal server error",
-            success: false
-        });
+        throw new ApiError(500, err.message || "Internal server error");
     }
 });
 
 const logout = asyncHandler(async (req, res) => {
     try {
-        const { refreshToken } = req.body;
+        const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
 
         if (!refreshToken) {
-            return res.status(400).json({ message: 'No refresh token provided', success: false });
+            throw ApiError.badRequest('No refresh token provided');
         }
 
         const user = await UserModel.findOne({ refreshToken });
         if (!user) {
-            return res.status(403).json({ message: 'Invalid refresh token', success: false });
+            throw ApiError.unauthorized('Invalid refresh token');
         }
 
-        user.refreshToken = null;
-        user.refreshTokenExpiry = null;
-        await user.save();
+        // Remove the refresh token from the user document
+        await UserModel.findByIdAndUpdate(
+            user._id,
+            { $set: { refreshToken: null } },
+            { new: true }
+        );
 
-        res.status(200).json({ message: 'Logout successful', success: true });
+        const options = {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'Strict',
+            path: '/',
+        };
+
+        return res
+            .status(200)
+            .clearCookie("accessToken", options)
+            .clearCookie("refreshToken", options)
+            .json(new ApiResponse(200, {}, "Logout successfully."));
     } catch (err) {
-        console.error('Logout Error:', err);
-        res.status(500).json({ message: 'Internal server error', success: false });
+        throw new ApiError(500, err.message || "Internal server error");
     }
 });
 
@@ -263,5 +260,5 @@ module.exports = {
     refreshAccessToken,
     deleteUser,
     searchDeletedAccounts,
-    recoverAccount
+    recoverAccount,
 };

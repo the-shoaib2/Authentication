@@ -38,6 +38,22 @@ class ApiError extends Error {
     static internalError(message = "Internal Server Error", errors = []) {
         return new ApiError(500, message, errors);
     }
+
+    static conflict(message = "Conflict", errors = []) {
+        return new ApiError(409, message, errors);
+    }
+
+    static unprocessableEntity(message = "Unprocessable Entity", errors = []) {
+        return new ApiError(422, message, errors);
+    }
+
+    static tooManyRequests(message = "Too Many Requests", errors = []) {
+        return new ApiError(429, message, errors);
+    }
+
+    static serviceUnavailable(message = "Service Unavailable", errors = []) {
+        return new ApiError(503, message, errors);
+    }
 }
 
 module.exports = ApiError;
