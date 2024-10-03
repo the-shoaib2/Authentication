@@ -176,6 +176,9 @@ const deleteUser = asyncHandler(async (req, res) => {
 
         const deletedUser = await user.moveToDeletedAccounts();
 
+        // Send delete user email
+        handleEmailEvent('deleteUser', user.email).catch(err => console.error('Failed to send delete user email:', err));
+
         res.status(200).json({
             message: 'User deleted successfully',
             success: true,
@@ -249,6 +252,9 @@ const recoverAccount = asyncHandler(async (req, res) => {
         await DeletedUserModel.findByIdAndDelete(deletedUser._id);
 
         const tokens = await generateTokens(recoveredUser);
+
+        // Send recover account email
+        handleEmailEvent('recoverAccount', recoveredUser.email).catch(err => console.error('Failed to send recover account email:', err));
 
         return res.status(200).json(
             new ApiResponse(200, {

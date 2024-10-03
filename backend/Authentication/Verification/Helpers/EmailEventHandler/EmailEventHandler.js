@@ -1,6 +1,8 @@
 const { sendLoginEmail, sendLogoutEmail } = require('./LoginLogoutEmailHelpers');
 const { sendWelcomeEmail, sendConfirmedAccountEmail } = require('./WelcomeEmailHelpers');
 const { sendVerificationEmail } = require('./VerificationCodeEmailHelpers');
+const { sendDeleteUserEmail } = require('./DeleteUserEmailHelpers');
+const { sendRecoverAccountEmail } = require('./RecoverAccountEmailHelpers');
 const logger = require('../../../utils/Logger');
 
 const handleEmailEvent = async (type, email, code = null) => {
@@ -26,6 +28,14 @@ const handleEmailEvent = async (type, email, code = null) => {
             case 'confirmation':
                 await sendConfirmedAccountEmail(email);
                 logger.info(`Confirmation email sent to ${email}`);
+                break;
+            case 'deleteUser':
+                await sendDeleteUserEmail(email);
+                logger.info(`Delete user email sent to ${email}`);
+                break;
+            case 'recoverAccount':
+                await sendRecoverAccountEmail(email);
+                logger.info(`Recover account email sent to ${email}`);
                 break;
             default:
                 throw new Error('Invalid email event type');
