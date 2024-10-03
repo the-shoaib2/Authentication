@@ -6,14 +6,25 @@ export const fetchLoggedInUser = async () => {
 };
 
 export const signupUser = async (formData) => {
-    const response = await axiosInstance.post("/auth/signup", formData, {
-        headers: {
-            "Content-Type": "application/json",
-        },
-        withCredentials: true, 
-    });
-    return response.data;
+    try {
+        const response = await axiosInstance.post("/auth/signup", formData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            withCredentials: true,
+        });
+
+        if (response.data.success) {
+            localStorage.setItem('token', response.data.accessToken);
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error('Signup error:', error);
+        throw error;
+    }
 };
+
 
 export const loginUser = async (emailOrUsername, password) => {
     const response = await axiosInstance.post("/auth/login", {
@@ -81,3 +92,4 @@ const clearAuthData = () => {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
     }
 };
+

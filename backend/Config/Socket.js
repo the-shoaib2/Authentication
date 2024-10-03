@@ -1,5 +1,5 @@
 const socketIo = require('socket.io');
-const User = require('../Models/User');
+const User = require('../Authentication/Models/User');
 
 module.exports = (server) => {
 	const io = socketIo(server, {

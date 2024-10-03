@@ -1,5 +1,6 @@
 // backend/index.js
 
+// Importing required modules
 const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -7,21 +8,29 @@ const cors = require('cors');
 require('dotenv').config();
 require('./Config/Database');
 const http = require('http');
-const socketIo = require('socket.io');
 const PORT = process.env.PORT || 8080;
 
-const AuthRouter = require('./Routes/AuthRouter');
-const UsersRouter = require('./Routes/UsersRouter');
-const VerificationRouter = require('./Routes/VerificationRouter');
+// Importing Routes
+// Authentication Routes
+const AuthRouter = require('./Authentication/Routes/AuthRouter');
+const UsersRouter = require('./Authentication/Routes/UsersRouter');
+const VerificationRouter = require('./Authentication/Verification/Routes/VerificationRouter');
+
+// Services Routes
 const ChatRouter = require('./Services/ChatServices/ChatRouters/ChatRouter'); 
 
+
+
+// Creating Server
 const server = http.createServer(app);
 const io = require('./Config/Socket')(server); // Pass server to socket config
 
+// Ping Route
 app.get('/ping', (req, res) => {
     res.send('Server is Running...😍');
 });
 
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
 

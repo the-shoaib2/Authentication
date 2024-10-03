@@ -17,6 +17,7 @@ import Popup from '../components/AgreementPopup';
 import PrivacyPolicy from '../components/PrivacyPolicy'; 
 import TermsOfUse from '../components/TermsOfUse'; 
 
+
 function Signup() {
   const [formData, setFormData] = useState({
     firstName: "",

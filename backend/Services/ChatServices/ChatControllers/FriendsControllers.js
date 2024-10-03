@@ -1,6 +1,6 @@
 const FriendRequest = require('../ChatModels/Friends');
-const User = require('../../../Models/User');
-const asyncHandler = require('../../../utils/asyncHandler');
+const User = require('../../../Authentication/Models/User');
+const asyncHandler = require('../../utils/asyncHandler');
 const { FRIEND_REQUEST_STATUS } = require('./constants');
 
 const SUCCESS_MESSAGES = {
