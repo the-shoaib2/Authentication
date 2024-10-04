@@ -23,7 +23,9 @@ function Home() {
   const [showProfile, setShowProfile] = useState(false);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [showHistorySidebar, setShowHistorySidebar] = useState(false);
-  const [activeService, setActiveService] = useState(null);
+  const [activeService, setActiveService] = useState(() => {
+    return localStorage.getItem('activeService') || null; // Restore active service from localStorage
+  });
   const navigate = useNavigate();
 
   const fetchUser = useCallback(async () => {
@@ -56,6 +58,12 @@ function Home() {
 
   const handleServiceClick = (serviceName) => {
     setActiveService(serviceName);
+    localStorage.setItem('activeService', serviceName); // Persist active service to localStorage
+  };
+
+  const handleCloseService = () => {
+    setActiveService(null); // Reset active service
+    localStorage.removeItem('activeService'); // Clear active service from localStorage
   };
 
   if (loading) {
@@ -85,7 +93,6 @@ function Home() {
                 e.stopPropagation();
                 toggleProfile();
               }}>
-                
               </div>
             )}
           </div>
@@ -100,11 +107,28 @@ function Home() {
         />
 
         <div className={`main-container ${showProfile ? 'hide-services' : ''}`}>
-          {activeService === 'Chat' ? (
-            <ChatService onClose={() => setActiveService(null)} />
+          {loggedInUser.isActive ? (
+            activeService ? (
+              <div>
+                <ChatService onClose={handleCloseService} />
+                 <button className="services-close-button" onClick={handleCloseService}>
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-x services-close-icon" viewBox="0 0 16 16">
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                </svg>
+                 </button>
+              </div>
+            ) : (
+              <div className="fade-in-bottom">
+                <ServicesSection userName={loggedInUser.name} onServiceClick={handleServiceClick} />
+              </div>
+            )
           ) : (
-            <div className="fade-in-bottom">
-              <ServicesSection userName={loggedInUser.name} onServiceClick={handleServiceClick} />
+            <div className="fade-in-bottom-disabled">
+              <ServicesSection 
+                userName={loggedInUser.name} 
+                onServiceClick={handleServiceClick} 
+                disabled={true} 
+              />
             </div>
           )}
         </div>

@@ -146,6 +146,42 @@
     transform: translate(-50%, -50%) rotate(-45deg);
 }
 
+
+.services-close-button{
+    position: absolute;
+    top: 30px;
+    right: 230px;
+    width: 30px;
+    height: 30px;
+    background: #ffffff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.services-close-button:hover {
+    background: #c0392b; 
+    color: #333; 
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.services-close-icon {
+    width: 30px; 
+    height: 30px; 
+    fill: #e74c3c; 
+    transition: fill 0.3s ease; 
+}
+
+.services-close-button:hover .services-close-icon {
+    fill: #ffffff; 
+}
+
+
+
+
 /* ------------------------------------------------
    User Name Styles
    - Styles for the user's name
@@ -210,18 +246,18 @@
 
 /* Confirm Account Button */
 .confirm-account-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007bff;
+    background-color: #4E4CC6; /* Purple color */
+    color: #fff; /* White text */
     border: none;
+    padding: 10px 20px;
+    font-size: 15px;
     border-radius: 30px;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .confirm-account-button:hover {
-    background-color: #0056b3;
+    background-color: #3d3c9b; /* A different shade of purple for hover */
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 

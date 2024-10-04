@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom"; 
 import "../../../assets/style/ServicesStyle/ChatServicesStyle/ChatService.css";
 import SelectedUserMessages from './SelectedUserMessages';
 import MessageInput from "./MessageInput";
@@ -9,9 +10,10 @@ import ChatHeader from './ChatHeader';
 import ChatNavbar from './ChatNavbar';
 import ActiveUsersList from './ActiveUsersList';
 import FriendsList from './Friends/FriendsList';
-import AddFriend from './Friends/AddFriend'; // Assuming AddFriend is a separate component
+import AddFriend from './Friends/AddFriend'; 
 
 const ChatService = ({ onClose }) => {
+  const navigate = useNavigate(); 
   const [message, setMessage] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState({});
@@ -19,6 +21,12 @@ const ChatService = ({ onClose }) => {
   const [reactions, setReactions] = useState({});
   const [openReactionMenuId, setOpenReactionMenuId] = useState(null);
   const [activeTab, setActiveTab] = useState('chatlist');
+  const [loading, setLoading] = useState(true); // Assuming you have a loading state
+
+  useEffect(() => {
+    // Remove loading state when the component mounts
+    setLoading(false);
+  }, []);
 
   const updateMessageStatus = useCallback(
     (messageObj, newStatus) => {
@@ -53,7 +61,6 @@ const ChatService = ({ onClose }) => {
           ],
         }));
 
-        // Simulate message status changes
         setTimeout(() => updateMessageStatus(newMessageObj, "delivered"), 1000);
         setTimeout(() => updateMessageStatus(newMessageObj, "seen"), 2000);
       }
@@ -80,7 +87,6 @@ const ChatService = ({ onClose }) => {
           ],
         }));
 
-        // Simulate message status changes
         setTimeout(() => updateMessageStatus(newMessageObj, "delivered"), 1000);
         setTimeout(() => updateMessageStatus(newMessageObj, "seen"), 2000);
       }
@@ -102,7 +108,7 @@ const ChatService = ({ onClose }) => {
               status: "seen",
               type: "text",
               id: Date.now(),
-            }
+            },
           ],
         };
       }
@@ -119,9 +125,9 @@ const ChatService = ({ onClose }) => {
   }, []);
 
   const handleReaction = useCallback((messageId, reaction) => {
-    setReactions(prevReactions => ({
+    setReactions((prevReactions) => ({
       ...prevReactions,
-      [messageId]: reaction === prevReactions[messageId] ? null : reaction
+      [messageId]: reaction === prevReactions[messageId] ? null : reaction,
     }));
     setOpenReactionMenuId(null);
   }, []);
@@ -145,8 +151,15 @@ const ChatService = ({ onClose }) => {
     };
   }, []);
 
+  const handleClose = () => {
+    navigate('/'); // Navigate back to the home page
+  };
+
   return (
-    <div className="chat-container-main-wrapper">
+    <div className="chat-container-main-wrapper fade-in"> 
+      <button className="close-button" onClick={handleClose}>
+        X
+      </button>
       <div className="chat-sidebar">
         <div className="chat-header-top-bar">
           <input type="text" className="user-search-bar" placeholder="Search" />
@@ -157,14 +170,13 @@ const ChatService = ({ onClose }) => {
         )}
         {activeTab === 'activeusers' && <ActiveUsersList />}
         {activeTab === 'friends' && <FriendsList />}
-        {activeTab === 'addfriends' && <AddFriend />} {/* Render AddFriend here */}
+        {activeTab === 'addfriends' && <AddFriend />}
       </div>
       
       <div className="chat-main">
         {selectedUser ? (
           <>
             <ChatHeader selectedUser={selectedUser} />
-
             <SelectedUserMessages
               selectedUser={selectedUser}
               messages={messages}
@@ -174,7 +186,6 @@ const ChatService = ({ onClose }) => {
               handleReaction={handleReaction}
               toggleReactionMenu={toggleReactionMenu}
             />
-
             <div className="chat-input-container">
               <MessageInput
                 onSendMessage={handleSendMessage}

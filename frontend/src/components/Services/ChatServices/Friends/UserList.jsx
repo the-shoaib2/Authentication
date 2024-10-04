@@ -18,14 +18,19 @@ const UserList = ({
       return (
         <ul className="add-user-list">
           {loading ? (
+
             <li>Loading users...</li>
+            
           ) : addUsers.length > 0 ? (
             addUsers.map((user) => {
-              // Defensive check for user
               if (!user || !user._id) {
                 console.warn("User is null or missing _id:", user);
                 return null; // Skip rendering if user is null or doesn't have _id
               }
+
+              const isFriend = addedFriends.includes(user._id);
+              const requestSent = outgoingRequests.some(request => request.receiver && request.receiver._id === user._id);
+              const requestReceived = incomingRequests.some(request => request.sender && request.sender._id === user._id);
 
               return (
                 <li key={user._id} className="add-user">
@@ -36,20 +41,24 @@ const UserList = ({
                   />
                   <span className="add-user-name">{`${user.first_name} ${user.last_name}`}</span>
                   <div className="button-container">
-                    {addedFriends.includes(user._id) ? (
-                      <button className="friend-button" >
+                    {isFriend ? (
+                      <button className="friend-button">
                         Friend
                       </button>
-                    ) : !outgoingRequests.some(request => request.receiver && request.receiver._id === user._id) ? (
+                    ) : requestSent ? (
+                      <button className="add-friend-success-button" disabled>
+                        Request Sent
+                      </button>
+                    ) : requestReceived ? (
+                      <button onClick={() => handleAcceptFriendRequest(user._id)} className="accept-button">
+                        Accept
+                      </button>
+                    ) : (
                       <button
                         onClick={() => handleAddFriend(user._id)}
                         className="add-friend-button"
                       >
                         Add Friend
-                      </button>
-                    ) : (
-                      <button className="add-friend-success-button" disabled>
-                        Request Sent
                       </button>
                     )}
                   </div>

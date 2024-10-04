@@ -120,3 +120,12 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+.fade-in-bottom-disabled {
+    pointer-events: none; /* Disable all mouse events */
+    opacity: 0.5; /* Make it visually distinct as disabled */
+}
+
+.fade-in-bottom-disabled .services-section {
+    cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+}

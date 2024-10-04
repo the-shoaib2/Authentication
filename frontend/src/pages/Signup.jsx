@@ -7,6 +7,7 @@ import {
   handleError,
   ToastContainer,
 } from "../utils/ReactToastify";
+import { signupUser } from '../utils/ApiService'; 
 import "../assets/style/styleutils/ReactToastifyCustom.css";
 import '../assets/style/styleutils/loading.css';
 import '../assets/style/styleutils/animations.css';
@@ -56,52 +57,19 @@ function Signup() {
 
     setLoading(true);
 
-    setTimeout(async () => {
-      try {
-        const response = await fetch("http://localhost:8080/auth/signup", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            password: formData.password,
-            confirmPassword: formData.confirmPassword,
-            phone: formData.phone,
-            dob: formData.dob,
-            gender: formData.gender,
-          }),
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-          handleSuccess("Signup successful! Please verify your email.");
-       
-        //
-          setTimeout(() => navigate('/verify-email', { 
-            state: { 
-              token: result.verificationToken,
-              email: formData.email 
-            } 
-          }), 500);
-        } else {
-          if (result.errors) {
-            const errorMessages = result.errors
-              .map((err) => `${err.field}: ${err.message}`)
-              .join(", ");
-            handleError(errorMessages);
-          } else {
-            handleError(result.message);
-          }
-        }
-      } catch (err) {
-        handleError("Network error. Please check your connection and try again.");
-      } finally {
-        setLoading(false);
+    try {
+      const result = await signupUser(formData);
+      if (result.success) {
+        handleSuccess("Signup successful! Please verify your email.");
+        navigate('/home', { replace: true }); // Navigate to home on success
+      } else {
+        handleError(result.message);
       }
-    }, 1000);
+    } catch (err) {
+      handleError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleShowPopup = (type) => {

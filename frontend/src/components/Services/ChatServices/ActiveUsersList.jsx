@@ -1,28 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import socketService from '../../../utils/socketService'; // Import socket service
 import { formatTime } from '../../../utils/formatTime'; // Import the formatTime function
+import { fetchFriends } from './API/FriendsAPI'; // Import the fetchFriends function
 import '../../../assets/style/ServicesStyle/ChatServicesStyle/ActiveUsersList.css';
 
 const ActiveUsersList = () => {
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchFriends = async () => {
+    const fetchFriendsList = async () => {
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch("http://localhost:8080/chat-services/friends", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Error fetching friends');
-            }
-
-            const data = await response.json();
+            const data = await fetchFriends(token); // Call the fetchFriends function
             setFriends(data.friends || []);
         } catch (error) {
             console.error("Error fetching friends:", error);
@@ -32,7 +21,7 @@ const ActiveUsersList = () => {
     };
 
     useEffect(() => {
-        fetchFriends();
+        fetchFriendsList();
 
         // Listen for user status updates
         socketService.on('user_status', (data) => {

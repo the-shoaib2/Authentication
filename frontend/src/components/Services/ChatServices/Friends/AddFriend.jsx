@@ -9,7 +9,7 @@ import {
     cancelFriendRequest,
     acceptFriendRequest,
     rejectFriendRequest,
-    fetchFriends // Import the fetchFriends function
+    fetchFriends 
 } from '../API/FriendsAPI';
 
 const UserList = lazy(() => import("./UserList"));
@@ -31,10 +31,6 @@ const AddFriend = () => {
                 const requestsData = await fetchFriendRequests(token);
                 setIncomingRequests(requestsData.incomingRequests);
                 setOutgoingRequests(requestsData.outgoingRequests);
-                
-                // Fetch friends list
-                const friendsData = await fetchFriends(token);
-                setAddedFriends(friendsData.friends.map(friend => friend._id)); // Store only friend IDs
             } catch (error) {
                 console.error(error);
             } finally {
@@ -66,6 +62,11 @@ const AddFriend = () => {
 
     const handleAddFriend = async (userId) => {
         const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("No token found");
+            handleError("You need to be logged in to send friend requests.");
+            return;
+        }
         try {
             await sendFriendRequest(token, userId);
             setAddedFriends((prev) => [...prev, userId]);
@@ -92,19 +93,20 @@ const AddFriend = () => {
     const handleAcceptFriendRequest = async (requestId) => {
         const token = localStorage.getItem("token");
         try {
-            await acceptFriendRequest(token, requestId);
-            handleSuccess("Friend request accepted successfully!");
-            setAddedFriends((prev) => [...prev, requestId]);
+            const data = await acceptFriendRequest(token, requestId);
+            handleSuccess(data.message);
+            setAddedFriends((prev) => [...prev, data.senderId]);
         } catch (error) {
             console.error("Error accepting friend request:", error);
             handleError(error.message);
         }
     };
 
+
     const handleRejectFriendRequest = async (requestId) => {
         const token = localStorage.getItem("token");
         try {
-            await rejectFriendRequest(token, requestId);
+            const data = await rejectFriendRequest(token, requestId);
             handleSuccess("Friend request rejected successfully!");
             setIncomingRequests((prev) => prev.filter(request => request._id !== requestId));
         } catch (error) {
