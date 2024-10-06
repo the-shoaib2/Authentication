@@ -87,7 +87,11 @@ function Home() {
             </svg>
           </button>
           <div className="user-icon-image" onClick={toggleProfile}>
-            <img src="images/avatar/avatar-Alice.png" className={`profilePicture ${showProfile ? 'fade-out' : ''}`} alt="Profile" />
+          <img 
+                    src={loggedInUser.profile_picture} 
+                    className={`profilePicture ${showProfile ? 'fade-out' : ''}`} 
+                    alt="Profile" 
+                />
             {showProfile && (
               <div className="close-profile-button fade-in" onClick={(e) => {
                 e.stopPropagation();

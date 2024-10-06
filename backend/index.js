@@ -14,6 +14,11 @@ const PORT = process.env.PORT || 8080;
 // Authentication Routes
 const AuthRouter = require('./Authentication/Routes/AuthRouter');
 const UsersRouter = require('./Authentication/Routes/UsersRouter');
+
+// Account Management Routes
+const AccountRouter = require('./AccountManagement/AccountRoutes/AccountRoutes');
+
+// Verification Routes
 const VerificationRouter = require('./Authentication/Verification/Routes/VerificationRouter');
 
 // Services Routes
@@ -44,8 +49,15 @@ const corsOptions = {
 app.use(cors(corsOptions)); // Use the CORS middleware with the specified options
 
 // Define routes using environment variables
+
+// Authentication Routes
 app.use(process.env.AUTH_ROUTE, AuthRouter);
 app.use(process.env.USERS_ROUTE, UsersRouter);
+
+// Account Management Routes
+app.use(process.env.ACCOUNT_ROUTE, AccountRouter);
+
+// Verification Routes
 app.use(process.env.VERIFICATION_ROUTE, VerificationRouter);
 
 // Services API

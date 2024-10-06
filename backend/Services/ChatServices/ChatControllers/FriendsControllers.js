@@ -2,6 +2,7 @@ const FriendRequest = require('../ChatModels/Friends');
 const User = require('../../../Authentication/Models/User');
 const asyncHandler = require('../../utils/asyncHandler');
 const { FRIEND_REQUEST_STATUS } = require('./constants');
+const { createChat } = require('./ChatController'); // Import createChat function
 
 const SUCCESS_MESSAGES = {
     FRIEND_REQUEST_SENT: 'Friend request sent.',
@@ -58,24 +59,39 @@ module.exports = (io) => {
             return res.status(403).json({ message: 'You cannot accept this request.' });
         }
 
-        friendRequest.status = FRIEND_REQUEST_STATUS.ACCEPTED;
-        await friendRequest.save();
+        // Check if the friend request is already accepted
+        if (friendRequest.status === FRIEND_REQUEST_STATUS.ACCEPTED) {
+            return res.status(400).json({ message: 'Friend request has already been accepted.' });
+        }
 
+        // Check if the users are already friends
         const sender = await User.findById(friendRequest.sender);
         const receiver = await User.findById(friendRequest.receiver);
 
+        if (sender.friends.includes(receiver._id)) {
+            return res.status(400).json({ message: 'You are already friends with this user.' });
+        }
+
+        friendRequest.status = FRIEND_REQUEST_STATUS.ACCEPTED;
+        await friendRequest.save();
+
+        // Add sender and receiver to each other's friends list
         sender.friends.push(receiver._id);
         receiver.friends.push(sender._id);
 
         await sender.save();
         await receiver.save();
 
-        // Emit notifications to both users
+        // Emit notifications only to the sender
         io.emit('friend_request_accepted', { senderId: sender._id, receiverId: receiver._id });
         io.emit('notification', { userId: sender._id, message: `${receiver.first_name} accepted your friend request.` });
-        io.emit('notification', { userId: receiver._id, message: `You and ${sender.first_name} are now friends.` });
 
-        res.status(200).json({ message: SUCCESS_MESSAGES.FRIEND_REQUEST_ACCEPTED });
+        // Create a chat after accepting the friend request
+        const participants = [sender._id, receiver._id]; // Prepare participants for the chat
+        const newChat = new Chat({ participants, type: 'individual' });
+        await newChat.save(); // Save the new chat
+
+        return res.status(200).json({ message: SUCCESS_MESSAGES.FRIEND_REQUEST_ACCEPTED, chat: newChat });
     });
 
     // Reject a friend request
@@ -329,6 +345,3 @@ module.exports = (io) => {
         getBlockedUsers,
     };
 };
-
-
-

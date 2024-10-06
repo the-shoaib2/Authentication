@@ -58,7 +58,7 @@ const UserSchema = new Schema({
   },
   profile_picture: {
     type: String,
-    default: '/avatar.png',
+    default: null,
   },
   refreshToken: {
     type: String,
@@ -78,7 +78,7 @@ const UserSchema = new Schema({
   },
   isActive: {
     type: Boolean,
-    default: false,  // false 
+    default: true,  // false 
   },
   accountExpiryDate: {
     type: Date,
@@ -133,8 +133,11 @@ UserSchema.pre('save', function (next) {
     this.username = `@${namePart}.${randomPart}`;
   }
 
-  if (!this.profile_picture) {
-    this.profile_picture = '/avatar.png';
+  // Set default profile picture based on gender
+  if (this.gender === 'male') {
+    this.profile_picture = 'https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v2/CHATAPPP/z45x9mxrvgr6nmcpwbwt.jpg'; // Male image URL
+  } else if (this.gender === 'female') {
+    this.profile_picture = 'https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v2/CHATAPPP/qod3z9cwwlgb0tdsnfac.jpg'; // Female image URL
   }
 
   // Update updatedAt timestamp

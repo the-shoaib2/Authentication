@@ -2,62 +2,69 @@ import React from "react";
 import "../../../assets/style/ServicesStyle/ChatServicesStyle/ChatList.css";
 
 const ChatList = ({ selectedUser, handleUserSelect }) => {
+  const users = [
+    {
+      id: 1,
+      name: "John Doe",
+      lastMessage: "Hey, how are you?",
+      time: "2:30 PM",
+      avatar: "/images/avatar/avatar-Alice.png",
+      unread: 2,
+      active: true,
+      status: "seen",
+      addedAt: new Date('2023-10-01'), // Example date
+      lastMessageTime: new Date('2023-10-01T14:30:00'), // Example last message time
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      lastMessage: "Can we meet tomorrow?",
+      time: "Yesterday",
+      avatar: "/images/avatar/avatar-Bob.png",
+      unread: 0,
+      active: false,
+      status: "delivered",
+      addedAt: new Date('2023-09-15'), // Example date
+      lastMessageTime: new Date('2023-09-30T10:00:00'), // Example last message time
+    },
+    {
+      id: 3,
+      name: "Bob Johnson",
+      lastMessage: "Thanks for your help!",
+      time: "2 days ago",
+      avatar: "/images/avatar/avatar-Charlie.png",
+      unread: 5,
+      active: true,
+      status: "sent",
+      addedAt: new Date('2023-08-20'), // Example date
+      lastMessageTime: new Date('2023-09-29T09:00:00'), // Example last message time
+    },
+  ];
+
+  // Sort users by lastMessageTime first, then by addedAt in descending order
+  const sortedUsers = users.sort((a, b) => {
+    if (b.lastMessageTime - a.lastMessageTime !== 0) {
+      return b.lastMessageTime - a.lastMessageTime; // Sort by last message time
+    }
+    return b.addedAt - a.addedAt; // Sort by added date if last message times are equal
+  });
+
   return (
     <div className="chat-sidebar">
-
       <ul className="chat-list">
-        {[ 
-          {
-            id: 1,
-            name: "John Doe",
-            lastMessage: "Hey, how are you?",
-            time: "2:30 PM",
-            avatar: "/images/avatar/avatar-Alice.png",
-            unread: 2,
-            active: true,
-            status: "seen",
-          },
-          {
-            id: 2,
-            name: "Jane Smith",
-            lastMessage: "Can we meet tomorrow?",
-            time: "Yesterday",
-            avatar: "/images/avatar/avatar-Bob.png",
-            unread: 0,
-            active: false,
-            status: "delivered",
-          },
-          {
-            id: 3,
-            name: "Bob Johnson",
-            lastMessage: "Thanks for your help!",
-            time: "2 days ago",
-            avatar: "/images/avatar/avatar-Charlie.png",
-            unread: 5,
-            active: true,
-            status: "sent",
-          },
-        ].map((user) => (
+        {sortedUsers.map((user) => (
           <li
             key={user.id}
-            className={`chat-list-item ${
-              selectedUser?.id === user.id ? "active" : ""
-            }`}
+            className={`chat-list-item ${selectedUser?.id === user.id ? "active" : ""}`}
             onClick={() => handleUserSelect(user)}
           >
             <div className="chat-item-content">
               <div className="avatar-container">
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="chat-avatar"
-                />
+                <img src={user.avatar} alt={user.name} className="chat-avatar" />
               </div>
               <div className="chat-info">
                 <div className="chat-header">
-                  <span
-                    className={`chat-name ${user.unread > 0 ? "unread" : ""}`}
-                  >
+                  <span className={`chat-name ${user.unread > 0 ? "unread" : ""}`}>
                     {user.name}
                   </span>
                   <span className="chat-time">{user.time}</span>
