@@ -56,7 +56,7 @@ const UserSchema = new Schema({
     unique: true,
     lowercase: true,
   },
-  profile_picture: {
+  avatar: {
     type: String,
     default: null,
   },
@@ -123,6 +123,10 @@ const UserSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  cloudinaryPublicId: {
+    type: String,
+    default: null,
+  },
 });
 
 // Pre-save hook to generate username if not provided and set default profile picture
@@ -135,9 +139,9 @@ UserSchema.pre('save', function (next) {
 
   // Set default profile picture based on gender
   if (this.gender === 'male') {
-    this.profile_picture = 'https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v2/CHATAPPP/z45x9mxrvgr6nmcpwbwt.jpg'; // Male image URL
+    this.avatar = 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306869/CHATAPP/avatar/xqmmchslvhkpjbu6hbo0.jpg'; // Male image URL
   } else if (this.gender === 'female') {
-    this.profile_picture = 'https://res.cloudinary.com/YOUR_CLOUD_NAME/image/upload/v2/CHATAPPP/qod3z9cwwlgb0tdsnfac.jpg'; // Female image URL
+    this.avatar = 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306936/CHATAPP/avatar/uw7nihkwksrweo2k6qbc.jpg'; // Female image URL
   }
 
   // Update updatedAt timestamp

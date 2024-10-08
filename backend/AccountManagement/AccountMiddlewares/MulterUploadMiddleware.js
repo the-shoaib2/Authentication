@@ -5,7 +5,7 @@ const path = require("path");
 const FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10MB
 
 // Define the folder path dynamically
-const UPLOAD_FOLDER = path.join(__dirname, "../public");
+const UPLOAD_FOLDER = path.join(__dirname, "../public/images");
 
 // Define allowed file types dynamically
 const ALLOWED_IMAGE_TYPES = /jpeg|jpg|png|gif/;

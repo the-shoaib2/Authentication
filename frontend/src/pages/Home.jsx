@@ -51,6 +51,13 @@ function Home() {
     }
   }, [loggedInUser.isActive]);
 
+  // Refetch user data when the profile is closed
+  useEffect(() => {
+    if (!showProfile) {
+      fetchUser();
+    }
+  }, [showProfile, fetchUser]);
+
   const toggleProfile = useCallback(() => {
     setShowProfile(prev => !prev);
     if (!showProfile) setActiveService(null); 
@@ -66,9 +73,9 @@ function Home() {
     localStorage.removeItem('activeService'); // Clear active service from localStorage
   };
 
-  if (loading) {
-    return <LoadingOverlay loading={loading} fadeOut={false} />;
-  }
+  // if (loading) {
+  //   return <LoadingOverlay loading={loading} fadeOut={false} />;
+  // }
 
   return (
     <div className="home-container">
@@ -88,7 +95,7 @@ function Home() {
           </button>
           <div className="user-icon-image" onClick={toggleProfile}>
           <img 
-                    src={loggedInUser.profile_picture} 
+                    src={loggedInUser.avatar} 
                     className={`profilePicture ${showProfile ? 'fade-out' : ''}`} 
                     alt="Profile" 
                 />

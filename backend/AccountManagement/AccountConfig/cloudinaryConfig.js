@@ -12,7 +12,7 @@ cloudinary.config({
 const BASE_FOLDER = "CHATAPP";
 
 // Define the public directory for uploads
-const PUBLIC_DIR = path.join(__dirname, '../public');
+const PUBLIC_DIR = path.join(__dirname, '../public/images');
 
 // Define the temporary file name format
 const TEMP_FILE_NAME_FORMAT = `temp_${Date.now()}.jpg`;
@@ -57,6 +57,16 @@ const uploadOnCloudinary = async (file, folderName, resourceType) => {
     }
 }
 
+const deleteFromCloudinary = async (publicId) => {
+    try {
+        const response = await cloudinary.uploader.destroy(publicId);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
 module.exports = {
-    uploadOnCloudinary
+    uploadOnCloudinary,
+    deleteFromCloudinary 
 };

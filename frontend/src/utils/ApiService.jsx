@@ -93,3 +93,35 @@ const clearAuthData = () => {
     }
 };
 
+export const uploadAvatar = async (file) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await axiosInstance.post('/account/upload/image', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error uploading avatar:', error);
+        throw error;
+    }
+};
+
+export const deleteAvatar = async () => {
+    try {
+        const response = await axiosInstance.delete('/account/delete/image', {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error deleting avatar:', error);
+        throw error;
+    }
+};
+
