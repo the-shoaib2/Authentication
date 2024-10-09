@@ -4,6 +4,21 @@ const DeletedUserModel = require('./DeletedUser');
 
 const Schema = mongoose.Schema;
 
+const AvatarHistorySchema = new Schema({
+  url: {
+    type: String,
+    required: true,
+  },
+  prev: {
+    type: Schema.Types.ObjectId,
+    ref: 'AvatarHistory',
+  },
+  next: {
+    type: Schema.Types.ObjectId,
+    ref: 'AvatarHistory',
+  }
+});
+
 const UserSchema = new Schema({
   user_id: {
     type: String,
@@ -60,6 +75,10 @@ const UserSchema = new Schema({
     type: String,
     default: null,
   },
+  avatarHistory: {
+    type: [AvatarHistorySchema],
+    default: [],
+  },
   refreshToken: {
     type: String,
     default: null,
@@ -110,11 +129,8 @@ const UserSchema = new Schema({
   lastActive: {
     type: Date,
     default: Date.now,
-  },
-  friends: [{
-    type: mongoose.Schema.Types.ObjectId,
     ref: 'users'
-  }],
+  },
   mutedUsers: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     muteUntil: { type: Date }
@@ -144,11 +160,34 @@ UserSchema.pre('save', function (next) {
     this.avatar = 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306936/CHATAPP/avatar/uw7nihkwksrweo2k6qbc.jpg'; // Female image URL
   }
 
+  // Add the default avatar to the history
+  this.avatarHistory.push({ url: this.avatar });
+
   // Update updatedAt timestamp
   this.updatedAt = Date.now();
 
   next();
 });
+
+// Method to delete the current avatar and focus on the first node in the history
+UserSchema.methods.deleteCurrentAvatar = async function () {
+  if (this.avatarHistory.length > 0) {
+    // Remove the current avatar from the history
+    this.avatarHistory.shift(); // Remove the first node (current avatar)
+    
+    // Set the new avatar to the first node in the history
+    if (this.avatarHistory.length > 0) {
+      this.avatar = this.avatarHistory[0].url;
+    } else {
+      // If no history left, set to null or a default avatar
+      this.avatar = this.gender === 'male' 
+        ? 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306869/CHATAPP/avatar/xqmmchslvhkpjbu6hbo0.jpg'
+        : 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306936/CHATAPP/avatar/uw7nihkwksrweo2k6qbc.jpg';
+    }
+    
+    await this.save();
+  }
+};
 
 // Method to activate a user
 UserSchema.methods.activate = function () {

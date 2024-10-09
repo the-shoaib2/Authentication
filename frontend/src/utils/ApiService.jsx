@@ -104,7 +104,7 @@ export const uploadAvatar = async (file) => {
             },
         });
 
-        return response.data;
+        return { url: response.data.url, message: response.data.message }; // Return URL and message
     } catch (error) {
         console.error('Error uploading avatar:', error);
         throw error;

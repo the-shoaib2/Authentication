@@ -8,11 +8,11 @@ const uploadFile = async (req, res) => {
         const folderName = req.body.folderName || 'files'; 
         const uploadResult = await uploadOnCloudinary(filePath, folderName, 'auto'); 
         res.status(200).json({
-            message: 'File uploaded successfully',
+            message: 'File uploaded !',
             url: uploadResult.secure_url 
         });
     } catch (error) {
-        res.status(500).json({ message: 'File upload failed', error: error.message });
+        res.status(500).json({ message: 'File Upload failed', error: error.message });
     }
 };
 
@@ -30,11 +30,11 @@ const uploadImage = async (req, res) => {
         }, { new: true });
 
         res.status(200).json({
-            message: 'Image uploaded successfully',
+            message: 'Avatar Uploaded !',
             url: uploadResult.secure_url 
         });
     } catch (error) {
-        res.status(500).json({ message: 'Image upload failed', error: error.message });
+        res.status(500).json({ message: 'Avatar Upload failed', error: error.message });
     }
 };
 
@@ -45,7 +45,7 @@ const deleteImage = async (req, res) => {
         const user = await UserModel.findById(userId);
 
         if (!user.cloudinaryPublicId) {
-            return res.status(400).json({ message: 'No image to delete' });
+            return res.status(400).json({ message: 'No Avatar to delete' });
         }
 
         const deleteResult = await deleteFromCloudinary(user.cloudinaryPublicId);
@@ -61,11 +61,11 @@ const deleteImage = async (req, res) => {
         }, { new: true });
 
         res.status(200).json({
-            message: 'File deleted successfully',
+            message: 'Avatar Deleted !',
             result: deleteResult
         });
     } catch (error) {
-        res.status(500).json({ message: 'File deletion failed', error: error.message });
+        res.status(500).json({ message: 'Avatar Deletion failed !', error: error.message });
     }
 };
 

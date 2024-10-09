@@ -3,7 +3,7 @@ import { handleError, handleSuccess } from "../utils/ReactToastify";
 import "../assets/style/styleutils/ReactToastifyCustom.css";
 import "../assets/style/PagesStyle/Profile.css";
 import { useNavigate } from "react-router-dom";
-import { logoutUser, fetchLoggedInUser } from "../utils/ApiService";
+import { logoutUser, fetchLoggedInUser } from "../utils/ApiService"; 
 import "../assets/style/styleutils/animations.css";
 import AvatarUploadPopup from "../Extension/AvatarUploadPopup";
 import LoadingOverlay from "../components/LoadingOverlay"; 
@@ -25,8 +25,8 @@ function UserProfile({ onClose }) {
   const [isModalActive, setIsModalActive] = useState(false);
   const [showAvatarPopup, setShowAvatarPopup] = useState(false); 
   const [avatarUrl, setAvatarUrl] = useState(""); 
-  const [isAvatarLoading, setIsAvatarLoading] = useState(true); // State to track avatar loading
-  const [isProfileLoading, setIsProfileLoading] = useState(true); // State to track profile loading
+  const [isAvatarLoading, setIsAvatarLoading] = useState(true); 
+  const [isProfileLoading, setIsProfileLoading] = useState(true); 
 
   const fetchUserData = async () => {
     try {
@@ -36,7 +36,7 @@ function UserProfile({ onClose }) {
     } catch (error) {
       console.error("Error fetching user data:", error);
     } finally {
-      setIsProfileLoading(false); // Set profile loading to false after data is fetched
+      setIsProfileLoading(false);
     }
   };
 
@@ -49,11 +49,9 @@ function UserProfile({ onClose }) {
       const response = await logoutUser();
       if (response.status === 200) {
         handleSuccess("Logged out successfully!");
-        // Clear local storage
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("loggedInUser");
-        // Clear cookies
         clearCookies();
         setTimeout(() => navigate("/login"), 500);
       } else {
@@ -101,14 +99,13 @@ function UserProfile({ onClose }) {
       <div className="profile-header">
         <div className="avatar-container" onClick={openAvatarPopup}>
           <div className="avatar">
-           <LoadingOverlay loading={isAvatarLoading} />
             <img
               src={avatarUrl}
               className="profile-picture"
               alt="Profile"
               loading="lazy"
-              onLoad={() => setIsAvatarLoading(false)} // Set loading to false when image loads
-              onError={() => setIsAvatarLoading(false)} // Handle error case
+              onLoad={() => setIsAvatarLoading(false)}
+              onError={() => setIsAvatarLoading(false)}
             />
             <div className="camera-icon">
               <svg
@@ -126,9 +123,7 @@ function UserProfile({ onClose }) {
           </div>
         </div>
 
-        <h1 className="user-name">{`${user.first_name || ""} ${
-          user.last_name || ""
-        }`}</h1>
+        <h1 className="user-name">{`${user.first_name || ""} ${user.last_name || ""}`}</h1>
         <p className="user-email">{user.email}</p>
       </div>
 
@@ -148,18 +143,11 @@ function UserProfile({ onClose }) {
       </div>
 
       {showLogoutModal && (
-        <div
-          className={`logout-modal-overlay ${
-            isModalActive ? "active fade-in" : ""
-          }`}
-        >
+        <div className={`logout-modal-overlay ${isModalActive ? "active fade-in" : ""}`}>
           <div className="logout-modal scale-in">
             <p>Are you sure you want to logout?</p>
             <div className="modal-actions">
-              <button
-                className="modal-cancel-button"
-                onClick={closeLogoutModal}
-              >
+              <button className="modal-cancel-button" onClick={closeLogoutModal}>
                 Cancel
               </button>
               <button className="modal-logout-button" onClick={handleLogout}>
@@ -173,9 +161,10 @@ function UserProfile({ onClose }) {
       {showAvatarPopup && (
         <AvatarUploadPopup
           onClose={closeAvatarPopup}
-          onUploadSuccess={(newAvatarUrl) => {
+          onUploadSuccess={(newAvatarUrl, message) => {
+            handleSuccess(message); // Show success message from backend
             setAvatarUrl(`${newAvatarUrl}?t=${new Date().getTime()}`);
-            setIsAvatarLoading(true); // Set loading to true when a new avatar is uploaded
+            setIsAvatarLoading(true);
             fetchUserData(); // Refetch user data to update the profile
           }}
         />

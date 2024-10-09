@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import "../assets/style/ExtensionStyle/AvatarUploadPopup.css";
 import { uploadAvatar, deleteAvatar } from "../utils/ApiService"; 
 import LoadingOverlay from "../components/LoadingOverlay";
+import { handleError } from "../utils/ReactToastify"; // Import handleError
 
 const AvatarUploadPopup = ({ onClose, onUploadSuccess }) => {
   const fileInputRef = useRef(null);
@@ -18,11 +19,11 @@ const AvatarUploadPopup = ({ onClose, onUploadSuccess }) => {
     if (file) {
       setLoading(true);
       try {
-        const newAvatarUrl = await uploadAvatar(file);
-        onUploadSuccess(newAvatarUrl); // Pass the new URL
+        const { url, message } = await uploadAvatar(file);
+        onUploadSuccess(url, message); // Pass the new URL and message
         onClose();
       } catch (error) {
-        console.error("Upload failed:", error);
+        handleError("Upload failed. Please try again."); // Show error message
       } finally {
         setLoading(false);
       }
@@ -36,7 +37,7 @@ const AvatarUploadPopup = ({ onClose, onUploadSuccess }) => {
       onUploadSuccess(); // Pass null or a default URL if needed
       onClose();
     } catch (error) {
-      console.error("Error removing avatar:", error);
+      handleError("Error removing avatar. Please try again."); // Show error message
     } finally {
       setLoading(false);
     }
