@@ -131,11 +131,11 @@ const UserSchema = new Schema({
     default: Date.now,
     ref: 'users'
   },
-  mutedUsers: [{
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    muteUntil: { type: Date }
-  }],
   blockedUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  mutedUsers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
@@ -143,6 +143,14 @@ const UserSchema = new Schema({
     type: String,
     default: null,
   },
+  friends: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users'
+  }],
+  friendRequests: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'FriendRequest'
+  }],
 });
 
 // Pre-save hook to generate username if not provided and set default profile picture
@@ -174,17 +182,17 @@ UserSchema.methods.deleteCurrentAvatar = async function () {
   if (this.avatarHistory.length > 0) {
     // Remove the current avatar from the history
     this.avatarHistory.shift(); // Remove the first node (current avatar)
-    
+
     // Set the new avatar to the first node in the history
     if (this.avatarHistory.length > 0) {
       this.avatar = this.avatarHistory[0].url;
     } else {
       // If no history left, set to null or a default avatar
-      this.avatar = this.gender === 'male' 
+      this.avatar = this.gender === 'male'
         ? 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306869/CHATAPP/avatar/xqmmchslvhkpjbu6hbo0.jpg'
         : 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306936/CHATAPP/avatar/uw7nihkwksrweo2k6qbc.jpg';
     }
-    
+
     await this.save();
   }
 };

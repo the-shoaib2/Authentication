@@ -1,6 +1,5 @@
 const Chat = require('../ChatModels/Chat');
-const Message = require('../ChatModels/Message');
-const User = require('../../../Authentication/Models/User');
+const MessageModel = require('../ChatModels/MessageModel');
 const asyncHandler = require('../../utils/asyncHandler');
 
 // Create chat for two participants
@@ -12,12 +11,21 @@ const createChat = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Exactly two participants are required for a one-on-one chat.' });
     }
 
+    // Check if a chat already exists between the two participants
+    const existingChat = await Chat.findOne({
+        participants: { $all: participants } // Ensure both participants are in the chat
+    });
+
+    if (existingChat) {
+        return res.status(400).json({ message: 'Chat already exists between these participants.' });
+    }
+
     const newChat = new Chat({ participants, type: 'individual' });
     await newChat.save();
 
     // Create an initial empty message
-    const initialMessage = new Message({
-        sender: participants[0], // Assuming the first participant sends the initial message
+    const initialMessage = new MessageModel({
+        sender: participants[0], // Use the first participant as the sender
         chat: newChat._id,
         content: '', // Empty content for the initial message
         type: 'text', // Assuming the type is text
@@ -105,6 +113,139 @@ const getChatMessages = async (req, res) => {
     }
 };
 
+// Add reaction to a message
+const addReaction = asyncHandler(async (req, res) => {
+    const { messageId, reaction } = req.body;
+    const userId = req.user._id;
+
+    const message = await MessageModel.findById(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    // Check if the user has already reacted
+    const existingReaction = message.reactions.find(r => r.user.toString() === userId.toString());
+    if (existingReaction) {
+        // If the user has already reacted, update the reaction
+        existingReaction.reaction = reaction;
+    } else {
+        // If not, add a new reaction
+        message.reactions.push({ user: userId, reaction });
+    }
+
+    await message.save();
+    res.status(200).json(message);
+});
+
+// Delete a message
+const deleteMessage = asyncHandler(async (req, res) => {
+    const { messageId } = req.params;
+
+    const message = await MessageModel.findByIdAndDelete(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    res.status(200).json({ message: 'Message deleted successfully' });
+});
+
+// Edit a message
+const editMessage = asyncHandler(async (req, res) => {
+    const { messageId } = req.params;
+    const { content } = req.body;
+
+    const message = await MessageModel.findById(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    message.content = content;
+    message.isEdited = true;
+    message.editHistory.push({ content, editedAt: Date.now() });
+    await message.save();
+
+    res.status(200).json(message);
+});
+
+// Pin a message
+const pinMessage = asyncHandler(async (req, res) => {
+    const { messageId } = req.params;
+
+    const message = await MessageModel.findById(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    message.isPinned = true;
+    await message.save();
+
+    res.status(200).json(message);
+});
+
+// Forward a message
+const forwardMessage = asyncHandler(async (req, res) => {
+    const { messageId, chatId } = req.body;
+    const senderId = req.user._id;
+
+    const originalMessage = await MessageModel.findById(messageId);
+    if (!originalMessage) {
+        return res.status(404).json({ message: 'Original message not found' });
+    }
+
+    const newMessage = new MessageModel({
+        sender: senderId,
+        chat: chatId,
+        content: originalMessage.content,
+        type: originalMessage.type,
+        fileUrl: originalMessage.fileUrl,
+    });
+
+    await newMessage.save();
+    res.status(201).json(newMessage);
+});
+
+// Bump a message
+const bumpMessage = asyncHandler(async (req, res) => {
+    const { messageId } = req.params;
+
+    const message = await MessageModel.findById(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    message.bumpedAt = Date.now();
+    await message.save();
+
+    res.status(200).json(message);
+});
+
+// Search messages
+const searchMessages = asyncHandler(async (req, res) => {
+    const { chatId, query } = req.query;
+
+    const messages = await MessageModel.find({
+        chat: chatId,
+        content: { $regex: query, $options: 'i' }
+    }).populate('sender', 'first_name last_name profile_picture');
+
+    res.status(200).json(messages);
+});
+
+// Vanish mode for messages
+const vanishMessage = asyncHandler(async (req, res) => {
+    const { messageId } = req.params;
+
+    const message = await MessageModel.findById(messageId);
+    if (!message) {
+        return res.status(404).json({ message: 'Message not found' });
+    }
+
+    message.vanish = true; // Assuming you have a field to mark messages as vanished
+    await message.save();
+
+    res.status(200).json({ message: 'Message set to vanish mode' });
+});
+
 // Export all functions
 module.exports = {
     createChat,
@@ -112,4 +253,12 @@ module.exports = {
     getChatDetails,
     getChats,
     getChatMessages,
+    addReaction,
+    deleteMessage,
+    editMessage,
+    pinMessage,
+    forwardMessage,
+    bumpMessage,
+    searchMessages,
+    vanishMessage,
 };

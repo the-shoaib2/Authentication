@@ -9,6 +9,7 @@ require('dotenv').config();
 require('./Config/Database');
 const http = require('http');
 const PORT = process.env.PORT || 8080;
+const socketIo = require('socket.io');
 
 // Importing Routes
 // Authentication Routes
@@ -24,11 +25,19 @@ const VerificationRouter = require('./Authentication/Verification/Routes/Verific
 // Services Routes
 const ChatRouter = require('./Services/ChatServices/ChatRouters/ChatRouter'); 
 
-
+// Friend Routes
+const FriendRoutes = require('./FriendshipManagement/FriendshipRoutes/FriendRoutes');
 
 // Creating Server
 const server = http.createServer(app);
-const io = require('./Config/Socket')(server); // Pass server to socket config
+const io = socketIo(server); // Pass server to socket config
+
+// Set io instance in app
+app.set('io', io);
+
+// Initialize chat service
+const chatService = require('./Services/ChatServices/ChatService');
+chatService(io); // Pass the io instance to the chat service
 
 // Ping Route
 app.get('/ping', (req, res) => {
@@ -61,7 +70,11 @@ app.use(process.env.ACCOUNT_ROUTE, AccountRouter);
 app.use(process.env.VERIFICATION_ROUTE, VerificationRouter);
 
 // Services API
-app.use(process.env.CHAT_SERVICES_ROUTE, ChatRouter(io));
+app.use(process.env.CHAT_SERVICES_ROUTE, ChatRouter);
+
+// Friend Services
+app.use(process.env.FRIEND_SERVICES_ROUTE, FriendRoutes);
+// app.use('/friend-services', FriendRoutes);
 
 // Start the server
 server.listen(PORT, () => {
