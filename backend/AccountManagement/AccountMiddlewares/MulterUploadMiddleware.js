@@ -1,21 +1,13 @@
-const multer = require("multer");
-const path = require("path");
+import multer from "multer";
 
-// Define a dynamic file size limit
-const FILE_SIZE_LIMIT = 10 * 1024 * 1024; // 10MB
-
-// Define the folder path dynamically
-const UPLOAD_FOLDER = path.join(__dirname, "../public/images");
-
-// Define allowed file types dynamically
-const ALLOWED_IMAGE_TYPES = /jpeg|jpg|png|gif/;
-const ALLOWED_OTHER_TYPES = /mp3|mp4|pdf|doc|docx/;
+//importing constants
+import { FILE_SIZE_LIMIT, UPLOAD_FOLDER, ALLOWED_IMAGE_TYPES, ALLOWED_OTHER_TYPES } from "../../Constants.js"; // Importing the constants
 
 // Memory storage for images
-const memoryStorage = multer.memoryStorage();
+export const memoryStorage = multer.memoryStorage();
 
 // Disk storage for other file types
-const diskStorage = multer.diskStorage({
+export const diskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, UPLOAD_FOLDER);
     },
@@ -25,7 +17,7 @@ const diskStorage = multer.diskStorage({
 });
 
 // File filter to accept specific file types
-const fileFilter = (req, file, cb) => {
+export const fileFilter = (req, file, cb) => {
     if (ALLOWED_IMAGE_TYPES.test(file.mimetype)) {
         // Use memory storage for images
         return cb(null, true);
@@ -37,20 +29,20 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Create multer instance for images
-const uploadImages = multer({
+export const uploadImages = multer({
     storage: memoryStorage,
     limits: { fileSize: FILE_SIZE_LIMIT },
     fileFilter
 });
 
 // Create multer instance for other files
-const uploadFiles = multer({
+export const uploadFiles = multer({
     storage: diskStorage,
     limits: { fileSize: FILE_SIZE_LIMIT }, 
     fileFilter
 });
 
-module.exports = { 
+export default { 
     uploadImages, 
     uploadFiles,
 };

@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const DeletedUserSchema = new Schema({
+export const DeletedUserSchema = new Schema({
     originalUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
@@ -61,6 +61,6 @@ DeletedUserSchema.index({ originalUserId: 1, deletedAt: 1 }, { unique: false });
 DeletedUserSchema.set('toObject', { virtuals: true });
 DeletedUserSchema.set('toJSON', { virtuals: true });
 
-const DeletedUserModel = mongoose.model("deleted_users", DeletedUserSchema, "deleted_users");
+export const DeletedUserModel = mongoose.model("deleted_users", DeletedUserSchema, "deleted_users");
 
-module.exports = DeletedUserModel;
+export default DeletedUserModel;

@@ -1,12 +1,12 @@
-const transporter = require('./EmailTransporter');
-const User = require('../../../Models/User');
+import transporter from './EmailTransporter.js';
+import User from '../../../Models/UserModel.js';
 
 /**
  * Sends a recover account notification email to the user.
  *
  * @param {string} email - The user's email address.
  */
-const sendRecoverAccountEmail = async (email) => {
+export const sendRecoverAccountEmail = async (email) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -40,4 +40,4 @@ const sendRecoverAccountEmail = async (email) => {
     }
 };
 
-module.exports = { sendRecoverAccountEmail };
+export default { sendRecoverAccountEmail };

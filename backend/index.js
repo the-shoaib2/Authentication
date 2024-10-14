@@ -1,42 +1,28 @@
 // backend/index.js
 
 // Importing required modules
-const express = require('express');
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import http from 'http';
+import { Server } from 'socket.io';
+
+// Load environment variables
+dotenv.config();
+import './Config/Database.js';
+
+// Set up the server
 const app = express();
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-require('dotenv').config();
-require('./Config/Database');
-const http = require('http');
 const PORT = process.env.PORT || 8080;
-const socketIo = require('socket.io');
-
-// Importing Routes
-// Authentication Routes
-const AuthRouter = require('./Authentication/Routes/AuthRouter');
-const UsersRouter = require('./Authentication/Routes/UsersRouter');
-
-// Account Management Routes
-const AccountRouter = require('./AccountManagement/AccountRoutes/AccountRoutes');
-
-// Verification Routes
-const VerificationRouter = require('./Authentication/Verification/Routes/VerificationRouter');
-
-// Services Routes
-const ChatRouter = require('./Services/ChatServices/ChatRouters/ChatRouter'); 
-
-// Friend Routes
-const FriendRoutes = require('./FriendshipManagement/FriendshipRoutes/FriendRoutes');
-
-// Creating Server
 const server = http.createServer(app);
-const io = socketIo(server); // Pass server to socket config
+const io = new Server(server); // Pass server to socket config
 
 // Set io instance in app
 app.set('io', io);
 
 // Initialize chat service
-const chatService = require('./Services/ChatServices/ChatService');
+import chatService from './Services/ChatServices/ChatService.js';
 chatService(io); // Pass the io instance to the chat service
 
 // Ping Route
@@ -57,24 +43,35 @@ const corsOptions = {
 
 app.use(cors(corsOptions)); // Use the CORS middleware with the specified options
 
-// Define routes using environment variables
-
+// Importing Routes
 // Authentication Routes
-app.use(process.env.AUTH_ROUTE, AuthRouter);
-app.use(process.env.USERS_ROUTE, UsersRouter);
+import AuthRouter from './Authentication/Routes/AuthRouter.js'; // Use default import
+import UsersRouter from './Authentication/Routes/UsersRouter.js';
 
 // Account Management Routes
-app.use(process.env.ACCOUNT_ROUTE, AccountRouter);
+import AccountRouter from './AccountManagement/AccountRoutes/AccountRoutes.js'; // Use default import
 
 // Verification Routes
+import VerificationRouter from './Authentication/Verification/Routes/VerificationRouter.js';
+
+// Services Routes
+// Chat Routes
+import ChatRouter from './Services/ChatServices/Routers/Chat.Router.js'; 
+// Message Routes
+import MessageRouter from './Services/ChatServices/Routers/Message.Router.js'; 
+
+// Friend Routes
+import FriendRoutes from './FriendshipManagement/FriendshipRoutes/FriendRoutes.js';
+
+// Define routes using environment variables
+app.use(process.env.AUTH_ROUTE, AuthRouter);
+app.use(process.env.USERS_ROUTE, UsersRouter);
+app.use(process.env.ACCOUNT_ROUTE, AccountRouter);
 app.use(process.env.VERIFICATION_ROUTE, VerificationRouter);
-
-// Services API
 app.use(process.env.CHAT_SERVICES_ROUTE, ChatRouter);
-
-// Friend Services
+// Uncomment if you want to use MessageRouter
+// app.use(process.env.MESSAGE_SERVICES_ROUTE, MessageRouter);
 app.use(process.env.FRIEND_SERVICES_ROUTE, FriendRoutes);
-// app.use('/friend-services', FriendRoutes);
 
 // Start the server
 server.listen(PORT, () => {

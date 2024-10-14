@@ -1,6 +1,6 @@
-const User = require('../../Authentication/Models/User');
+import User from '../../Authentication/Models/UserModel.js';
 
-const checkAccountExpiry = async (req, res, next) => {
+export const checkAccountExpiry = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -24,4 +24,6 @@ const checkAccountExpiry = async (req, res, next) => {
   }
 };
 
-module.exports = checkAccountExpiry;
+export default {
+    checkAccountExpiry
+};

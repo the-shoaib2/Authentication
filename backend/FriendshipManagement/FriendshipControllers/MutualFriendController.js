@@ -1,8 +1,7 @@
-const UserModel = require('../../Authentication/Models/User');
-const logger = require('../FriendshipUtils/Logger');
-const { findConnections } = require('../FriendshipUtils/GraphUtils');
+import logger from '../../Utils/Logger';
+import { findConnections } from '../FriendshipUtils/GraphUtils';
 
-class MutualFriendController {
+export class MutualFriendController {
     async findMutualFriends(req, res) {
         const { userId1, userId2 } = req.body;
 

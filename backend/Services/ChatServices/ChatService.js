@@ -1,7 +1,7 @@
-const MessageModel = require('./ChatModels/MessageModel'); // Import your message model
-const UserModel = require('../../Authentication/Models/User'); // Import your user model
+import MessageModel from './Models/MessageModel.js'; 
+import UserModel from '../../Authentication/Models/UserModel.js'; 
 
-const chatService = (io) => {
+export const chatService = (io) => {
     io.on('connection', (socket) => {
         console.log('A user connected:', socket.id);
 
@@ -24,4 +24,4 @@ const chatService = (io) => {
     });
 };
 
-module.exports = chatService;
+export default chatService;

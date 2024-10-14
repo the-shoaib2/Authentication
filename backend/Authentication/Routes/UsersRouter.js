@@ -1,8 +1,9 @@
 // backend/Routes/UsersRouter.js
 // Loged in User 
-const ensureAuthenticated = require('../Middlewares/Auth');
-const UserModel = require('../Models/User');
-const router = require('express').Router();
+import ensureAuthenticated from '../Middlewares/Auth.js';
+import UserModel from '../Models/UserModel.js';
+import { Router } from 'express'; 
+const router = Router();
 
 const GET_ME_ROUTE = process.env.ROUTER_GET_ME;
 
@@ -18,6 +19,7 @@ router.get(GET_ME_ROUTE, ensureAuthenticated, async (req, res) => {
     }
 }); 
 
-module.exports = router;
+export default router;
+
 
 

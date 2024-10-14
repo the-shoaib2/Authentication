@@ -1,18 +1,24 @@
-const bcrypt = require('bcrypt');
-const UserModel = require("../Models/User");
-const DeletedUserModel = require("../Models/DeletedUser");
-const { generateTokens, refreshAccessToken, setAuthCookies } = require('./TokenController');
-const asyncHandler = require('../utils/asyncHandler');
-const ApiError = require('../utils/ApiError');
-const ApiResponse = require('../utils/ApiResponse');
-const { sendWelcomeEmail } = require('../Verification/Helpers/EmailEventHandler/WelcomeEmailHelpers'); 
-const { handleEmailEvent } = require('../Verification/Helpers/EmailEventHandler/EmailEventHandler');
+import bcrypt from 'bcrypt';
+import UserModel from "../Models/UserModel.js";
+import DeletedUserModel from "../Models/DeletedUser.js";
+import { generateTokens, refreshAccessToken, setAuthCookies } from './TokenController.js';
+import asyncHandler from '../../Utils/asyncHandler.js';
+import ApiError from '../../Utils/ApiError.js';
+import ApiResponse from '../../Utils/ApiResponse.js';
+import { sendWelcomeEmail } from '../Verification/Helpers/EmailEventHandler/WelcomeEmailHelpers.js';
+import { handleEmailEvent } from '../Verification/Helpers/EmailEventHandler/EmailEventHandler.js';
 
 // Add these lines at the top of the file
 const ACCOUNT_EXPIRY_DAYS = parseInt(process.env.ACCOUNT_EXPIRY_DAYS);
 const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
 
-const signup = asyncHandler(async (req, res) => {
+/**
+ * @description Handles user signup
+ * @param {Object} req - The request object containing user details
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const signup = asyncHandler(async (req, res) => {
     const startTime = Date.now();
     try {
         const { firstName, lastName, email, password, phone, dob, gender } = req.body;
@@ -67,13 +73,23 @@ const signup = asyncHandler(async (req, res) => {
                 success: true,
                 name: `${newUser.first_name} ${newUser.last_name}`,
                 email: newUser.email,
+                accountExpiryDate: newUser.accountExpiryDate,
+                isActive: newUser.isActive,
+                isEmailVerified: newUser.isEmailVerified,
+                is2FAEnabled: newUser.is2FAEnabled,
             });
     } catch (err) {
         throw new ApiError(500, err.message || "Internal server error");
     }
 });
 
-const login = asyncHandler(async (req, res) => {
+/**
+ * @description Handles user login
+ * @param {Object} req - The request object containing login credentials
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const login = asyncHandler(async (req, res) => {
     try {
         const { emailOrUsername, password } = req.body;
         const trimmedInput = emailOrUsername.trim();
@@ -119,13 +135,22 @@ const login = asyncHandler(async (req, res) => {
                 name: `${user.first_name} ${user.last_name}`,
                 isActive: user.isActive,
                 accountExpiryDate: user.accountExpiryDate,
+                isEmailVerified: user.isEmailVerified,
+                is2FAEnabled: user.is2FAEnabled,
+                
             });
     } catch (err) {
         throw new ApiError(500, err.message || "Internal server error");
     }
 });
 
-const logout = asyncHandler(async (req, res) => {
+/**
+ * @description Handles user logout
+ * @param {Object} req - The request object containing user session data
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const logout = asyncHandler(async (req, res) => {
     try {
         const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
 
@@ -165,7 +190,13 @@ const logout = asyncHandler(async (req, res) => {
     }
 });
 
-const deleteUser = asyncHandler(async (req, res) => {
+/**
+ * @description Deletes a user account
+ * @param {Object} req - The request object containing user ID
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const deleteUser = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
         const user = await UserModel.findById(id);
@@ -194,7 +225,13 @@ const deleteUser = asyncHandler(async (req, res) => {
     }
 });
 
-const searchDeletedAccounts = asyncHandler(async (req, res) => {
+/**
+ * @description Searches for deleted accounts based on a search term
+ * @param {Object} req - The request object containing the search term
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const searchDeletedAccounts = asyncHandler(async (req, res) => {
     try {
         const { searchTerm } = req.body;
 
@@ -225,7 +262,13 @@ const searchDeletedAccounts = asyncHandler(async (req, res) => {
     }
 });
 
-const recoverAccount = asyncHandler(async (req, res) => {
+/**
+ * @description Recovers a deleted user account
+ * @param {Object} req - The request object containing the ID of the deleted user
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ */
+export const recoverAccount = asyncHandler(async (req, res) => {
     try {
         const { id } = req.body;
 
@@ -270,7 +313,7 @@ const recoverAccount = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {
+export default {
     signup,
     login,
     logout,

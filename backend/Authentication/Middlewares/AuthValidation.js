@@ -1,14 +1,8 @@
-// backend/Middlewares/AuthValidation.js
+import Joi from "joi";
 
-const Joi = require("joi");
+import { MIN_NAME_LENGTH, MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH, MAX_PASSWORD_LENGTH, MIN_DOB_YEAR } from "../../Constants.js";
 
-const MIN_NAME_LENGTH = parseInt(process.env.MIN_NAME_LENGTH) || 3;
-const MAX_NAME_LENGTH = parseInt(process.env.MAX_NAME_LENGTH) || 100;
-const MIN_PASSWORD_LENGTH = parseInt(process.env.MIN_PASSWORD_LENGTH) || 8;
-const MAX_PASSWORD_LENGTH = parseInt(process.env.MAX_PASSWORD_LENGTH) || 100;
-const MIN_DOB_YEAR = parseInt(process.env.MIN_DOB_YEAR) || 1900;
-
-const signupValidation = (req, res, next) => {
+export const signupValidation = (req, res, next) => {
     const schema = Joi.object({
         firstName: Joi.string()
             .min(MIN_NAME_LENGTH)
@@ -89,7 +83,7 @@ const signupValidation = (req, res, next) => {
     next();
 };
 
-const loginValidation = (req, res, next) => {
+export const loginValidation = (req, res, next) => {
     const schema = Joi.object({
         emailOrUsername: Joi.string()
             .required()
@@ -124,7 +118,7 @@ const loginValidation = (req, res, next) => {
     next();
 };
 
-module.exports = {
+export default {
     signupValidation,
     loginValidation,
 };

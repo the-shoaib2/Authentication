@@ -1,22 +1,24 @@
-const User = require("../../Models/User");
-const bcrypt = require("bcrypt");
-const VerificationService = require('../Helpers/VerificationHelpers');
-const asyncHandler = require('../../utils/asyncHandler');
-const ApiError = require('../../utils/ApiError');
-const ApiResponse = require('../../utils/ApiResponse');
-const { sendVerificationEmail } = require('../Helpers/EmailEventHandler/VerificationCodeEmailHelpers');
-const { sendConfirmedAccountEmail } = require('../Helpers/EmailEventHandler/WelcomeEmailHelpers'); // Import the function
+import User from "../../Models/UserModel.js";
+import bcrypt from "bcrypt";
+import VerificationService from '../Helpers/VerificationHelpers.js';
+import asyncHandler from '../../../Utils/asyncHandler.js';
+import ApiError from '../../../Utils/ApiError.js';
+import ApiResponse from '../../../Utils/ApiResponse.js';
+import { sendVerificationEmail } from '../Helpers/EmailEventHandler/VerificationCodeEmailHelpers.js';
+import { sendConfirmedAccountEmail } from '../Helpers/EmailEventHandler/WelcomeEmailHelpers.js'; 
 
-// Add these lines at the top of the file
-const VERIFICATION_CODE_LENGTH = parseInt(process.env.VERIFICATION_CODE_LENGTH);
-const VERIFICATION_CODE_EXPIRY = process.env.VERIFICATION_CODE_EXPIRY;
-const MAX_VERIFICATION_ATTEMPTS = parseInt(process.env.MAX_VERIFICATION_ATTEMPTS);
-const VERIFICATION_COOLDOWN_PERIOD = process.env.VERIFICATION_COOLDOWN_PERIOD;
-const ACCOUNT_LOCK_DURATION = process.env.ACCOUNT_LOCK_DURATION;
-const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
+// Import the constants
+import {
+    VERIFICATION_CODE_LENGTH,
+    VERIFICATION_CODE_EXPIRY,
+    MAX_VERIFICATION_ATTEMPTS,
+    VERIFICATION_COOLDOWN_PERIOD,
+    ACCOUNT_LOCK_DURATION,
+    BCRYPT_SALT_ROUNDS
+} from '../../../Constants.js'; 
 
 // Wrap each controller function with asyncHandler
-const findUserForgotPassword = asyncHandler(async (req, res) => {
+export const findUserForgotPassword = asyncHandler(async (req, res) => {
     try {
         const { emailOrUsername } = req.body;
 
@@ -52,7 +54,7 @@ const findUserForgotPassword = asyncHandler(async (req, res) => {
 });
 
 // Send OTP to user
-const sendOtp = asyncHandler(async (req, res) => {
+export const sendOtp = asyncHandler(async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
@@ -86,7 +88,7 @@ const sendOtp = asyncHandler(async (req, res) => {
 });
 
 // Verify OTP provided by user
-const verifyOtp = asyncHandler(async (req, res) => {
+export  const verifyOtp = asyncHandler(async (req, res) => {
     try {
         const { email, otp } = req.body;
         const user = await User.findOne({ email });
@@ -116,7 +118,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
 });
 
 // Reset user password
-const resetPassword = asyncHandler(async (req, res) => {
+export  const resetPassword = asyncHandler(async (req, res) => {
     try {
         const { email, newPassword } = req.body;
         const user = await User.findOne({ email });
@@ -138,7 +140,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 // Verify user's email
-const verifyEmail = asyncHandler(async (req, res) => {
+export const verifyEmail = asyncHandler(async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
         if (!user || user.isActive) return res.status(400).json(ApiError.badRequest('User not found or already active.'));
@@ -157,7 +159,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
 });
 
 
-module.exports = {
+export default {
     findUserForgotPassword,
     sendOtp,
     verifyOtp,

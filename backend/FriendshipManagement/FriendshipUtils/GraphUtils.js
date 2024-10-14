@@ -1,12 +1,12 @@
-const UserModel = require('../../Authentication/Models/User');
+import UserModel from '../../Authentication/Models/UserModel.js';
 
-const findConnections = async (userId) => {
+export const findConnections = async (userId) => {
     const user = await UserModel.findById(userId).populate('friends');
     return user.friends.map(friend => friend._id);
 };
 
-const areFriends = (user1Friends, user2Id) => {
+export const areFriends = (user1Friends, user2Id) => {
     return user1Friends.includes(user2Id);
 };
 
-module.exports = { findConnections, areFriends };
+export default { findConnections, areFriends };

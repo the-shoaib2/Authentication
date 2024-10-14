@@ -1,24 +1,24 @@
-const express = require('express');
-const { uploadImages, uploadFiles } = require('../AccountMiddlewares/MulterUploadMiddleware');
-const { uploadFile, uploadImage ,deleteImage} = require('../AccountControllers/CloudinaryController'); 
-const { editAndUploadImage } = require('../AccountControllers/AccountController'); 
-const { imageProcessingMiddleware } = require('../AccountMiddlewares/ImageProcessingMiddleware'); 
-const ensureAuthenticated = require('../../Authentication/Middlewares/Auth'); 
+import express from 'express';
+import { uploadImages, uploadFiles } from '../AccountMiddlewares/MulterUploadMiddleware.js';
+import { uploadFile, uploadImage, deleteImage } from '../AccountControllers/CloudinaryController.js'; 
+import { editAndUploadImage } from '../AccountControllers/AccountController.js'; 
+import { imageProcessingMiddleware } from '../AccountMiddlewares/ImageProcessingMiddleware.js'; 
+import ensureAuthenticated from '../../Authentication/Middlewares/Auth.js'; 
 
-const router = express.Router();
+export const AccountRouter = express.Router();
 
 // Route to upload files (using disk storage)
-router.post('/upload/file', ensureAuthenticated, uploadFiles.single('file'), uploadFile);
+AccountRouter.post('/upload/file', ensureAuthenticated, uploadFiles.single('file'), uploadFile);
 // Route to upload images with processing (using memory storage)
-router.post('/upload/image', ensureAuthenticated, uploadImages.single('file'), imageProcessingMiddleware, uploadImage);
+AccountRouter.post('/upload/image', ensureAuthenticated, uploadImages.single('file'), imageProcessingMiddleware, uploadImage);
 // Route to edit and upload images
-router.post('/upload/edit-image', ensureAuthenticated, uploadImages.single('file'), editAndUploadImage);
+AccountRouter.post('/upload/edit-image', ensureAuthenticated, uploadImages.single('file'), editAndUploadImage);
 // Route to delete Images
-router.delete('/delete/Image', ensureAuthenticated, deleteImage);
+AccountRouter.delete('/delete/Image', ensureAuthenticated, deleteImage);
 
 
 
 
 
 // Use CommonJS export
-module.exports = router;
+export default AccountRouter;

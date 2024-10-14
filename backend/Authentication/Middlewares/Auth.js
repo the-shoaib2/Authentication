@@ -1,11 +1,19 @@
 //backend/Middlewares/Auth.js
 
-const ApiError = require('../utils/ApiError');
-const asyncHandler = require("../utils/asyncHandler");
-const jwt = require("jsonwebtoken");
-const User = require("../Models/User");
+import ApiError from '../../Utils/ApiError.js';
+import asyncHandler from '../../Utils/asyncHandler.js';
+import jwt from "jsonwebtoken";
+import User from "../Models/UserModel.js";
 
-const ensureAuthenticated = asyncHandler(async (req, _, next) => {
+/**
+ * @description Middleware to ensure the user is authenticated
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @param {Function} next - The next middleware function
+ * @returns {Promise<void>}
+ * @throws {ApiError} If the user is not authenticated
+ */
+export const ensureAuthenticated = asyncHandler(async (req, _, next) => {
     try {
         // Extract cookies from the request
         const cookies = req.headers.cookie;
@@ -36,6 +44,6 @@ const ensureAuthenticated = asyncHandler(async (req, _, next) => {
         throw new ApiError(401, error?.message || "Invalid access token");
     }
 });
-
-module.exports = ensureAuthenticated;
+        
+export default ensureAuthenticated;
 

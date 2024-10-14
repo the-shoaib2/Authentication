@@ -1,6 +1,12 @@
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-const path = require("path");
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import path from "path";
+ // Import the constants
+import { 
+    BASE_FOLDER, 
+    PUBLIC_DIR, 
+    TEMP_FILE_NAME_FORMAT 
+} from '../../Constants.js';
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,16 +14,9 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Define the base folder for uploads
-const BASE_FOLDER = "CHATAPP";
 
-// Define the public directory for uploads
-const PUBLIC_DIR = path.join(__dirname, '../public/images');
 
-// Define the temporary file name format
-const TEMP_FILE_NAME_FORMAT = `temp_${Date.now()}.jpg`;
-
-const uploadOnCloudinary = async (file, folderName, resourceType) => {
+export const uploadOnCloudinary = async (file, folderName, resourceType) => {
     let filePath;
 
     try {
@@ -57,7 +56,7 @@ const uploadOnCloudinary = async (file, folderName, resourceType) => {
     }
 }
 
-const deleteFromCloudinary = async (publicId) => {
+export const deleteFromCloudinary = async (publicId) => {
     try {
         const response = await cloudinary.uploader.destroy(publicId);
         return response;
@@ -66,7 +65,7 @@ const deleteFromCloudinary = async (publicId) => {
     }
 };
 
-module.exports = {
+export default {
     uploadOnCloudinary,
     deleteFromCloudinary 
 };

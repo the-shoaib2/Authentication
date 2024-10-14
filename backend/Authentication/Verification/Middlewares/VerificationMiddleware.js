@@ -1,9 +1,9 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-const OTP_LENGTH = parseInt(process.env.OTP_LENGTH) || 6;
+import { VERIFICATION_CODE_LENGTH } from '../../../Constants.js';
 
 // Validation schema for searching user
-const searchUserValidation = (req, res, next) => {
+export const searchUserValidation = (req, res, next) => {
     const schema = Joi.object({
         emailOrUsername: Joi.string().min(3).required(),
     });
@@ -18,7 +18,7 @@ const searchUserValidation = (req, res, next) => {
 };
 
 // Middleware to validate OTP request
-const sendOtpValidation = (req, res, next) => {
+export const sendOtpValidation = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().email().required(),
     });
@@ -31,10 +31,10 @@ const sendOtpValidation = (req, res, next) => {
 };
 
 // Middleware to validate OTP verification
-const verifyOtpValidation = (req, res, next) => {
+export const verifyOtpValidation = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().email().required(),
-        otp: Joi.string().length(OTP_LENGTH).required(),
+        otp: Joi.string().length(VERIFICATION_CODE_LENGTH).required(),
     });
 
     const { error } = schema.validate(req.body);
@@ -45,7 +45,7 @@ const verifyOtpValidation = (req, res, next) => {
 };
 
 // Middleware to validate password reset
-const resetPasswordValidation = (req, res, next) => {
+export const resetPasswordValidation = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().email().required(),
         newPassword: Joi.string().min(6).required(),
@@ -58,7 +58,7 @@ const resetPasswordValidation = (req, res, next) => {
     next();
 };
 
-module.exports = {
+export default {
     searchUserValidation,
     sendOtpValidation,
     verifyOtpValidation,

@@ -1,16 +1,11 @@
-const sharp = require('sharp');
+import sharp from 'sharp';
+import { MAX_IMAGE_SIZE, MIN_PROCESS_IMAGE_SIZE, SKIP_PROCESS_IMAGE_SIZE, IMAGE_MAX_DIMENSION, JPEG_QUALITY } from "../../Constants.js"; // Importing the constants
 
 // Constants for image processing
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
-const MIN_PROCESS_IMAGE_SIZE = 1 * 1024; // 1KB
-const SKIP_PROCESS_IMAGE_SIZE = 150 * 1024; // 150KB
-const IMAGE_MAX_DIMENSION = 800; // Maximum dimension for resizing
-const JPEG_QUALITY = 90; // JPEG quality setting
-
 const VALID_IMAGE_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/gif']);
 
 // Middleware to process images
-const imageProcessingMiddleware = async (req, res, next) => {
+export const imageProcessingMiddleware = async (req, res, next) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file data received' });
     }
@@ -55,6 +50,6 @@ const imageProcessingMiddleware = async (req, res, next) => {
     }
 };
 
-module.exports = {
+export default {
     imageProcessingMiddleware
 };

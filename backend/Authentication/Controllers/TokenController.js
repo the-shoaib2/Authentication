@@ -1,12 +1,17 @@
 //backend/Controllers/TokenController.js
 
-const jwt = require('jsonwebtoken');
-const UserModel = require("../Models/User");
-const asyncHandler = require('../utils/asyncHandler');
-const ApiError = require('../utils/ApiError');
-const ApiResponse = require('../utils/ApiResponse');
+import jwt from 'jsonwebtoken';
+import UserModel from "../Models/UserModel.js";
+import asyncHandler from '../../Utils/asyncHandler.js';
+import ApiError from '../../Utils/ApiError.js';
+import ApiResponse from '../../Utils/ApiResponse.js';
 
-const generateAccessToken = (user) => {
+/**
+ * @description Generates an access token for a user
+ * @param {Object} user - The user object containing user details
+ * @returns {string} The generated access token
+ */
+export const generateAccessToken = (user) => {
     return jwt.sign(
         { email: user.email, _id: user._id },
         process.env.JWT_ACCESS_SECRET,
@@ -14,7 +19,12 @@ const generateAccessToken = (user) => {
     );
 };
 
-const generateRefreshToken = (user) => {
+/**
+ * @description Generates a refresh token for a user
+ * @param {Object} user - The user object containing user details
+ * @returns {string} The generated refresh token
+ */
+export const generateRefreshToken = (user) => {
     return jwt.sign(
         { email: user.email, _id: user._id },
         process.env.JWT_REFRESH_SECRET,
@@ -22,7 +32,12 @@ const generateRefreshToken = (user) => {
     );
 };
 
-const generateTokens = async (user) => {
+/**
+ * @description Generates both access and refresh tokens for a user
+ * @param {Object} user - The user object containing user details
+ * @returns {Promise<Object>} An object containing access and refresh tokens
+ */
+export const generateTokens = async (user) => {
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
 
@@ -33,8 +48,13 @@ const generateTokens = async (user) => {
     return { accessToken, refreshToken };
 };
 
-// Helper function to parse JWT expiration string to milliseconds
-const parseDuration = (duration) => {
+/**
+ * @description Parses a JWT expiration string to milliseconds
+ * @param {string} duration - The duration string (e.g., "1h", "30m")
+ * @returns {number} The duration in milliseconds
+ * @throws {Error} If the duration format is invalid
+ */
+export const parseDuration = (duration) => {
     const match = /^(\d+)([smhdw])$/.exec(duration);
     if (!match) throw new Error('Invalid duration format');
 
@@ -51,12 +71,15 @@ const parseDuration = (duration) => {
     }
 };
 
-// Function to refresh access token
-const refreshAccessToken = asyncHandler(async (req, res) => {
-    
+/**
+ * @description Refreshes the access token using the refresh token
+ * @param {Object} req - The request object containing the refresh token
+ * @param {Object} res - The response object to send the response
+ * @returns {Promise<void>}
+ * @throws {ApiError} If the refresh token is invalid or expired
+ */
+export const refreshAccessToken = asyncHandler(async (req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
-
-    console.log("Incoming Refresh Token:", incomingRefreshToken);
 
     if (!incomingRefreshToken) {
         throw new ApiError(401, "Unauthorized request.");
@@ -78,7 +101,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             throw new ApiError(401, "Refresh token is expired or used.");
         }
 
-        const { accessToken, refreshToken: newRefreshToken } = await generateTokens(user); // Updated to use generateTokens
+        const { accessToken, refreshToken: newRefreshToken } = await generateTokens(user);
 
         // Set cookies using the helper function
         setAuthCookies(res, accessToken, newRefreshToken);
@@ -97,8 +120,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-// Helper function to set authentication cookies
-const setAuthCookies = (res, accessToken, refreshToken) => {
+/**
+ * @description Sets authentication cookies in the response
+ * @param {Object} res - The response object to set cookies
+ * @param {string} accessToken - The access token to set in the cookie
+ * @param {string} refreshToken - The refresh token to set in the cookie
+ */
+export const setAuthCookies = (res, accessToken, refreshToken) => {
     const options = {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -110,7 +138,7 @@ const setAuthCookies = (res, accessToken, refreshToken) => {
     res.cookie("refreshToken", refreshToken, options);
 };
 
-module.exports = {
+export default {
     generateAccessToken,
     generateRefreshToken,
     generateTokens,

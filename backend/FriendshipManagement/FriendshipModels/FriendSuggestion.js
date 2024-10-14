@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const FriendSuggestionSchema = new mongoose.Schema({
+export const FriendSuggestionSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -19,4 +19,4 @@ const FriendSuggestionSchema = new mongoose.Schema({
 
 const FriendSuggestionModel = mongoose.model("FriendSuggestion", FriendSuggestionSchema);
 
-module.exports = FriendSuggestionModel;
+export default FriendSuggestionModel;

@@ -1,5 +1,5 @@
-const transporter = require('./EmailTransporter');
-const User = require('../../../Models/User'); 
+import transporter from './EmailTransporter.js';
+import User from '../../../Models/UserModel.js'; 
 
 /**
  * Sends a verification email with the provided code.
@@ -7,7 +7,7 @@ const User = require('../../../Models/User');
  * @param {string} email - The user's email address.
  * @param {string} code - The verification code.
  */
-const sendVerificationEmail = async (email, code) => {
+export const sendVerificationEmail = async (email, code) => {
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -46,5 +46,5 @@ const sendVerificationEmail = async (email, code) => {
     }
 };
 
-module.exports = { sendVerificationEmail };
+export default { sendVerificationEmail };
 

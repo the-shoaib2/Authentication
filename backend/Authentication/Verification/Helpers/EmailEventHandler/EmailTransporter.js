@@ -1,6 +1,6 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         user: process.env.EMAIL_USER,
@@ -8,4 +8,4 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-module.exports = transporter;
+export default transporter;

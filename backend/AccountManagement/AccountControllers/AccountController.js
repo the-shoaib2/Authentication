@@ -1,8 +1,8 @@
-const { uploadOnCloudinary } = require('../AccountConfig/cloudinaryConfig');
-const sharp = require('sharp');
+import { uploadOnCloudinary } from '../AccountConfig/cloudinaryConfig.js';
+import sharp from 'sharp';
 
 // Controller function to edit and upload images
-const editAndUploadImage = async (req, res) => {
+export const editAndUploadImage = async (req, res) => {
     try {
         const { crop, filter } = req.body; 
         let imageBuffer = req.file.buffer; 
@@ -33,6 +33,6 @@ const editAndUploadImage = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     editAndUploadImage 
 };

@@ -1,12 +1,12 @@
-const transporter = require('./EmailTransporter');
-const User = require('../../../Models/User');
+import transporter from './EmailTransporter.js';
+import User from '../../../Models/UserModel.js';
 
 /**
  * Sends a login notification email to the user.
  *
  * @param {string} email - The user's email address.
  */
-const sendLoginEmail = async (email) => {
+export const sendLoginEmail = async (email) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -46,7 +46,7 @@ const sendLoginEmail = async (email) => {
  *
  * @param {string} email - The user's email address.
  */
-const sendLogoutEmail = async (email) => {
+export const sendLogoutEmail = async (email) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -81,4 +81,4 @@ const sendLogoutEmail = async (email) => {
     }
 };
 
-module.exports = { sendLoginEmail, sendLogoutEmail };
+export default { sendLoginEmail, sendLogoutEmail };

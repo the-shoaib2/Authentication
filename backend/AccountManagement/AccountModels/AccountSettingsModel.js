@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const Schema = mongoose.Schema;
+import Schema from "mongoose";
 
-const AccountSettingsSchema = new Schema({
+import AccountSettingsSchema from new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
@@ -81,4 +81,4 @@ AccountSettingsSchema.pre('save', function (next) {
 
 const AccountSettingsModel = mongoose.model("AccountSettings", AccountSettingsSchema);
 
-module.exports = AccountSettingsModel;
+export default AccountSettingsModel;

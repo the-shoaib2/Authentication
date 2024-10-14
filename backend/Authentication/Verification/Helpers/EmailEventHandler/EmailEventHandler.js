@@ -1,11 +1,11 @@
-const { sendLoginEmail, sendLogoutEmail } = require('./LoginLogoutEmailHelpers');
-const { sendWelcomeEmail, sendConfirmedAccountEmail } = require('./WelcomeEmailHelpers');
-const { sendVerificationEmail } = require('./VerificationCodeEmailHelpers');
-const { sendDeleteUserEmail } = require('./DeleteUserEmailHelpers');
-const { sendRecoverAccountEmail } = require('./RecoverAccountEmailHelpers');
-const logger = require('../../../utils/Logger');
+import { sendLoginEmail, sendLogoutEmail } from './LoginLogoutEmailHelpers.js';
+import { sendWelcomeEmail, sendConfirmedAccountEmail } from './WelcomeEmailHelpers.js';
+import { sendVerificationEmail } from './VerificationCodeEmailHelpers.js';
+import { sendDeleteUserEmail } from './DeleteUserEmailHelpers.js';
+import { sendRecoverAccountEmail } from './RecoverAccountEmailHelpers.js';
+import logger from '../../../../Utils/Logger.js';
 
-const handleEmailEvent = async (type, email, code = null) => {
+export const handleEmailEvent = async (type, email, code = null) => {
     try {
         switch (type) {
             case 'login':
@@ -46,4 +46,4 @@ const handleEmailEvent = async (type, email, code = null) => {
     }
 };
 
-module.exports = { handleEmailEvent };
+export default { handleEmailEvent };

@@ -1,5 +1,5 @@
-const transporter = require('./EmailTransporter');
-const User = require('../../../Models/User'); 
+import transporter from './EmailTransporter.js';
+import User from '../../../Models/UserModel.js'; 
 
 
 /**
@@ -7,7 +7,7 @@ const User = require('../../../Models/User');
  *
  * @param {string} email - The user's email address.
  */
-const sendWelcomeEmail = async (email) => {
+export const sendWelcomeEmail = async (email) => {
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -57,7 +57,7 @@ const sendWelcomeEmail = async (email) => {
  *
  * @param {string} email - The user's email address.
  */
-const sendConfirmedAccountEmail = async (email) => {
+export const sendConfirmedAccountEmail = async (email) => {
     try {
         // Find the user by email
         const user = await User.findOne({ email });
@@ -95,4 +95,4 @@ const sendConfirmedAccountEmail = async (email) => {
 
 
 
-module.exports = { sendWelcomeEmail, sendConfirmedAccountEmail };
+export default { sendWelcomeEmail, sendConfirmedAccountEmail };

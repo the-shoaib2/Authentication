@@ -1,6 +1,6 @@
-const { body, validationResult } = require('express-validator');
+import { body, validationResult } from 'express-validator';
 
-const validateFriendRequest = [
+export const validateFriendRequest = [
     body('receiverId').isMongoId().withMessage('Receiver ID must be a valid MongoDB ID'),
     (req, res, next) => {
         const errors = validationResult(req);
@@ -11,4 +11,4 @@ const validateFriendRequest = [
     }
 ];
 
-module.exports = validateFriendRequest;
+export default validateFriendRequest;

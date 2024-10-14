@@ -1,12 +1,12 @@
-const transporter = require('./EmailTransporter');
-const User = require('../../../Models/User');
+import transporter from './EmailTransporter.js';
+import User from '../../../Models/UserModel.js';
 
 /**
  * Sends a delete user notification email to the user.
  *
  * @param {string} email - The user's email address.
  */
-const sendDeleteUserEmail = async (email) => {
+export const sendDeleteUserEmail = async (email) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
@@ -40,4 +40,4 @@ const sendDeleteUserEmail = async (email) => {
     }
 };
 
-module.exports = { sendDeleteUserEmail };
+export default { sendDeleteUserEmail };

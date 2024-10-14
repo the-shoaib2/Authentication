@@ -1,8 +1,8 @@
-const { uploadOnCloudinary, deleteFromCloudinary } = require('../AccountConfig/cloudinaryConfig');
-const UserModel = require('../../Authentication/Models/User');
+import { uploadOnCloudinary, deleteFromCloudinary } from '../AccountConfig/cloudinaryConfig.js';
+import UserModel from '../../Authentication/Models/UserModel.js';
 
 // Controller function to upload files
-const uploadFile = async (req, res) => {
+export const uploadFile = async (req, res) => {
     try {
         const filePath = req.file.path; 
         const folderName = req.body.folderName || 'files'; 
@@ -17,7 +17,7 @@ const uploadFile = async (req, res) => {
 };
 
 // Controller function to upload images with processing
-const uploadImage = async (req, res) => {
+export const uploadImage = async (req, res) => {
     try {
         const folderName = req.body.folderName || 'images'; 
         const uploadResult = await uploadOnCloudinary(req.file.buffer, folderName, 'image'); 
@@ -39,37 +39,17 @@ const uploadImage = async (req, res) => {
 };
 
 // Controller function to delete files
-const deleteImage = async (req, res) => {
+export const deleteImage = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const user = await UserModel.findById(userId);
-
-        if (!user.cloudinaryPublicId) {
-            return res.status(400).json({ message: 'No Avatar to delete' });
-        }
-
-        const deleteResult = await deleteFromCloudinary(user.cloudinaryPublicId);
-
-        // Update the user's profile picture URL and clear the publicId in the database
-        let defaultAvatar = user.gender === 'male' 
-            ? 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306869/CHATAPP/avatar/xqmmchslvhkpjbu6hbo0.jpg'
-            : 'https://res.cloudinary.com/dtteg3e2b/image/upload/v1728306936/CHATAPP/avatar/uw7nihkwksrweo2k6qbc.jpg';
-
-        await UserModel.findByIdAndUpdate(userId, { 
-            avatar: defaultAvatar, 
-            cloudinaryPublicId: null 
-        }, { new: true });
-
-        res.status(200).json({
-            message: 'Avatar Deleted !',
-            result: deleteResult
-        });
+        const { publicId } = req.params; // Assuming you're passing the public ID of the image to delete
+        const result = await deleteFromCloudinary(publicId);
+        res.status(200).json({ message: 'Image deleted successfully', result });
     } catch (error) {
-        res.status(500).json({ message: 'Avatar Deletion failed !', error: error.message });
+        res.status(500).json({ message: 'Error deleting image', error: error.message });
     }
 };
 
-module.exports = {
+export default {
     uploadFile,
     uploadImage,
     deleteImage 

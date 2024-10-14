@@ -1,9 +1,9 @@
-const FriendRequestModel = require('../FriendshipModels/FriendRequest');
-const UserModel = require('../../Authentication/Models/User');
-const logger = require('../FriendshipUtils/Logger');
-const { findConnections, areFriends } = require('../FriendshipUtils/GraphUtils');
+import FriendRequestModel from '../FriendshipModels/FriendRequest.js';
+import UserModel from '../../Authentication/Models/UserModel.js';
+import logger from '../../Utils/Logger.js';
+import { findConnections, areFriends } from '../FriendshipUtils/GraphUtils.js';
 
-class FriendController {
+export class FriendController {
 
     async sendFriendRequest(req, res) {
         const { receiverId } = req.body;
@@ -167,4 +167,4 @@ class FriendController {
     }
 }
 
-module.exports = new FriendController();
+export default new FriendController();

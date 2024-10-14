@@ -1,12 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const friendsController = require('../FriendshipControllers/FriendController');
-const ensureAuthenticated = require('../../Authentication/Middlewares/Auth');
-const friendRequestValidator = require('../FriendshipMiddlewares/FriendRequestValidator');
-const asyncHandler = require('../FriendshipUtils/asyncHandler');
+import express from 'express';
+import friendsController from '../FriendshipControllers/FriendController.js';
+import ensureAuthenticated from '../../Authentication/Middlewares/Auth.js';
+import friendRequestValidator from '../FriendshipMiddlewares/FriendRequestValidator.js';
+import asyncHandler from '../../Utils/asyncHandler.js';
+
+const router = express.Router(); 
 
 // Define friend-related routes
-const friendRoutes = [
+export const friendRoutes = [
     { method: 'post', path: '/friend-requests', handler: [friendRequestValidator, asyncHandler(friendsController.sendFriendRequest)] },
     { method: 'post', path: '/friend-requests/accept', handler: [asyncHandler(friendsController.acceptFriendRequest)] },
     { method: 'post', path: '/friend-requests/reject', handler: [asyncHandler(friendsController.rejectFriendRequest)] },
@@ -24,7 +25,11 @@ const friendRoutes = [
 
 // Register friend-related routes
 friendRoutes.forEach(route => {
-    router[route.method](route.path, ensureAuthenticated, route.handler);
+    if (typeof router[route.method] === 'function') { // Check if the method is valid
+        router[route.method](route.path, ensureAuthenticated, ...route.handler); // Spread the handler array
+    } else {
+        console.error(`Invalid method: ${route.method}`); // Log invalid methods
+    }
 });
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
 // backend/Models/Verification.js
 
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const BaseVerificationSchema = new mongoose.Schema({
+export const BaseVerificationSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     expiresAt: { type: Date, required: true },
     verified: { type: Boolean, default: false }
@@ -11,13 +11,13 @@ const BaseVerificationSchema = new mongoose.Schema({
 // This index ensures that documents will be deleted automatically after the 'expiresAt' date.
 BaseVerificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-const VerificationTokenSchema = new mongoose.Schema({
+export const VerificationTokenSchema = new mongoose.Schema({
     token: { type: String, required: true },
     ...BaseVerificationSchema.obj 
 }, { timestamps: true });
 
 // The VerificationCode schema, if you're using it, would also have similar TTL logic.
-const VerificationCodeSchema = new mongoose.Schema({
+export const VerificationCodeSchema = new mongoose.Schema({
     code: { type: String, required: true },
     ...BaseVerificationSchema.obj 
 }, { timestamps: true });
@@ -35,14 +35,14 @@ VerificationCodeSchema.pre('save', async function (next) {
     next();
 });
 
-const VerificationAttemptSchema = new mongoose.Schema({
+export const VerificationAttempt = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     attempts: { type: Number, default: 0 },
     lastAttempt: { type: Date, default: Date.now },
     cooldownEnd: { type: Date, default: null }
 });
 
-VerificationAttemptSchema.methods.incrementAttempt = function() {
+VerificationAttempt.methods.incrementAttempt = function() {
     this.attempts += 1;
     this.lastAttempt = new Date();
     if (this.attempts >= 3) {
@@ -51,16 +51,15 @@ VerificationAttemptSchema.methods.incrementAttempt = function() {
     return this.save();
 };
 
-VerificationAttemptSchema.methods.resetAttempts = function() {
+VerificationAttempt.methods.resetAttempts = function() {
     this.attempts = 0;
     this.lastAttempt = null;
     this.cooldownEnd = null;
     return this.save();
 };
+        
 
-const VerificationAttempt = mongoose.model('VerificationAttempt', VerificationAttemptSchema);
-
-module.exports = {
+export default {
     VerificationCode: mongoose.model('VerificationCode', VerificationCodeSchema),
     VerificationToken: mongoose.model('VerificationToken', VerificationTokenSchema),
     VerificationAttempt
