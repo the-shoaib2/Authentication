@@ -25,7 +25,6 @@ export const getChatMessages = asyncHandler(async (req, res) => {
         .populate('sender', 'first_name last_name profile_picture');
     res.status(200).json(messages);
 });
-
 // Add reaction to a message
 export const addReaction = asyncHandler(async (req, res) => {
     const { messageId, reaction } = req.body;
@@ -164,3 +163,4 @@ export default {
     searchMessages,
     vanishMessage
 };
+

@@ -1,6 +1,5 @@
 import FriendRequestModel from '../FriendshipModels/FriendRequest.js';
 import UserModel from '../../Authentication/Models/UserModel.js';
-import logger from '../../Utils/Logger.js';
 import { findConnections, areFriends } from '../FriendshipUtils/GraphUtils.js';
 
 export class FriendController {
@@ -20,7 +19,6 @@ export class FriendController {
 
         const friendRequest = new FriendRequestModel({ sender: senderId, receiver: receiverId });
         await friendRequest.save();
-        logger.info(`Friend request sent from ${senderId} to ${receiverId}`);
         res.status(201).json({ message: "Friend request sent." });
     }
 
@@ -43,7 +41,6 @@ export class FriendController {
         await UserModel.findByIdAndUpdate(request.sender, { $addToSet: { friends: request.receiver } });
         await UserModel.findByIdAndUpdate(request.receiver, { $addToSet: { friends: request.sender } });
 
-        logger.info(`Friend request accepted between ${request.sender} and ${request.receiver}`);
         res.status(200).json({ message: "Friend request accepted." });
     }
 
@@ -57,7 +54,6 @@ export class FriendController {
 
         request.status = 'rejected';
         await request.save();
-        logger.info(`Friend request rejected from ${request.sender} to ${request.receiver}`);
         res.status(200).json({ message: "Friend request rejected." });
     }
 
@@ -67,7 +63,6 @@ export class FriendController {
 
         await UserModel.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
         await UserModel.findByIdAndUpdate(friendId, { $pull: { friends: userId } });
-        logger.info(`User ${userId} unfriended ${friendId}`);
         res.status(200).json({ message: "Unfriended successfully." });
     }
 
@@ -76,7 +71,6 @@ export class FriendController {
         const userId = req.user._id;
 
         await UserModel.findByIdAndUpdate(userId, { $addToSet: { blockedUsers: userIdToBlock } });
-        logger.info(`User ${userId} blocked ${userIdToBlock}`);
         res.status(200).json({ message: "User blocked." });
     }
 
@@ -85,7 +79,6 @@ export class FriendController {
         const userId = req.user._id;
 
         await UserModel.findByIdAndUpdate(userId, { $pull: { blockedUsers: userIdToUnblock } });
-        logger.info(`User ${userId} unblocked ${userIdToUnblock}`);
         res.status(200).json({ message: "User unblocked." });
     }
 
@@ -94,7 +87,6 @@ export class FriendController {
         const userId = req.user._id;
 
         await UserModel.findByIdAndUpdate(userId, { $addToSet: { mutedUsers: userIdToMute } });
-        logger.info(`User ${userId} muted ${userIdToMute}`);
         res.status(200).json({ message: "User muted." });
     }
 
@@ -103,7 +95,6 @@ export class FriendController {
         const userId = req.user._id;
 
         await UserModel.findByIdAndUpdate(userId, { $pull: { mutedUsers: userIdToUnmute } });
-        logger.info(`User ${userId} unmuted ${userIdToUnmute}`);
         res.status(200).json({ message: "User unmuted." });
     }
 
@@ -131,7 +122,6 @@ export class FriendController {
             const users = await UserModel.find({}, '-password -__v');
             res.status(200).json(users);
         } catch (error) {
-            logger.error(`Error fetching users: ${error.message}`);
             res.status(500).json({ message: "Error fetching users", error });
         }
     }
@@ -146,7 +136,6 @@ export class FriendController {
             }
             res.status(200).json({ friends: user.friends });
         } catch (error) {
-            logger.error(`Error fetching friends: ${error.message}`);
             res.status(500).json({ message: "Error fetching friends", error });
         }
     }
@@ -161,7 +150,6 @@ export class FriendController {
             const mutualFriends = user1Connections.filter(friendId => user2Connections.includes(friendId));
             res.status(200).json({ mutualFriends });
         } catch (error) {
-            logger.error(`Error fetching mutual friends: ${error.message}`);
             res.status(500).json({ message: "Error fetching mutual friends", error });
         }
     }

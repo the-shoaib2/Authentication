@@ -12,6 +12,6 @@ router.use((req, res, next) => {
 });
 
 // Define your chat-related routes here
-router.post('/create-chat', chatController.createChat);
+router.post('/create-chat', chatAuth, chatController.createChat);
 
 export default router;

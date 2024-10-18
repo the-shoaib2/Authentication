@@ -2,15 +2,12 @@ import bcrypt from 'bcrypt';
 import UserModel from "../Models/UserModel.js";
 import DeletedUserModel from "../Models/DeletedUser.js";
 import { generateTokens, refreshAccessToken, setAuthCookies } from './TokenController.js';
-import asyncHandler from '../../Utils/asyncHandler.js';
-import ApiError from '../../Utils/ApiError.js';
-import ApiResponse from '../../Utils/ApiResponse.js';
+import asyncHandler from '../../utils/asyncHandler.js';
+import ApiError from '../../utils/ApiError.js';
+import ApiResponse from '../../utils/ApiResponse.js';
 import { sendWelcomeEmail } from '../Verification/Helpers/EmailEventHandler/WelcomeEmailHelpers.js';
 import { handleEmailEvent } from '../Verification/Helpers/EmailEventHandler/EmailEventHandler.js';
-
-// Add these lines at the top of the file
-const ACCOUNT_EXPIRY_DAYS = parseInt(process.env.ACCOUNT_EXPIRY_DAYS);
-const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
+import { ACCOUNT_EXPIRY_DAYS, BCRYPT_SALT_ROUNDS } from '../../Constants.js';
 
 /**
  * @description Handles user signup

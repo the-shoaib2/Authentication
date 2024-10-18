@@ -56,22 +56,31 @@ import VerificationRouter from './Authentication/Verification/Routes/Verificatio
 
 // Services Routes
 // Chat Routes
-import ChatRouter from './Services/ChatServices/Routers/Chat.Router.js'; 
+import ChatRouter from './Services/ChatServices/Routers/ChatRouter.js'; 
 // Message Routes
-import MessageRouter from './Services/ChatServices/Routers/Message.Router.js'; 
+import MessageRouter from './Services/ChatServices/Routers/MessageRouter.js'; 
 
 // Friend Routes
 import FriendRoutes from './FriendshipManagement/FriendshipRoutes/FriendRoutes.js';
 
 // Define routes using environment variables
-app.use(process.env.AUTH_ROUTE, AuthRouter);
-app.use(process.env.USERS_ROUTE, UsersRouter);
-app.use(process.env.ACCOUNT_ROUTE, AccountRouter);
-app.use(process.env.VERIFICATION_ROUTE, VerificationRouter);
-app.use(process.env.CHAT_SERVICES_ROUTE, ChatRouter);
-// Uncomment if you want to use MessageRouter
-// app.use(process.env.MESSAGE_SERVICES_ROUTE, MessageRouter);
-app.use(process.env.FRIEND_SERVICES_ROUTE, FriendRoutes);
+const routes = [
+    { path: process.env.AUTH_ROUTE, router: AuthRouter },
+    { path: process.env.USERS_ROUTE, router: UsersRouter },
+    { path: process.env.ACCOUNT_ROUTE, router: AccountRouter },
+    { path: process.env.VERIFICATION_ROUTE, router: VerificationRouter },
+    { path: process.env.CHAT_SERVICES_ROUTE, router: ChatRouter },
+    { path: process.env.MESSAGE_SERVICES_ROUTE, router: MessageRouter },
+    { path: process.env.FRIEND_SERVICES_ROUTE, router: FriendRoutes },
+];
+
+routes.forEach(({ path, router }) => {
+    if (path) {
+        app.use(path, router);
+    } else {
+        console.warn(`Warning: Route for ${router.name} is not defined in environment variables.`);
+    }
+});
 
 // Start the server
 server.listen(PORT, () => {

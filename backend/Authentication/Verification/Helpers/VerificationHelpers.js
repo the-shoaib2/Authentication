@@ -1,7 +1,7 @@
 import VerificationAttempt from '../Models/VerificationAttempt.js';
 import VerificationCode from '../Models/Verification.js'; 
 import User from '../../Models/UserModel.js';
-import ApiError from '../../../Utils/ApiError.js';
+import ApiError from '../../../utils/ApiError.js';
 
 const MAX_ATTEMPTS = parseInt(process.env.MAX_VERIFICATION_ATTEMPTS) || 5;
 const COOLDOWN_DURATION = parseInt(process.env.VERIFICATION_COOLDOWN_PERIOD) * 60 * 1000 || 15 * 60 * 1000; 

@@ -27,12 +27,19 @@ export const ALLOWED_IMAGE_TYPES = /jpeg|jpg|png|gif/; // Allowed image types
 export const ALLOWED_OTHER_TYPES = /mp3|mp4|pdf|doc|docx/; // Allowed other file types
 
 // Verification constants
-export const VERIFICATION_CODE_LENGTH = parseInt(process.env.VERIFICATION_CODE_LENGTH);
-export const VERIFICATION_CODE_EXPIRY = process.env.VERIFICATION_CODE_EXPIRY;
-export const MAX_VERIFICATION_ATTEMPTS = parseInt(process.env.MAX_VERIFICATION_ATTEMPTS);
-export const VERIFICATION_COOLDOWN_PERIOD = process.env.VERIFICATION_COOLDOWN_PERIOD;
-export const ACCOUNT_LOCK_DURATION = process.env.ACCOUNT_LOCK_DURATION;
-export const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS);
+export const VERIFICATION_CODE_LENGTH = 6; 
+export const VERIFICATION_CODE_EXPIRY = "10m"; 
+export const MAX_VERIFICATION_ATTEMPTS = 5; 
+export const VERIFICATION_COOLDOWN_PERIOD = "15m"; 
+export const ACCOUNT_LOCK_DURATION = "72h"; 
+export const ACCOUNT_EXPIRY_DAYS = 15;
+
+// Password Hashing
+export const BCRYPT_SALT_ROUNDS = 10; 
+
+// Email Configuration
+export const SERVICES_EMAIL = "services@gmail.com"; 
+export const SERVICES_NAME = "ZenZ"; 
 
 // Cloudinary constants
 export const BASE_FOLDER = "CHATAPP"; 

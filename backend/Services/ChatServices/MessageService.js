@@ -22,7 +22,7 @@ class MessageService {
 
     async handleFileUpload(file) {
         if (!file) return [];
-        const uploadResult = await uploadOnCloudinary(file.buffer, 'messages', file.mimetype.split('/')[0]); // Updated to use uploadOnCloudinary
+        const uploadResult = await uploadOnCloudinary(file.buffer, 'messages', file.mimetype.split('/')[0]);
         return [uploadResult.secure_url];
     }
 

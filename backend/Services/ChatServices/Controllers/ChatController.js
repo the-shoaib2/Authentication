@@ -14,7 +14,7 @@ export const createChat = asyncHandler(async (req, res) => {
 
     // Check if a chat already exists between the two participants
     const existingChat = await Chat.findOne({
-        participants: { $all: participants } // Ensure both participants are in the chat
+        participants: { $all: participants }
     });
 
     if (existingChat) {
@@ -24,19 +24,18 @@ export const createChat = asyncHandler(async (req, res) => {
     const newChat = new Chat({ participants, type: 'individual' });
     await newChat.save();
 
-    // Create an initial empty message
-    const iv = crypto.randomBytes(16).toString('hex'); // Generate a random iv
+    const iv = crypto.randomBytes(16).toString('hex');
     const initialMessage = new MessageModel({
-        sender: participants[0], // Use the first participant as the sender
+        sender: participants[0],
         chat: newChat._id,
-        content: '', // Set Empty content for the initial message
-        iv: iv, // Include the generated iv
-        type: 'text', // Assuming the type is text
+        content: '',
+        iv: iv,
+        type: 'text',
     });
 
     await initialMessage.save();
-    newChat.messages.push(initialMessage._id); // Add the message to the chat
-    await newChat.save(); // Save the chat with the new message
+    newChat.messages.push(initialMessage._id);
+    await newChat.save();
 
     res.status(201).json({ chat: newChat, initialMessage }); // Return the new chat object and the initial message
 });
@@ -152,7 +151,6 @@ export const deleteMessage = asyncHandler(async (req, res) => {
 
     res.status(200).json({ message: 'Message deleted successfully' });
 });
-
 // Edit a message
 export const editMessage = asyncHandler(async (req, res) => {
     const { messageId } = req.params;

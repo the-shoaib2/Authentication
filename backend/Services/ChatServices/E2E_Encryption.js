@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 const algorithm = 'aes-256-cbc';
-const key = crypto.randomBytes(32); // Use a secure key management strategy
+const key = crypto.randomBytes(32);
 const iv = crypto.randomBytes(16);
 
 export const encrypt = (text) => {
@@ -17,4 +17,3 @@ export const decrypt = (encryptedData) => {
   decrypted += decipher.final('utf8');
   return decrypted;
 };
-

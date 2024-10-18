@@ -4,6 +4,7 @@ import { Server, Socket } from "socket.io";
 import { AvailableChatEvents, ChatEventEnum } from "../constants.js";
 import { User } from "../models/auth/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
+import { encrypt, decrypt } from "../E2E_Encryption.js"; // Import encryption functions
 
 /**
  * @description This function allows a user to join the chat represented by chatId. This event occurs when the user switches between chats.
@@ -16,7 +17,7 @@ const mountJoinChatEvent = (socket) => {
     socket.join(chatId);
   });
 };
-        throw new ApiError(401, "Unauthorized handshake. Token is missing.");
+
 /**
  * @description This function emits the typing event to other participants of the chat.
  * @param {Socket<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>} socket - The socket instance for the connection.
@@ -36,7 +37,6 @@ const mountParticipantStoppedTypingEvent = (socket) => {
     socket.in(chatId).emit(ChatEventEnum.STOP_TYPING_EVENT, chatId);
   });
 };
-
 /**
  * @description Initializes the Socket.IO server and handles user connections.
  * @param {Server<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>} io - The Socket.IO server instance.
@@ -46,21 +46,15 @@ const initializeSocketIO = (io) => {
     try {
       // Parse cookies from the handshake headers (This is only possible if the client has `withCredentials: true`)
       const cookies = cookie.parse(socket.handshake.headers?.cookie || "");
-      let accessToken = cookies?.accessToken; // Get the accessToken
+      let accessToken = cookies?.accessToken || socket.handshake.auth?.token;
 
       if (!accessToken) {
         // If there is no access token in cookies, check inside the handshake auth
-        accessToken = socket.handshake.auth?.token;
-      }
-
-      if (!accessToken) {
-        // Token is required for the socket to work
         throw new ApiError(401, "Unauthorized handshake. Token is missing.");
       }
 
       const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET); // Decode the token
 
-      const decodedToken = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET); // Decode the token
       // Retrieve the user
       const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
 
@@ -103,5 +97,16 @@ const emitSocketEvent = (req, roomId, event, payload) => {
   req.app.get("io").in(roomId).emit(event, payload);
 };
 
+const mountSendMessageEvent = (socket) => {
+  socket.on(ChatEventEnum.SEND_MESSAGE_EVENT, (messageData) => {
+    const encryptedMessage = encrypt(messageData.text); // Encrypt the message
+    socket.to(messageData.chatId).emit(ChatEventEnum.RECEIVE_MESSAGE_EVENT, {
+      ...messageData,
+      text: encryptedMessage // Send the encrypted message
+    });
+  });
+};
+
 export { initializeSocketIO, emitSocketEvent };
 export { initializeSocketIO, emitSocketEvent };
+

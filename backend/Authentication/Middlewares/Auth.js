@@ -1,7 +1,7 @@
 //backend/Middlewares/Auth.js
 
-import ApiError from '../../Utils/ApiError.js';
-import asyncHandler from '../../Utils/asyncHandler.js';
+import ApiError from '../../utils/ApiError.js';
+import asyncHandler from '../../utils/asyncHandler.js';
 import jwt from "jsonwebtoken";
 import User from "../Models/UserModel.js";
 

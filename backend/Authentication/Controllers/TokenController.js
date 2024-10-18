@@ -2,9 +2,9 @@
 
 import jwt from 'jsonwebtoken';
 import UserModel from "../Models/UserModel.js";
-import asyncHandler from '../../Utils/asyncHandler.js';
-import ApiError from '../../Utils/ApiError.js';
-import ApiResponse from '../../Utils/ApiResponse.js';
+import asyncHandler from '../../utils/asyncHandler.js';
+import ApiError from '../../utils/ApiError.js';
+import ApiResponse from '../../utils/ApiResponse.js';
 
 /**
  * @description Generates an access token for a user
